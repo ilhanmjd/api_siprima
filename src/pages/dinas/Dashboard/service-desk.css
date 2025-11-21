@@ -1,0 +1,84 @@
+/* MAIN CARD WRAPPER */
+.service-card {
+  position: relative;
+  width: 92%;
+  margin: 40px auto;
+  background: #a9cbfa; /* biru soft seperti screenshot */
+  border-radius: 15px;
+  padding: 50px 60px;
+  color: #000;
+  overflow: hidden;
+}
+
+/* HEADER: LOGO + TEXT */
+.service-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.service-card-logo {
+  width: 48px;
+  height: auto;
+}
+
+.service-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* SECTION TITLE */
+.section-title {
+  font-size: 42px;
+  font-weight: 700;
+  margin: 0 0 20px 0;
+}
+
+/* DESCRIPTION TEXT */
+.section-description {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 40px;
+}
+
+/* BUTTON */
+.generate-link-btn {
+  background: white;
+  color: #7aa7e9;
+  padding: 14px 38px;
+  border-radius: 20px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.generate-link-btn:hover {
+  background: #f3f3f3;
+}
+
+/* ORANGE SHAPE BOTTOM-LEFT */
+.shape-orange {
+  position: absolute;
+  bottom: -40px;
+  left: -30px;
+  width: 160px;
+  height: 160px;
+  background: #ffb53f;
+  border-radius: 50%;
+}
+
+/* PINK TRIANGLE TOP-RIGHT */
+.shape-pink {
+  position: absolute;
+  top: -40px;
+  right: -60px;
+  width: 200px;
+  height: 200px;
+  background: #f9a7a7;
+  clip-path: polygon(0 0, 100% 40%, 40% 100%);
+  border-radius: 20px;
+}

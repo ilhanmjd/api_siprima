@@ -8,6 +8,8 @@ import {
 import { AssetProvider } from "./contexts/AssetContext";
 import Login from "./components/Login"; // perhatikan huruf besar L
 import Dashboard from "./pages/dinas/Dashboard/Dashboard";
+import ServiceDesk from "./pages/dinas/Dashboard/service-desk";
+import FAQ from "./pages/dinas/Dashboard/faq";
 import AsetInput1 from "./pages/dinas/asset/AsetInput1";
 import AsetInput2 from "./pages/dinas/asset/AsetInput2";
 import AsetInput3 from "./pages/dinas/asset/AsetInput3";
@@ -67,6 +69,22 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <Dashboard />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/service-desk",
+    element: (
+      <ProtectedRoute>
+        <ServiceDesk />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/faq",
+    element: (
+      <ProtectedRoute>
+        <FAQ />
       </ProtectedRoute>
     ),
   },

@@ -1,0 +1,20 @@
+.success-wrapper {
+  min-height: 100vh;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: "Inter", sans-serif;
+}
+
+.checkmark-box {
+  margin-bottom: 30px;
+}
+
+.success-text {
+  font-size: 30px;
+  text-align: center;
+  color: #222;
+  line-height: 1.5;
+}

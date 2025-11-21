@@ -1,0 +1,9 @@
+- [x] Ubah navigate("/") menjadi navigate("/Dashboard") di src/pages/risiko/konfirmasi-input-risiko.jsx
+- [x] Ubah navigate("/") menjadi navigate("/Dashboard") di src/pages/risiko/DashboardRisk.jsx
+- [x] Ubah navigate("/") menjadi navigate("/Dashboard") di src/pages/notifikasi/notifikasi-user-dinas.jsx
+- [x] Ubah navigate("/") menjadi navigate("/Dashboard") di src/pages/asset/konfirmasi-input-aset.jsx
+- [x] Ubah href="/" menjadi href="/Dashboard" di src/pages/risiko/konfirmasi-input-risiko.jsx
+- [x] Ubah href="/" menjadi href="/Dashboard" di src/pages/risiko/DashboardRisk.jsx
+- [x] Ubah href="/" menjadi href="/Dashboard" di src/pages/notifikasi/notifikasi-user-dinas.jsx
+- [x] Ubah href="/" menjadi href="/Dashboard" di src/pages/Dashboard/Dashboard.jsx
+- [x] Ubah href="/" menjadi href="/Dashboard" di src/pages/asset/konfirmasi-input-aset.jsx

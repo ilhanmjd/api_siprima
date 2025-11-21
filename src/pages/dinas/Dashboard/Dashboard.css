@@ -1,0 +1,234 @@
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background-color: #8ec5fc;
+}
+
+/* Navbar */
+.navbar {
+  background: #4a90e2;
+  color: rgb(0, 0, 0);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 30px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  width: 28px;
+  height: 28px;
+}
+
+.brand {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.navbar-center span {
+  color: rgb(255, 255, 255);
+  text-decoration: none;
+  margin: 0 15px;
+  font-weight: 500;
+  padding-bottom: 3px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.navbar-center span.active,
+.navbar-center span:hover {
+  border-bottom: 2px solid #f7c500;
+}
+
+.navbar-right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.icon, .profile {
+  background: rgb(255, 255, 255);
+  color: black;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Content */
+.content {
+  padding: 30px 60px;
+  background-color: #9FCBFF;
+}
+
+.title {
+  color: #2c3e50;
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.subtitle {
+  color: #34495e;
+  font-size: 20px;
+  margin-top: 40px;
+}
+
+/* Cards */
+.card-row {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.main-card {
+  background: #243c7a;
+  color: rgb(255, 255, 255);
+  flex: 1;
+  border-radius: 16px;
+  padding: 30px 20px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.main-card:hover {
+  transform: scale(1.05);
+}
+
+.main-card h2 {
+  font-size: 22px;
+  margin-bottom: 15px;
+}
+
+.button-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.yellow-btn {
+  background: #f7c500;
+  color: black;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.yellow-btn:hover {
+  background: #ffd740;
+}
+
+/* Actions */
+.actions-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.action-btn {
+  background: #ffffff;
+  color: rgb(0, 0, 0);
+  font-weight: 600;
+  padding: 10px 22px;
+  border-radius: 30px;
+  border: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+  background: #f1c40f;
+  color: rgb(255, 255, 255);
+  transform: scale(1.05);
+}
+
+/* Charts */
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 25px;
+  margin-top: 25px;
+}
+
+.chart-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  min-height: 250px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+.chart-placeholder {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #95a5a6;
+  font-size: 16px;
+  animation: fadeIn 0.6s ease;
+}
+
+.chart-placeholder p {
+  margin-top: 8px;
+}
+
+/* Risiko Section */
+.risk-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.risk-item {
+  background: #f4f6f8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 18px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.risk-item:hover {
+  background: #e8f0ff;
+}
+
+.status-btn {
+  border: none;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.status-btn.done {
+  background: #f7c500;
+  color: black;
+}
+
+.status-btn.process {
+  background: #fbc02d;
+  color: black;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -53,26 +53,50 @@ export default function KonfirmasiInputAset() {
   };
 
   return (
-    <div className="page-wrapper">
-      <header className="header">
-        <div className="header-left">
-          <img src="/logo.png" alt="SIPRIMA" className="logo" />
-          <span className="brand-name">SIPRIMA</span>
+    <div className="dashboard-container">
+      {/* Navbar */}
+      <nav className="navbar">
+        <div className="navbar-left">
+          <img src="/logo.png" alt="Logo" className="logo" />
+          <span className="brand">SIPRIMA</span>
         </div>
-        <nav className="nav">
-          <span className="active" onClick={() => navigate("/Dashboard")}>Dashboard</span>
-          <span onClick={() => navigate("/Dashboard")}>Requests</span>
-        </nav>
+        <div className="navbar-center">
+          <span className="active" onClick={() => navigate("/Dashboard")}>
+            Dashboard
+          </span>
+
+          <span onClick={() => navigate("/service-desk")}>Requests</span>
+          <span onClick={() => navigate("/faq")}>FAQ</span>
+        </div>
+
         <div className="navbar-right">
-          <div className="icon" onClick={() => navigate("/notifikasi-user-dinas")}>🔔</div>
+          <div
+            className="icon"
+            onClick={() => navigate("/notifikasi-user-dinas")}
+          >
+            🔔
+          </div>
           <div className="profile">👤</div>
         </div>
-      </header>
+      </nav>
+
+      {/* Breadcrumb */}
       <div className="breadcrumb">
-        <span onClick={() => navigate("/Dashboard")}>Dashboard</span> {">"} Input Asset
+        <span onClick={() => navigate("/Dashboard")}>Dashboard</span> {">"}{" "}
+        Input Asset
       </div>
+
+      {/* Form Card */}
       <div className="form-card">
-        <div className="form-header" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+        <div
+          className="form-header"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "10px",
+          }}
+        >
           <img src="/logo.png" alt="icon" className="form-icon" />
           <h1>Input Asset</h1>
         </div>
@@ -108,7 +132,11 @@ export default function KonfirmasiInputAset() {
           {assetData.doc && (
             <div>
               <label>Lampiran Bukti</label>
-              <input type="text" value={assetData.doc.name || "File terlampir"} readOnly />
+              <input
+                type="text"
+                value={assetData.doc.name || "File terlampir"}
+                readOnly
+              />
             </div>
           )}
           <div className="col-span">
@@ -124,7 +152,13 @@ export default function KonfirmasiInputAset() {
             <input type="text" value={assetData.penanggung_jawab} readOnly />
           </div>
           <div className="form-actions">
-            <button type="button" className="btn-cancel" onClick={() => navigate("/AsetInput3")}>Batal</button>
+            <button
+              type="button"
+              className="btn-cancel"
+              onClick={() => navigate("/AsetInput3")}
+            >
+              Batal
+            </button>
             <button type="submit" className="btn-confirm" disabled={isLoading}>
               {isLoading ? "Loading..." : "Konfirmasi"}
             </button>

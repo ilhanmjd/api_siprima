@@ -72,7 +72,8 @@ const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
           <span className="active" onClick={() => navigate("/Dashboard")}>
             Dashboard
           </span>
-          <span onClick={() => navigate("/Dashboard")}>Requests</span>
+          <span onClick={() => navigate("/service-desk")}>Requests</span>
+          <span onClick={() => navigate("/faq")}>FAQ</span>
         </div>
         <div className="navbar-right">
           <div
@@ -272,7 +273,9 @@ const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
               ) : (
                 maintenanceList.map((maintenance) => (
                   <div key={maintenance.id} className="aset-item">
-                    <span className="aset-name">{maintenance.nama || maintenance.judul}</span>
+                    <span className="aset-name">
+                      {maintenance.nama || maintenance.judul}
+                    </span>
                     <button className="verification-button under-review">
                       UnderReview
                     </button>
@@ -293,7 +296,7 @@ const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
                 <span className="aset-name">Aset Komputer</span>
                 <button
                   className="verification-button accepted"
-                  onClick={() => navigate("/JadwalPemeliharaan")}
+                  onClick={() => navigate("/notif-accept-Penghapusan-Aset")}
                 >
                   Accepted
                 </button>
@@ -320,7 +323,7 @@ const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
                 <span className="aset-name">Microsoft Office</span>
                 <button
                   className="verification-button accepted"
-                  onClick={() => navigate("/JadwalPemeliharaan")}
+                  onClick={() => navigate("/notif-accept-Penghapusan-Aset")}
                 >
                   Accepted
                 </button>
@@ -344,7 +347,7 @@ const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
                 <span className="aset-name">Firewall</span>
                 <button
                   className="verification-button accepted"
-                  onClick={() => navigate("/JadwalPemeliharaan")}
+                  onClick={() => navigate("/notif-accept-Penghapusan-Aset")}
                 >
                   Accepted
                 </button>

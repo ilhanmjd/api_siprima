@@ -14,10 +14,14 @@ export default function JadwalPemeliharaan() {
           <span className="brand">SIPRIMA</span>
         </div>
         <div className="navbar-center">
-          <span className="active" onClick={() => navigate("/Dashboard")}>Dashboard</span>
+          <span className="active" onClick={() => navigate("/Dashboard")}>
+            Dashboard
+          </span>
 
-          <span onClick={() => navigate("/Dashboard")}>Requests</span>
+          <span onClick={() => navigate("/service-desk")}>Requests</span>
+          <span onClick={() => navigate("/faq")}>FAQ</span>
         </div>
+
         <div className="navbar-right">
           <div
             className="icon"
@@ -31,7 +35,10 @@ export default function JadwalPemeliharaan() {
 
       {/* Breadcrumb */}
       <div className="breadcrumb">
-        <span className="breadcrumb-link" onClick={() => navigate("/Dashboard")}>
+        <span
+          className="breadcrumb-link"
+          onClick={() => navigate("/Dashboard")}
+        >
           Dashboard
         </span>{" "}
         {">"} Jadwal Pemeliharaan
@@ -63,7 +70,10 @@ export default function JadwalPemeliharaan() {
             </thead>
 
             <tbody>
-              <tr>
+              <tr
+                onClick={() => navigate("/RiwayatPemeliharaan")}
+                style={{ cursor: "pointer" }}
+              >
                 <td className="asset">r14a Laptop</td>
                 <td>LCD Pecah</td>
                 <td>Sedang</td>
@@ -71,7 +81,11 @@ export default function JadwalPemeliharaan() {
                 <td></td>
               </tr>
 
-              <tr className="row-alt">
+              <tr
+                className="row-alt"
+                onClick={() => navigate("/RiwayatPemeliharaan")}
+                style={{ cursor: "pointer" }}
+              >
                 <td className="asset">d45k Komputer</td>
                 <td>Komputer Tidak Berfungsi</td>
                 <td>Sedang</td>
@@ -79,7 +93,10 @@ export default function JadwalPemeliharaan() {
                 <td></td>
               </tr>
 
-              <tr>
+              <tr
+                onClick={() => navigate("/RiwayatPemeliharaan")}
+                style={{ cursor: "pointer" }}
+              >
                 <td className="asset">c12d Data Cloud</td>
                 <td>Kebocoran Data</td>
                 <td>Tinggi</td>
@@ -87,7 +104,11 @@ export default function JadwalPemeliharaan() {
                 <td></td>
               </tr>
 
-              <tr className="row-alt">
+              <tr
+                className="row-alt"
+                onClick={() => navigate("/RiwayatPemeliharaan")}
+                style={{ cursor: "pointer" }}
+              >
                 <td className="asset">v52w Microsoft Word</td>
                 <td>File Word mengandung malware</td>
                 <td>Tinggi</td>
@@ -95,7 +116,10 @@ export default function JadwalPemeliharaan() {
                 <td></td>
               </tr>
 
-              <tr>
+              <tr
+                onClick={() => navigate("/RiwayatPemeliharaan")}
+                style={{ cursor: "pointer" }}
+              >
                 <td className="asset">k990 Server</td>
                 <td>Downtime</td>
                 <td>Sedang</td>
@@ -103,7 +127,11 @@ export default function JadwalPemeliharaan() {
                 <td></td>
               </tr>
 
-              <tr className="row-alt">
+              <tr
+                className="row-alt"
+                onClick={() => navigate("/RiwayatPemeliharaan")}
+                style={{ cursor: "pointer" }}
+              >
                 <td className="asset">p171 Printer</td>
                 <td>Overheating</td>
                 <td>Sedang</td>
@@ -111,7 +139,10 @@ export default function JadwalPemeliharaan() {
                 <td></td>
               </tr>
 
-              <tr>
+              <tr
+                onClick={() => navigate("/RiwayatPemeliharaan")}
+                style={{ cursor: "pointer" }}
+              >
                 <td className="asset">f82j Printer</td>
                 <td>Kerusakan Hardware</td>
                 <td>Tinggi</td>

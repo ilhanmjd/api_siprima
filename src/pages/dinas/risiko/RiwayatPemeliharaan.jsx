@@ -14,10 +14,11 @@ export default function RiwayatPemeliharaan() {
           <span className="brand">SIPRIMA</span>
         </div>
         <div className="navbar-center">
-          <a href="/Dashboard" className="active">
+          <span className="active" onClick={() => navigate("/Dashboard")}>
             Dashboard
-          </a>
-          <a href="/Dashboard">Requests</a>
+          </span>
+          <span onClick={() => navigate("/service-desk")}>Requests</span>
+          <span onClick={() => navigate("/faq")}>FAQ</span>
         </div>
         <div className="navbar-right">
           <div

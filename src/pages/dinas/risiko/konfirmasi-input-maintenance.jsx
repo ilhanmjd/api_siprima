@@ -35,9 +35,11 @@ export default function KonfirmasiInputMaintenance() {
           <span className="brand">SIPRIMA</span>
         </div>
         <div className="navbar-center">
-          <span className="active" onClick={() => navigate("/Dashboard")}>Dashboard</span>
-
-          <span onClick={() => navigate("/Dashboard")}>Requests</span>
+          <span className="active" onClick={() => navigate("/Dashboard")}>
+            Dashboard
+          </span>
+          <span onClick={() => navigate("/service-desk")}>Requests</span>
+          <span onClick={() => navigate("/faq")}>FAQ</span>
         </div>
         <div className="navbar-right">
           <div

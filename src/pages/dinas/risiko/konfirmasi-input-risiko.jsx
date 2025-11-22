@@ -57,7 +57,9 @@ export default function KonfirmasiInputRisiko() {
 
       // Validasi data
       if (!validateRiskData(newRisk)) {
-        alert("Semua field wajib diisi dan asset_id, probabilitas, nilai dampak harus berupa angka.");
+        alert(
+          "Semua field wajib diisi dan asset_id, probabilitas, nilai dampak harus berupa angka."
+        );
         setLoading(false);
         return;
       }
@@ -87,9 +89,11 @@ export default function KonfirmasiInputRisiko() {
           <span className="brand">SIPRIMA</span>
         </div>
         <div className="navbar-center">
-          <span className="active" onClick={() => navigate("/Dashboard")}>Dashboard</span>
-
-          <span onClick={() => navigate("/Dashboard")}>Requests</span>
+          <span className="active" onClick={() => navigate("/Dashboard")}>
+            Dashboard
+          </span>
+          <span onClick={() => navigate("/service-desk")}>Requests</span>
+          <span onClick={() => navigate("/faq")}>FAQ</span>
         </div>
         <div className="navbar-right">
           <div
@@ -183,7 +187,12 @@ export default function KonfirmasiInputRisiko() {
           >
             Batal
           </button>
-          <button type="submit" className="btn-confirm" onClick={handleConfirm} disabled={loading}>
+          <button
+            type="submit"
+            className="btn-confirm"
+            onClick={handleConfirm}
+            disabled={loading}
+          >
             {loading ? "Memproses..." : "Konfirmasi"}
           </button>
         </div>

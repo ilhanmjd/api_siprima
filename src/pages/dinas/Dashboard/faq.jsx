@@ -31,24 +31,11 @@ export default function FAQ() {
         </div>
 
         <div className="navbar-center">
-          <a href="/Dashboard" onClick={(e) => handleNav(e, "/Dashboard")}>
-            Dashboard
-          </a>
-
-          <a
-            href="/service-desk"
-            onClick={(e) => handleNav(e, "/service-desk")}
-          >
-            Requests
-          </a>
-
-          <a
-            href="/faq"
-            className="active"
-            onClick={(e) => handleNav(e, "/faq")}
-          >
+          <span onClick={() => navigate("/Dashboard")}>Dashboard</span>
+          <span onClick={() => navigate("/service-desk")}>Requests</span>
+          <span className="active" onClick={() => navigate("/faq")}>
             FAQ
-          </a>
+          </span>
         </div>
 
         <div className="navbar-right">

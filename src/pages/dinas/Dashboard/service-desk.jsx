@@ -15,21 +15,11 @@ export default function ServiceDesk() {
         </div>
 
         <div className="navbar-center">
-          <a href="/Dashboard" onClick={(e) => handleNav(e, "/Dashboard")}>
-            Dashboard
-          </a>
-
-          <a
-            href="/service-desk"
-            className="active"
-            onClick={(e) => handleNav(e, "/service-desk")}
-          >
+          <span onClick={() => navigate("/Dashboard")}>Dashboard</span>
+          <span className="active" onClick={() => navigate("/service-desk")}>
             Requests
-          </a>
-
-          <a href="/faq" onClick={(e) => handleNav(e, "/faq")}>
-            FAQ
-          </a>
+          </span>
+          <span onClick={() => navigate("/faq")}>FAQ</span>
         </div>
 
         <div className="navbar-right">

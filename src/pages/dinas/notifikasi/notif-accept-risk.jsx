@@ -18,13 +18,13 @@ export default function NotifikasiAcceptRisk() {
         const [assetsRes, risksRes, maintenancesRes] = await Promise.all([
           getAssets(),
           getRisks(),
-          getMaintenances()
+          getMaintenances(),
         ]);
         setAssetList(assetsRes.data || []);
         setRiskList(risksRes.data || []);
         setMaintenanceList(maintenancesRes.data || []);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
@@ -41,9 +41,11 @@ export default function NotifikasiAcceptRisk() {
           <span className="brand">SIPRIMA</span>
         </div>
         <div className="navbar-center">
-          <span className="active" onClick={() => navigate("/Dashboard")}>Dashboard</span>
-
-          <span onClick={() => navigate("/Dashboard")}>Requests</span>
+          <span className="active" onClick={() => navigate("/Dashboard")}>
+            Dashboard
+          </span>
+          <span onClick={() => navigate("/service-desk")}>Requests</span>
+          <span onClick={() => navigate("/faq")}>FAQ</span>
         </div>
         <div className="navbar-right">
           <div
@@ -129,8 +131,14 @@ export default function NotifikasiAcceptRisk() {
                 <p>Loading...</p>
               ) : (
                 assetList.map((asset) => (
-                  <div key={asset.id} className="aset-item" style={{ backgroundColor: "#9C9C9C" }}>
-                    <span className="aset-name" style={{ color: "black" }}>{asset.nama}</span>
+                  <div
+                    key={asset.id}
+                    className="aset-item"
+                    style={{ backgroundColor: "#9C9C9C" }}
+                  >
+                    <span className="aset-name" style={{ color: "black" }}>
+                      {asset.nama}
+                    </span>
                   </div>
                 ))
               )}
@@ -142,8 +150,17 @@ export default function NotifikasiAcceptRisk() {
                 <p style={{ fontSize: "12px" }}>Loading...</p>
               ) : (
                 riskList.map((risk) => (
-                  <div key={risk.id} className="aset-item" style={{ fontSize: "12px", backgroundColor: "#9C9C9C" }}>
-                    <span className="aset-name" style={{ fontSize: "12px", color: "black" }}>{risk.judul}</span>
+                  <div
+                    key={risk.id}
+                    className="aset-item"
+                    style={{ fontSize: "12px", backgroundColor: "#9C9C9C" }}
+                  >
+                    <span
+                      className="aset-name"
+                      style={{ fontSize: "12px", color: "black" }}
+                    >
+                      {risk.judul}
+                    </span>
                   </div>
                 ))
               )}
@@ -151,57 +168,191 @@ export default function NotifikasiAcceptRisk() {
           )}
           {selectedCategory === "Risk Treatment" && (
             <div className="aset-list" style={{ fontSize: "12px" }}>
-              <div className="aset-item" style={{ fontSize: "12px", backgroundColor: "#9C9C9C" }}>
-                <span className="aset-name" style={{ fontSize: "12px", color: "black" }}>Aset Laptop</span>
+              <div
+                className="aset-item"
+                style={{ fontSize: "12px", backgroundColor: "#9C9C9C" }}
+              >
+                <span
+                  className="aset-name"
+                  style={{ fontSize: "12px", color: "black" }}
+                >
+                  Aset Laptop
+                </span>
               </div>
-              <div className="aset-item" style={{ fontSize: "12px", backgroundColor: "#0845C9" }} onClick={() => navigate("/notif-accept-risk-treatment")}>
-                <span className="aset-name" style={{ fontSize: "12px", color: "white" }}>Aset Komputer</span>
+              <div
+                className="aset-item"
+                style={{ fontSize: "12px", backgroundColor: "#0845C9" }}
+                onClick={() => navigate("/notif-accept-risk-treatment")}
+              >
+                <span
+                  className="aset-name"
+                  style={{ fontSize: "12px", color: "white" }}
+                >
+                  Aset Komputer
+                </span>
               </div>
-              <div className="aset-item" style={{ fontSize: "12px", backgroundColor: "#FF0004" }} onClick={() => navigate("/notif-reject-risk-treatment")}>
-                <span className="aset-name" style={{ fontSize: "12px", color: "white" }}>Data Cloud</span>
+              <div
+                className="aset-item"
+                style={{ fontSize: "12px", backgroundColor: "#FF0004" }}
+                onClick={() => navigate("/notif-reject-risk-treatment")}
+              >
+                <span
+                  className="aset-name"
+                  style={{ fontSize: "12px", color: "white" }}
+                >
+                  Data Cloud
+                </span>
               </div>
-              <div className="aset-item" style={{ fontSize: "12px", backgroundColor: "#FF0004" }} onClick={() => navigate("/notif-reject-risk-treatment")}>
-                <span className="aset-name" style={{ fontSize: "12px", color: "white" }}>Server</span>
+              <div
+                className="aset-item"
+                style={{ fontSize: "12px", backgroundColor: "#FF0004" }}
+                onClick={() => navigate("/notif-reject-risk-treatment")}
+              >
+                <span
+                  className="aset-name"
+                  style={{ fontSize: "12px", color: "white" }}
+                >
+                  Server
+                </span>
               </div>
-              <div className="aset-item" style={{ fontSize: "12px", backgroundColor: "#0845C9" }} onClick={() => navigate("/notif-accept-risk-treatment")}>
-                <span className="aset-name" style={{ fontSize: "12px", color: "white" }}>Microsoft Office</span>
+              <div
+                className="aset-item"
+                style={{ fontSize: "12px", backgroundColor: "#0845C9" }}
+                onClick={() => navigate("/notif-accept-risk-treatment")}
+              >
+                <span
+                  className="aset-name"
+                  style={{ fontSize: "12px", color: "white" }}
+                >
+                  Microsoft Office
+                </span>
               </div>
-              <div className="aset-item" style={{ fontSize: "12px", backgroundColor: "#9C9C9C" }}>
-                <span className="aset-name" style={{ fontSize: "12px", color: "black" }}>Router</span>
+              <div
+                className="aset-item"
+                style={{ fontSize: "12px", backgroundColor: "#9C9C9C" }}
+              >
+                <span
+                  className="aset-name"
+                  style={{ fontSize: "12px", color: "black" }}
+                >
+                  Router
+                </span>
               </div>
-              <div className="aset-item" style={{ fontSize: "12px", backgroundColor: "#FF0004" }} onClick={() => navigate("/notif-reject-risk-treatment")}>
-                <span className="aset-name" style={{ fontSize: "12px", color: "white" }}>Printer</span>
+              <div
+                className="aset-item"
+                style={{ fontSize: "12px", backgroundColor: "#FF0004" }}
+                onClick={() => navigate("/notif-reject-risk-treatment")}
+              >
+                <span
+                  className="aset-name"
+                  style={{ fontSize: "12px", color: "white" }}
+                >
+                  Printer
+                </span>
               </div>
-              <div className="aset-item" style={{ fontSize: "12px", backgroundColor: "#0845C9" }} onClick={() => navigate("/notif-accept-risk-treatment")}>
-                <span className="aset-name" style={{ fontSize: "12px", color: "white" }}>Firewall</span>
+              <div
+                className="aset-item"
+                style={{ fontSize: "12px", backgroundColor: "#0845C9" }}
+                onClick={() => navigate("/notif-accept-risk-treatment")}
+              >
+                <span
+                  className="aset-name"
+                  style={{ fontSize: "12px", color: "white" }}
+                >
+                  Firewall
+                </span>
               </div>
             </div>
           )}
           {selectedCategory === "Penghapusan Aset" && (
             <div className="aset-list" style={{ fontSize: "12px" }}>
-              <div className="aset-item" style={{ fontSize: "12px", backgroundColor: "#9C9C9C" }}>
-                <span className="aset-name" style={{ fontSize: "12px", color: "black" }}>Aset Laptop</span>
+              <div
+                className="aset-item"
+                style={{ fontSize: "12px", backgroundColor: "#9C9C9C" }}
+              >
+                <span
+                  className="aset-name"
+                  style={{ fontSize: "12px", color: "black" }}
+                >
+                  Aset Laptop
+                </span>
               </div>
-              <div className="aset-item" style={{ fontSize: "12px", backgroundColor: "#0845C9" }}>
-                <span className="aset-name" style={{ fontSize: "12px", color: "white" }}>Aset Komputer</span>
+              <div
+                className="aset-item"
+                style={{ fontSize: "12px", backgroundColor: "#0845C9" }}
+              >
+                <span
+                  className="aset-name"
+                  style={{ fontSize: "12px", color: "white" }}
+                >
+                  Aset Komputer
+                </span>
               </div>
-              <div className="aset-item" style={{ fontSize: "12px", backgroundColor: "#FF0004" }}>
-                <span className="aset-name" style={{ fontSize: "12px", color: "white" }}>Data Cloud</span>
+              <div
+                className="aset-item"
+                style={{ fontSize: "12px", backgroundColor: "#FF0004" }}
+              >
+                <span
+                  className="aset-name"
+                  style={{ fontSize: "12px", color: "white" }}
+                >
+                  Data Cloud
+                </span>
               </div>
-              <div className="aset-item" style={{ fontSize: "12px", backgroundColor: "#FF0004" }}>
-                <span className="aset-name" style={{ fontSize: "12px", color: "white" }}>Server</span>
+              <div
+                className="aset-item"
+                style={{ fontSize: "12px", backgroundColor: "#FF0004" }}
+              >
+                <span
+                  className="aset-name"
+                  style={{ fontSize: "12px", color: "white" }}
+                >
+                  Server
+                </span>
               </div>
-              <div className="aset-item" style={{ fontSize: "12px", backgroundColor: "#0845C9" }}>
-                <span className="aset-name" style={{ fontSize: "12px", color: "white" }}>Microsoft Office</span>
+              <div
+                className="aset-item"
+                style={{ fontSize: "12px", backgroundColor: "#0845C9" }}
+              >
+                <span
+                  className="aset-name"
+                  style={{ fontSize: "12px", color: "white" }}
+                >
+                  Microsoft Office
+                </span>
               </div>
-              <div className="aset-item" style={{ fontSize: "12px", backgroundColor: "#9C9C9C" }}>
-                <span className="aset-name" style={{ fontSize: "12px", color: "black" }}>Router</span>
+              <div
+                className="aset-item"
+                style={{ fontSize: "12px", backgroundColor: "#9C9C9C" }}
+              >
+                <span
+                  className="aset-name"
+                  style={{ fontSize: "12px", color: "black" }}
+                >
+                  Router
+                </span>
               </div>
-              <div className="aset-item" style={{ fontSize: "12px", backgroundColor: "#FF0004" }}>
-                <span className="aset-name" style={{ fontSize: "12px", color: "white" }}>Printer</span>
+              <div
+                className="aset-item"
+                style={{ fontSize: "12px", backgroundColor: "#FF0004" }}
+              >
+                <span
+                  className="aset-name"
+                  style={{ fontSize: "12px", color: "white" }}
+                >
+                  Printer
+                </span>
               </div>
-              <div className="aset-item" style={{ fontSize: "12px", backgroundColor: "#0845C9" }}>
-                <span className="aset-name" style={{ fontSize: "12px", color: "white" }}>Firewall</span>
+              <div
+                className="aset-item"
+                style={{ fontSize: "12px", backgroundColor: "#0845C9" }}
+              >
+                <span
+                  className="aset-name"
+                  style={{ fontSize: "12px", color: "white" }}
+                >
+                  Firewall
+                </span>
               </div>
             </div>
           )}

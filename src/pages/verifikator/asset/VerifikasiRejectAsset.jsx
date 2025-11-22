@@ -13,10 +13,19 @@ export default function VerifikasiRejectAsset() {
           <span className="brand">SIPRIMA</span>
         </div>
         <div className="navbar-center">
-          <a href="/Dashboard" className="active">
+          <span
+            onClick={() => navigate("/Dashboard-verifikator")}
+            className="active"
+            style={{ cursor: "pointer" }}
+          >
             Dashboard
-          </a>
-          <a href="/Dashboard">Maintenance</a>
+          </span>
+          <span
+            onClick={() => navigate("/notifikasi-verifikator-maintenance")}
+            style={{ cursor: "pointer" }}
+          >
+            Maintenance
+          </span>
         </div>
         <div className="navbar-right">
           <div
@@ -31,8 +40,10 @@ export default function VerifikasiRejectAsset() {
 
       {/* Breadcrumb */}
       <div className="breadcrumb">
-        <span onClick={() => navigate("/Dashboard-verifikator")}>Dashboard</span> {">"}{" "}
-        Notification
+        <span onClick={() => navigate("/Dashboard-verifikator")}>
+          Dashboard
+        </span>{" "}
+        {">"} Notification
       </div>
 
       {/* Main content */}

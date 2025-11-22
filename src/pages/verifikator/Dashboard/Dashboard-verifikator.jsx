@@ -37,10 +37,19 @@ export default function DashboardVerifikator() {
           <span className="brand">SIPRIMA</span>
         </div>
         <div className="navbar-center">
-          <a href="/Dashboard-verifikator" className="active">
+          <span
+            onClick={() => navigate("/Dashboard-verifikator")}
+            className="active"
+            style={{ cursor: "pointer" }}
+          >
             Dashboard
-          </a>
-          <a href="/Dashboard-verifikator">Maintenance</a>
+          </span>
+          <span
+            onClick={() => navigate("/notifikasi-verifikator-maintenance")}
+            style={{ cursor: "pointer" }}
+          >
+            Maintenance
+          </span>
         </div>
         <div className="navbar-right">
           <div
@@ -90,15 +99,7 @@ export default function DashboardVerifikator() {
             "END OF LIFE",
             "ASSET BERMASALAH",
           ].map((item, i) => (
-            <button
-              className="action-btn"
-              key={i}
-              onClick={
-                item === "MAINTENANCE"
-                  ? () => navigate("/notifikasi-verifikator-maintenance")
-                  : undefined
-              }
-            >
+            <button className="action-btn" key={i}>
               {item}
             </button>
           ))}

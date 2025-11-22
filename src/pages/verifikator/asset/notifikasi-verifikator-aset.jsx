@@ -49,10 +49,19 @@ export default function NotifikasiVerifikatorAset() {
         </div>
 
         <div className="navbar-center">
-          <a href="/Dashboard-verifikator" className="active">
+          <span
+            onClick={() => navigate("/Dashboard-verifikator")}
+            className="active"
+            style={{ cursor: "pointer" }}
+          >
             Dashboard
-          </a>
-          <a href="/Dashboard-verifikator">Maintenance</a>
+          </span>
+          <span
+            onClick={() => navigate("/notifikasi-verifikator-maintenance")}
+            style={{ cursor: "pointer" }}
+          >
+            Maintenance
+          </span>
         </div>
 
         <div className="navbar-right">

@@ -78,18 +78,22 @@ export default function VerifikasiAcceptMaintenance() {
           <span className="brand">SIPRIMA</span>
         </div>
         <div className="navbar-center">
-          <a href="/Dashboard" className="active">
+          <span
+            onClick={() => navigate("/Dashboard-verifikator")}
+            style={{ cursor: "pointer" }}
+          >
             Dashboard
-          </a>
-          <a href="/Dashboard">Requests</a>
+          </span>
+          <span
+            onClick={() => navigate("/notifikasi-verifikator-maintenance")}
+            className="active"
+            style={{ cursor: "pointer" }}
+          >
+            Maintenance
+          </span>
         </div>
         <div className="navbar-right">
-          <div
-            className="icon"
-            // onClick={() => navigate("/notifikasi-user-dinas")}
-          >
-            🔔
-          </div>
+          <div className="icon">🔔</div>
           <div className="profile">👤</div>
         </div>
       </nav>
@@ -98,7 +102,7 @@ export default function VerifikasiAcceptMaintenance() {
       <div className="breadcrumb">
         <span
           className="breadcrumb-link"
-          onClick={() => navigate("/Dashboard")}
+          onClick={() => navigate("/Dashboard-verifikator")}
         >
           Dashboard
         </span>{" "}

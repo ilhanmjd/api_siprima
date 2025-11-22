@@ -34,7 +34,15 @@ export default function ServiceDesk() {
       </nav>
 
       {/* BREADCRUMB */}
-      <div className="breadcrumb">Request &gt; Service Desk</div>
+      <div className="breadcrumb">
+        <span
+          className="breadcrumb-link"
+          onClick={() => navigate("/Dashboard")}
+        >
+          Dashboard
+        </span>{" "}
+        &gt; Service Desk
+      </div>
 
       {/* MAIN CARD */}
       <div className="service-card">

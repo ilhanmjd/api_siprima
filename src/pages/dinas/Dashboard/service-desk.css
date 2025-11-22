@@ -54,6 +54,8 @@
   font-weight: 600;
   cursor: pointer;
   transition: 0.2s ease;
+  position: relative; /* Tambahkan ini agar z-index berfungsi */
+  z-index: 2; /* Tambahkan ini untuk membawa tombol ke depan */
 }
 
 .generate-link-btn:hover {

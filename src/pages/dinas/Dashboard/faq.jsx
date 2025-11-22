@@ -50,7 +50,15 @@ export default function FAQ() {
       </nav>
 
       {/* Breadcrumb */}
-      <div className="breadcrumb">Dashboard &gt; FAQ</div>
+      <div className="breadcrumb">
+        <span
+          className="breadcrumb-link"
+          onClick={() => navigate("/Dashboard")}
+        >
+          Dashboard
+        </span>{" "}
+        &gt; FAQ
+      </div>
 
       {/* FAQ CONTAINER */}
       <div className="faq-wrapper">

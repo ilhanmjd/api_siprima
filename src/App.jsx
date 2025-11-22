@@ -8,13 +8,8 @@ import {
 import { AssetProvider } from "./contexts/AssetContext";
 import Login from "./components/Login"; // perhatikan huruf besar L
 import Dashboard from "./pages/dinas/Dashboard/Dashboard";
-<<<<<<< HEAD
 import DashboardVerifikator from "./pages/verifikator/Dashboard/Dashboard-verifikator";
 import NotifikasiVerifikatorAset from "./pages/verifikator/asset/notifikasi-verifikator-aset";
-=======
-import ServiceDesk from "./pages/dinas/Dashboard/service-desk";
-import FAQ from "./pages/dinas/Dashboard/faq";
->>>>>>> 658acb09c4ed4c1447d3b4c5d4b9044d1df35228
 import AsetInput1 from "./pages/dinas/asset/AsetInput1";
 import AsetInput2 from "./pages/dinas/asset/AsetInput2";
 import AsetInput3 from "./pages/dinas/asset/AsetInput3";
@@ -105,7 +100,6 @@ const router = createBrowserRouter([
     ),
   },
   {
-<<<<<<< HEAD
     path: "/RiwayatPemeliharaan",
     element: (
       <ProtectedRoute>
@@ -314,8 +308,6 @@ const router = createBrowserRouter([
     ),
   },
   {
-=======
->>>>>>> 658acb09c4ed4c1447d3b4c5d4b9044d1df35228
     path: "/service-desk",
     element: (
       <ProtectedRoute>
@@ -332,7 +324,6 @@ const router = createBrowserRouter([
     ),
   },
   {
-<<<<<<< HEAD
     path: "/Dashboard-verifikator",
     element: (
       <ProtectedRoute>
@@ -349,8 +340,6 @@ const router = createBrowserRouter([
     ),
   },
   {
-=======
->>>>>>> 658acb09c4ed4c1447d3b4c5d4b9044d1df35228
     path: "/AsetInput1",
     element: (
       <ProtectedRoute>

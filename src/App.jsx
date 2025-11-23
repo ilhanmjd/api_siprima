@@ -9,6 +9,9 @@ import { AssetProvider } from "./contexts/AssetContext";
 import Login from "./components/Login"; // perhatikan huruf besar L
 import Dashboard from "./pages/dinas/Dashboard/Dashboard";
 import DashboardVerifikator from "./pages/verifikator/Dashboard/Dashboard-verifikator";
+import DashboardAuditor from "./pages/auditor/DashboardAuditor";
+import DashboardDiskominfo from "./pages/diskominfo/dashboard-diskominfo";
+import NotifikasiDiskominfo from "./pages/diskominfo/notifikasi-diskominfo";
 import NotifikasiVerifikatorAset from "./pages/verifikator/asset/notifikasi-verifikator-aset";
 import AsetInput1 from "./pages/dinas/asset/AsetInput1";
 import AsetInput2 from "./pages/dinas/asset/AsetInput2";
@@ -536,6 +539,30 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <JadwalPemeliharaan />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/dashboard-auditor",
+    element: (
+      <ProtectedRoute>
+        <DashboardAuditor />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/dashboard-diskominfo",
+    element: (
+      <ProtectedRoute>
+        <DashboardDiskominfo />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/notifikasi-diskominfo",
+    element: (
+      <ProtectedRoute>
+        <NotifikasiDiskominfo />
       </ProtectedRoute>
     ),
   },

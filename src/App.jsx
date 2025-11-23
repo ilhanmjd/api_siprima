@@ -10,7 +10,7 @@ import Login from "./components/Login"; // perhatikan huruf besar L
 import Dashboard from "./pages/dinas/Dashboard/Dashboard";
 import DashboardVerifikator from "./pages/verifikator/Dashboard/Dashboard-verifikator";
 import DashboardAuditor from "./pages/auditor/DashboardAuditor";
-import DashboardDiskominfo from "./pages/diskominfo/Dashboard-diskominfo";
+import DashboardDiskominfo from "./pages/diskominfo/dashboard-diskominfo";
 import NotifikasiDiskominfo from "./pages/diskominfo/notifikasi-diskominfo";
 import NotifikasiVerifikatorAset from "./pages/verifikator/asset/notifikasi-verifikator-aset";
 import AsetInput1 from "./pages/dinas/asset/AsetInput1";

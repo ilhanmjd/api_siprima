@@ -1,7 +1,7 @@
 // src/components/Login.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../api"; // Import fungsi login
+import { login, getMe } from "../api"; // Import fungsi login dan getMe
 import { Eye, EyeOff } from "lucide-react"; // Import ikon mata
 import styled from "styled-components";
 
@@ -180,7 +180,29 @@ const Login = () => {
       const response = await login(email, password);
       // Simpan token jika berhasil
       localStorage.setItem('token', response.token);
-      navigate("/Dashboard");
+
+      // Fetch user data to get role
+      const userData = await getMe();
+      const role = userData.role || userData.data?.role;
+      localStorage.setItem('role', role);
+
+      // Redirect based on role
+      switch (role) {
+        case 'User Dinas':
+          navigate("/Dashboard");
+          break;
+        case 'Verifikator':
+          navigate("/Dashboard-verifikator");
+          break;
+        case 'Diskominfo':
+          navigate("/dashboard-diskominfo");
+          break;
+        case 'Auditor':
+          navigate("/dashboard-auditor");
+          break;
+        default:
+          navigate("/Dashboard");
+      }
     } catch (err) {
       setError('Login gagal. Periksa email dan password Anda.');
     } finally {

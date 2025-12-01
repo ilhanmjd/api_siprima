@@ -28,12 +28,12 @@ export default function VerifikasiRejectPenghapusanAset() {
           </span>
         </div>
         <div className="navbar-right">
-          <div
+          {/* <div
             className="icon"
             // onClick={() => navigate("/notifikasi-verifikator-penghapusan-aset")}
           >
             🔔
-          </div>
+          </div> */}
           <div className="profile">👤</div>
         </div>
       </nav>

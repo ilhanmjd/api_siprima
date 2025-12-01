@@ -22,33 +22,64 @@ body {
   flex: 1;
 }
 
-/* NAVBAR */
+/* Navbar */
 .navbar {
-  height: 60px;
-  background: #3a77d4;
+  background: #4a90e2;
+  color: rgb(0, 0, 0);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
-  color: #fff;
-}
-
-.logo {
-  width: 35px;
-  margin-right: 10px;
+  padding: 12px 30px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .navbar-left {
   display: flex;
   align-items: center;
+  gap: 10px;
 }
 
-.icon {
-  width: 35px;
-  height: 35px;
-  background: white;
+.logo {
+  width: 28px;
+  height: 28px;
+}
+
+.brand {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.navbar-center span {
+  color: rgb(255, 255, 255);
+  text-decoration: none;
+  margin: 0 15px;
+  font-weight: 500;
+  padding-bottom: 3px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.navbar-center span.active,
+.navbar-center span:hover {
+  border-bottom: 2px solid #f7c500;
+}
+
+.navbar-right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.icon, .profile {
+  background: rgb(255, 255, 255);
+  color: black;
   border-radius: 50%;
-  margin-left: 12px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 

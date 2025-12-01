@@ -15,12 +15,8 @@ function VerifikasiAset2() {
   };
 
   const handleNext = () => {
-    if (allFilled) {
-      // Navigasi ke halaman berikutnya jika diperlukan
-      navigate("/VerifikasiAset3");
-    } else {
-      alert("Harap isi semua field");
-    }
+    // Navigasi ke halaman berikutnya jika diperlukan
+    navigate("/VerifikasiAset3");
   };
 
   const handleKondisiSelectChange = (value) => {
@@ -32,7 +28,6 @@ function VerifikasiAset2() {
     setDoc(e.target.files[0]);
   };
 
-  const allFilled = tanggalPerolehan && nilaiPerolehan && kondisiAset && doc;
 
   return (
     <div className="asset-container">
@@ -97,7 +92,7 @@ function VerifikasiAset2() {
             className="dropdown-btn"
             onClick={() => setIsKondisiDropdownOpen(!isKondisiDropdownOpen)}
           >
-            {kondisiAset || "Pilih Kondisi"} <span>▼</span>
+            {kondisiAset || "Pilih Kondisi"} <span>▾</span>
           </button>
           <div
             className={`dropdown-content ${
@@ -152,8 +147,7 @@ function VerifikasiAset2() {
           </button>
           <button
             type="button"
-            className={`next-btn ${allFilled ? "active" : "disabled"}`}
-            disabled={!allFilled}
+            className="next-btn active"
             onClick={() => navigate("/VerifikasiAset3")}
           >
             NEXT

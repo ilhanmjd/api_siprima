@@ -36,29 +36,23 @@ export default function DashboardVerifikator() {
           <img src="/logo.png" alt="Logo" className="logo" />
           <span className="brand">SIPRIMA</span>
         </div>
+        
         <div className="navbar-center">
-          <span
-            onClick={() => navigate("/Dashboard-verifikator")}
-            className="active"
-            style={{ cursor: "pointer" }}
-          >
+          <span className="active" onClick={() => navigate("/Dashboard")}>
             Dashboard
           </span>
-          <span
-            onClick={() => navigate("/notifikasi-verifikator-maintenance")}
-            style={{ cursor: "pointer" }}
-          >
-            Maintenance
-          </span>
+          <span onClick={() => navigate("/notifikasi-verifikator-maintenance")}>Maintenance</span>
         </div>
         <div className="navbar-right">
-          <div
+          {/* <div
             className="icon"
             // onClick={() => navigate("/notifikasi-verifikator-aset")}
           >
             🔔
+          </div> */}
+          <div 
+          className="profile">👤
           </div>
-          <div className="profile">👤</div>
         </div>
       </nav>
 

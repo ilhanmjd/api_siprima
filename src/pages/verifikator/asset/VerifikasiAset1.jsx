@@ -31,8 +31,6 @@ function VerifikasiAset1() {
     navigate("/notifikasi-verifikator-aset");
   };
 
-  const allFilled = kategori && subKategori && namaAset && deskripsiAset;
-
   return (
     <div className="asset-container">
       <button className="back-btn" onClick={handleBack}>
@@ -162,8 +160,7 @@ function VerifikasiAset1() {
         />
         <button
           type="button"
-          className={`next-btn ${allFilled ? "active" : "disabled"}`}
-          disabled={!allFilled}
+          className="next-btn active"
           onClick={handleNext}
         >
           NEXT

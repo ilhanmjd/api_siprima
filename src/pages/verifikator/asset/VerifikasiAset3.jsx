@@ -10,6 +10,8 @@ function VerifikasiAset3() {
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
   const [isLokasiDropdownOpen, setIsLokasiDropdownOpen] = useState(false);
   const [lokasiFilter, setLokasiFilter] = useState("");
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
 
   const lokasiOptions = [
     "Kantor Dinkes Lt.2",
@@ -62,15 +64,11 @@ function VerifikasiAset3() {
     navigate("/VerifikasiAset2");
   };
   const handleReject = () => {
-    navigate("/VerifikasiRejectAsset");
+    setIsRejectModalOpen(true);
   };
 
   const handleVerify = () => {
-    if (allFilled) {
-      navigate("/VerifikasiAcceptAsset");
-    } else {
-      alert("Harap isi semua field");
-    }
+    navigate("/VerifikasiAcceptAsset");
   };
 
   const handleStatusSelectChange = (value) => {
@@ -90,7 +88,20 @@ function VerifikasiAset3() {
     setIsLokasiDropdownOpen(true);
   };
 
-  const allFilled = penanggungJawab && lokasi && status;
+  const handleRejectCancel = () => {
+    setIsRejectModalOpen(false);
+    setRejectReason("");
+  };
+
+  const handleRejectSubmit = () => {
+    // Here you can handle the rejection reason, e.g., send to API
+    console.log("Rejection reason:", rejectReason);
+    setIsRejectModalOpen(false);
+    setRejectReason("");
+    navigate("/VerifikasiRejectAsset");
+  };
+
+
 
   return (
     <div className="asset-container">
@@ -156,7 +167,7 @@ function VerifikasiAset3() {
               className="dropdown-arrow"
               onClick={() => setIsLokasiDropdownOpen(!isLokasiDropdownOpen)}
             >
-              ▼
+              ▾
             </span>
           </div>
           <div
@@ -178,7 +189,7 @@ function VerifikasiAset3() {
             className="dropdown-btn"
             onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
           >
-            {status || "Pilih Status"} <span>▼</span>
+            {status || "Pilih Status"} <span>▾</span>
           </button>
           <div
             className={`dropdown-content ${isStatusDropdownOpen ? "show" : ""}`}
@@ -209,15 +220,34 @@ function VerifikasiAset3() {
           </button>
           <button
             type="button"
-            className={`next-btn ${allFilled ? "active" : "disabled"}`}
-            disabled={!allFilled}
+            className="next-btn active"
             onClick={handleVerify}
-            style={{ backgroundColor: allFilled ? "#29AE08" : undefined }}
+            style={{ backgroundColor: "#29AE08" }}
           >
             VERIFIKASI
           </button>
         </div>
       </form>
+
+      {/* Reject Modal */}
+      {isRejectModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Alasan Ditolak:</h3>
+            <textarea
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              placeholder="tulis alasan ditolak!!!"
+              rows="4"
+              cols="50"
+            />
+            <div className="modal-buttons">
+              <button className="cancel-btn" onClick={handleRejectCancel}>Cancel</button>
+              <button className="submit-btn" onClick={handleRejectSubmit}>Submit</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

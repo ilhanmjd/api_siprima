@@ -60,30 +60,21 @@ function NotifikasiDiskominfo() {
       <div className="progress-wrapper">
         {/* Step 1 */}
         <div className="step-wrapper">
-          <div
-            className={`icon-box ${step1Active ? "active-bg" : "inactive-bg"}`}
-          >
-            <img
-              src="/identitas aset.png"
-              alt="Identitas Aset"
-              width="30"
-              height="23"
-            />
+          <div className="icon-box active-bg">
+            <img src="/identitas%20aset.png" alt="Identitas Aset" width="30" height="23" />
           </div>
           <p>Identitas Aset</p>
         </div>
 
         {/* Connector 1 */}
         <div
-          className={`connector ${
-            connectorActive ? "active-connector" : "inactive-connector"
-          }`}
+          className={"connector active-connector"}
         ></div>
 
         {/* Step 2 */}
         <div className="step-wrapper">
           <div
-            className={`icon-box ${step2Active ? "active-bg" : "inactive-bg"}`}
+            className={"icon-box active-bg"}
           >
             <img
               src="/Penghapusan_Aset.png"
@@ -139,17 +130,9 @@ function NotifikasiDiskominfo() {
             }}
             onClick={handleReject}
           >
-            REJECT
+            DELETE
           </button>
-          <button
-            type="button"
-            className={`next-btn ${allFilled ? "active" : "disabled"}`}
-            disabled={!allFilled}
-            onClick={handleVerify}
-            style={{ backgroundColor: allFilled ? "#29AE08" : undefined }}
-          >
-            VERIFIKASI
-          </button>
+          
         </div>
       </form>
     </div>

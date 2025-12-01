@@ -28,12 +28,11 @@ export default function VerifikasiRejectAsset() {
           </span>
         </div>
         <div className="navbar-right">
-          <div
+          {/* <div
             className="icon"
-            onClick={() => navigate("/notifikasi-user-dinas")}
           >
             🔔
-          </div>
+          </div> */}
           <div className="profile">👤</div>
         </div>
       </nav>

@@ -10,6 +10,23 @@
   position: relative;
 }
 
+.back-btn {
+  position: absolute;
+  /* Adjust top and left values to position the button */
+  top: 70px; /* Change this value to adjust vertical position */
+  left: 80px; /* Change this value to adjust horizontal position */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.back-btn img {
+  /* Adjust width and height to resize the image */
+  width: 16px; /* Change this value to adjust image width */
+  height: 29px; /* Change this value to adjust image height */
+}
+
 /* ========== PROGRESS BAR ========== */
 .progress-wrapper {
   display: flex;
@@ -49,7 +66,7 @@
 .progress-wrapper .connector {
   flex-grow: 1;
   height: 4px;
-  margin-top: -35px;
+  margin-top: -35px; /* biar garis nyambung ke tengah icon */
   z-index: 1;
   min-width: 150px;
 }
@@ -193,7 +210,7 @@
   top: 110%;
 }
 
-.lokasi-dropdown {
+.subkategori-dropdown {
   max-height: 150px;
   overflow-y: auto;
 }
@@ -223,95 +240,4 @@
 
 .next-btn.active {
   background-color: #0c4ad2;
-}
-
-.button-group {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-top: 20px;
-}
-
-/* ========== MODAL ========== */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background-color: #ffffff;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  max-width: 500px;
-  width: 90%;
-  text-align: center;
-  font-family: "Poppins", sans-serif;
-}
-
-.modal-content h3 {
-  margin-bottom: 20px;
-  font-size: 18px;
-  color: #333;
-  font-weight: 600;
-}
-
-.modal-content textarea {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 14px;
-  font-family: "Poppins", sans-serif;
-  resize: vertical;
-  outline: none;
-  transition: border-color 0.3s ease;
-}
-
-.modal-content textarea:focus {
-  border-color: #0845c9;
-}
-
-.modal-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-  gap: 10px;
-}
-
-.cancel-btn, .submit-btn {
-  flex: 1;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.cancel-btn {
-  background-color: #a0a0a0;
-  color: #ffffff;
-}
-
-.cancel-btn:hover {
-  background-color: #888;
-}
-
-.submit-btn {
-  background-color: #0845c9;
-  color: #ffffff;
-}
-
-.submit-btn:hover {
-  background-color: #0638a8;
 }

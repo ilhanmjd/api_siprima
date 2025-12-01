@@ -31,24 +31,25 @@ body {
   font-size: 18px;
 }
 
-.navbar-center a {
-  color: rgb(255, 255, 255);
-  text-decoration: none;
-  margin: 0 15px;
-  font-weight: 500;
-  padding-bottom: 3px;
-  transition: all 0.3s ease;
-}
-
-.navbar-center a.active,
-.navbar-center a:hover {
-  border-bottom: 2px solid #f7c500;
-}
-
 .navbar-right {
   display: flex;
   gap: 10px;
   align-items: center;
+}
+
+.navbar-center span {
+color: rgb(255, 255, 255);
+text-decoration: none;
+margin: 0 15px;
+font-weight: 500;
+padding-bottom: 3px;
+transition: all 0.3s ease;
+cursor: pointer;
+}
+
+.navbar-center span.active,
+.navbar-center span:hover {
+border-bottom: 2px solid #f7c500;
 }
 
 .icon,

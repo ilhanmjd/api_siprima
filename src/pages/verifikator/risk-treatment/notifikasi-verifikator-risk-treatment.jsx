@@ -65,12 +65,12 @@ export default function NotifikasiVerifikatorRiskTreatment() {
         </div>
 
         <div className="navbar-right">
-          <div
+          {/* <div
             className="icon"
             // onClick={() => navigate("/notifikasi-verifikator")}
           >
             🔔
-          </div>
+          </div> */}
           <div className="profile">👤</div>
         </div>
       </nav>

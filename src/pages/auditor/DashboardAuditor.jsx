@@ -12,15 +12,10 @@ export default function DashboardAuditor() {
           <span className="brand">SIPRIMA</span>
         </div>
         <div className="navbar-center">
-          <span className="active" onClick={() => navigate("/Dashboard")}>Dashboard</span>
+          <span className="active" onClick={() => navigate("/dashboard-auditor")}>Dashboard</span>
         </div>
         <div className="navbar-right">
-          <div
-            className="icon"
-            onClick={() => navigate("/notifikasi-user-dinas")}
-          >
-            🔔
-          </div>
+          <div className="icon">🔔</div>
           <div className="profile">👤</div>
         </div>
       </nav>

@@ -65,12 +65,12 @@ export default function NotifikasiVerifikatorAset() {
         </div>
 
         <div className="navbar-right">
-          <div
+          {/* <div
             className="icon"
             onClick={() => navigate("/notifikasi-verifikator")}
           >
             🔔
-          </div>
+          </div> */}
           <div className="profile">👤</div>
         </div>
       </nav>
@@ -79,6 +79,7 @@ export default function NotifikasiVerifikatorAset() {
         <span
           className="breadcrumb-link"
           onClick={() => navigate("/Dashboard-verifikator")}
+          style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}
         >
           Dashboard
         </span>{" "}

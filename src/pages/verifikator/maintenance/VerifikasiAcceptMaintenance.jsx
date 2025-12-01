@@ -93,7 +93,7 @@ export default function VerifikasiAcceptMaintenance() {
           </span>
         </div>
         <div className="navbar-right">
-          <div className="icon">🔔</div>
+          {/* <div className="icon">🔔</div> */}
           <div className="profile">👤</div>
         </div>
       </nav>

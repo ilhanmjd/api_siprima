@@ -198,6 +198,11 @@
   overflow-y: auto;
 }
 
+.penanggung-jawab-dropdown {
+  max-height: 150px;
+  overflow-y: auto;
+}
+
 .dropdown.show .dropdown-btn span {
   transform: rotate(180deg);
 }

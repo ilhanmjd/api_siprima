@@ -42,11 +42,11 @@ export default function DashboardRisk() {
         <span className="breadcrumb-link" onClick={() => navigate("/Dashboard")}>
           Dashboard
         </span>{" "}
-        {">"} Risiko
+        {">"} Asset
       </div>
 
       <div className="content-box">
-        <h2 className="content-title">Dashboard Risk</h2>
+        <h2 className="content-title">Active Asset List</h2>
         <div className="risk-list">
           {items.map((item, index) => (
             <div className="risk-item" key={index}>

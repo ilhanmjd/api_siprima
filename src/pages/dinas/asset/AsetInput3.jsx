@@ -10,6 +10,8 @@ function AssetForm() {
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
   const [isLokasiDropdownOpen, setIsLokasiDropdownOpen] = useState(false);
   const [lokasiFilter, setLokasiFilter] = useState("");
+  const [isPenanggungJawabDropdownOpen, setIsPenanggungJawabDropdownOpen] = useState(false);
+  const [penanggungJawabFilter, setPenanggungJawabFilter] = useState("");
 
   const handleChange = (e) => {
     updateAssetData({ [e.target.name]: e.target.value });
@@ -30,6 +32,18 @@ function AssetForm() {
     updateAssetData({ lokasi: value });
     setLokasiFilter(value);
     setIsLokasiDropdownOpen(true);
+  };
+
+  const handlePenanggungJawabSelectChange = (value) => {
+    updateAssetData({ penanggung_jawab: value });
+    setIsPenanggungJawabDropdownOpen(false);
+  };
+
+  const handlePenanggungJawabInputChange = (e) => {
+    const value = e.target.value;
+    updateAssetData({ penanggung_jawab: value });
+    setPenanggungJawabFilter(value);
+    setIsPenanggungJawabDropdownOpen(true);
   };
 
   const lokasiOptions = [
@@ -77,6 +91,23 @@ function AssetForm() {
 
   const filteredLokasiOptions = lokasiOptions.filter(option =>
     option.toLowerCase().includes(lokasiFilter.toLowerCase())
+  );
+
+  const penanggungJawabOptions = [
+    "Ahmad Surya",
+    "Budi Santoso",
+    "Citra Dewi",
+    "Dedi Rahman",
+    "Eka Putri",
+    "Fajar Nugroho",
+    "Gita Sari",
+    "Hendra Wijaya",
+    "Indah Lestari",
+    "Joko Prabowo"
+  ];
+
+  const filteredPenanggungJawabOptions = penanggungJawabOptions.filter(option =>
+    option.toLowerCase().includes(penanggungJawabFilter.toLowerCase())
   );
 
   const handleBack = () => {
@@ -131,12 +162,24 @@ function AssetForm() {
       {/* === FORM === */}
       <form className="asset-form">
         <label>Penanggung Jawab</label>
-        <input
-          type="text"
-          name="penanggung_jawab"
-          value={assetData.penanggung_jawab || ""}
-          onChange={handleChange}
-        />
+        <div className="dropdown">
+          <div className="text-dropdown-container">
+            <input
+              type="text"
+              className="dropdown-input"
+              value={assetData.penanggung_jawab || ""}
+              onChange={handlePenanggungJawabInputChange}
+              onClick={() => setIsPenanggungJawabDropdownOpen(!isPenanggungJawabDropdownOpen)}
+              placeholder="Pilih atau ketik Penanggung Jawab"
+            />
+            <span className="dropdown-arrow" onClick={() => setIsPenanggungJawabDropdownOpen(!isPenanggungJawabDropdownOpen)}>▾</span>
+          </div>
+          <div className={`dropdown-content penanggung-jawab-dropdown ${isPenanggungJawabDropdownOpen ? 'show' : ''}`}>
+            {filteredPenanggungJawabOptions.map((option, index) => (
+              <div key={index} onClick={() => handlePenanggungJawabSelectChange(option)}>{option}</div>
+            ))}
+          </div>
+        </div>
 
         <label>Lokasi</label>
         <div className="dropdown">

@@ -80,21 +80,6 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* Actions */}
-        <h2 className="subtitle">Actions</h2>
-        <div className="actions-row">
-          {[
-            "ASSET AKTIF",
-            "MAINTENANCE",
-            "END OF LIFE",
-            "ASSET BERMASALAH",
-          ].map((item, i) => (
-            <button className="action-btn" key={i}>
-              {item}
-            </button>
-          ))}
-        </div>
-
         {/* Charts Section */}
         <div className="chart-grid">
           <div className="chart-card">

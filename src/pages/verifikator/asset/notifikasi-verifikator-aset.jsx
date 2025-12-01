@@ -71,7 +71,6 @@ export default function NotifikasiVerifikatorAset() {
           >
             🔔
           </div> */}
-          <div className="profile">👤</div>
         </div>
       </nav>
 

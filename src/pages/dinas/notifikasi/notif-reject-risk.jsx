@@ -53,7 +53,6 @@ export default function NotifikasiRejectRisk() {
           >
             🔔
           </div>
-          <div className="profile">👤</div>
         </div>
       </nav>
 

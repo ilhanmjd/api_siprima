@@ -94,7 +94,6 @@ export default function VerifikasiAcceptMaintenance() {
         </div>
         <div className="navbar-right">
           {/* <div className="icon">🔔</div> */}
-          <div className="profile">👤</div>
         </div>
       </nav>
 

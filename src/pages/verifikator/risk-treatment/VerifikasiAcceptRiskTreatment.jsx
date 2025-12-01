@@ -33,7 +33,6 @@ export default function VerifikasiAcceptRiskTreatment() {
           >
             🔔
           </div> */}
-          <div className="profile">👤</div>
         </div>
       </nav>
 

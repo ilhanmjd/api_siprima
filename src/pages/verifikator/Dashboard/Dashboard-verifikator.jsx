@@ -50,9 +50,6 @@ export default function DashboardVerifikator() {
           >
             🔔
           </div> */}
-          <div 
-          className="profile">👤
-          </div>
         </div>
       </nav>
 

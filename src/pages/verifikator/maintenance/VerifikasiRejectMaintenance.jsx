@@ -33,7 +33,6 @@ export default function VerifikasiRejectMaintenance() {
           >
             🔔
           </div> */}
-          <div className="profile">👤</div>
         </div>
       </nav>
 

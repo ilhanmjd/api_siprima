@@ -71,7 +71,6 @@ export default function NotifikasiVerifikatorRiskTreatment() {
           >
             🔔
           </div> */}
-          <div className="profile">👤</div>
         </div>
       </nav>
 

@@ -53,7 +53,6 @@ export default function NotifRejectMaintenance() {
           >
             🔔
           </div>
-          <div className="profile">👤</div>
         </div>
       </nav>
 

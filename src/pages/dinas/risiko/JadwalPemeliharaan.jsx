@@ -29,7 +29,6 @@ export default function JadwalPemeliharaan() {
           >
             🔔
           </div>
-          <div className="profile">👤</div>
         </div>
       </nav>
 

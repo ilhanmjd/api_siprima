@@ -48,7 +48,6 @@ export default function KonfirmasiInputMaintenance() {
           >
             🔔
           </div>
-          <div className="profile">👤</div>
         </div>
       </nav>
 

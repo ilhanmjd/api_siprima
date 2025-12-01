@@ -82,7 +82,6 @@ const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
           >
             🔔
           </div>
-          <div className="profile">👤</div>
         </div>
       </nav>
 

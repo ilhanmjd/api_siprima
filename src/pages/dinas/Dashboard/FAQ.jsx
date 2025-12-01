@@ -45,7 +45,7 @@ export default function FAQ() {
           >
             🔔
           </div>
-          <div className="profile">👤</div>
+          
         </div>
       </nav>
 

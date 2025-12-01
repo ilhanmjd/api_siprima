@@ -40,7 +40,6 @@ export default function NotifikasiAcceptRisk() {
           >
             🔔
           </div>
-          <div className="profile">👤</div>
         </div>
       </nav>
 

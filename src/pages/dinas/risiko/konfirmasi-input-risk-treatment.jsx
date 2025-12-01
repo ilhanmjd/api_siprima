@@ -54,7 +54,6 @@ export default function KonfirmasiInputRiskTreatment() {
           >
             🔔
           </div>
-          <div className="profile">👤</div>
         </div>
       </nav>
 

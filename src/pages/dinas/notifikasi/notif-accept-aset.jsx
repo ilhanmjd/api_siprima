@@ -43,7 +43,6 @@ export default function NotifAcceptAset() {
           >
             🔔
           </div>
-          <div className="profile">👤</div>
         </div>
       </nav>
 

@@ -29,7 +29,7 @@ export default function ServiceDesk() {
           >
             🔔
           </div>
-          <div className="profile">👤</div>
+          
         </div>
       </nav>
 

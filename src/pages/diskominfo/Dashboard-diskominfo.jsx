@@ -38,7 +38,6 @@ export default function DashboardDiskominfo() {
           <div className="icon" onClick={() => navigate("")}>
             🔔
           </div>
-          <div className="profile">👤</div>
         </div>
       </nav>
 

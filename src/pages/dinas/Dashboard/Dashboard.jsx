@@ -48,7 +48,7 @@ export default function Dashboard() {
           >
             🔔
           </div>
-          <div className="profile">👤</div>
+          
         </div>
       </nav>
 

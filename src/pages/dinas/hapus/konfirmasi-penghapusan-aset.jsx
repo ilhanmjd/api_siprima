@@ -50,7 +50,7 @@ export default function KonfirmasiPenghapusanAset() {
           >
             🔔
           </div>
-          <div className="profile">👤</div>
+          
         </div>
       </nav>
 

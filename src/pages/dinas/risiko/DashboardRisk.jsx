@@ -34,7 +34,6 @@ export default function DashboardRisk() {
           >
             🔔
           </div>
-          <div className="profile">👤</div>
         </div>
       </nav>
 

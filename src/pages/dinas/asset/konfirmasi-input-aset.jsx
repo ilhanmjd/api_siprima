@@ -76,7 +76,7 @@ export default function KonfirmasiInputAset() {
           >
             🔔
           </div>
-          <div className="profile">👤</div>
+          
         </div>
       </nav>
 

@@ -16,7 +16,6 @@ export default function DashboardAuditor() {
         </div>
         <div className="navbar-right">
           <div className="icon">🔔</div>
-          <div className="profile">👤</div>
         </div>
       </nav>
 

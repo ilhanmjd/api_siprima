@@ -27,7 +27,6 @@ export default function RiwayatPemeliharaan() {
           >
             🔔
           </div>
-          <div className="profile">👤</div>
         </div>
       </nav>
 

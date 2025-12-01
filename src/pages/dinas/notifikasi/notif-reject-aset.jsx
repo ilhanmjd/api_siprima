@@ -40,7 +40,6 @@ export default function NotifRejectAset() {
           >
             🔔
           </div>
-          <div className="profile">👤</div>
         </div>
       </nav>
 

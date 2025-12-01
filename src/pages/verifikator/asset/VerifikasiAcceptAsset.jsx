@@ -33,7 +33,6 @@ export default function VerifikasiAcceptAsset() {
           >
             🔔
           </div> */}
-          <div className="profile">👤</div>
         </div>
       </nav>
 

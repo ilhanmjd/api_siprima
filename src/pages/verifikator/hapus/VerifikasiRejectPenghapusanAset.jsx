@@ -34,7 +34,6 @@ export default function VerifikasiRejectPenghapusanAset() {
           >
             🔔
           </div> */}
-          <div className="profile">👤</div>
         </div>
       </nav>
 

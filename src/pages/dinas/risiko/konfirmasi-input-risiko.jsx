@@ -101,7 +101,6 @@ export default function KonfirmasiInputRisiko() {
           >
             🔔
           </div>
-          <div className="profile">👤</div>
         </div>
       </nav>
 

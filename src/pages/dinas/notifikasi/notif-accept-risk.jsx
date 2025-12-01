@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAssets, getRisks, getMaintenances } from "../../../api";
 import "./notif-accept-risk.css";
 
 export default function NotifikasiAcceptRisk() {
@@ -12,25 +11,12 @@ export default function NotifikasiAcceptRisk() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const [assetsRes, risksRes, maintenancesRes] = await Promise.all([
-          getAssets(),
-          getRisks(),
-          getMaintenances(),
-        ]);
-        setAssetList(assetsRes.data || []);
-        setRiskList(risksRes.data || []);
-        setMaintenanceList(maintenancesRes.data || []);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    setLoading(true);
+    // Simulate API calls by setting empty arrays
+    setAssetList([]);
+    setRiskList([]);
+    setMaintenanceList([]);
+    setLoading(false);
   }, []);
 
   return (

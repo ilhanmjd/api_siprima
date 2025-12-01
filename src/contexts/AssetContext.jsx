@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { getAssets, addAsset as apiAddAsset, getRisks, addRisk as apiAddRisk } from '../api'; // Import fungsi API
+
 
 const AssetContext = createContext();
 
@@ -23,25 +23,9 @@ export const AssetProvider = ({ children }) => {
   const [loading, setLoading] = useState(true); // Tambahkan state loading
   const [error, setError] = useState(null); // Tambahkan state error
 
-  // Load assets dan risks dari API saat komponen mount, hanya jika ada token
+  // API calls removed as per plan
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      setLoading(false);
-      return;
-    }
-    const loadData = async () => {
-      try {
-        const [assetsData, risksData] = await Promise.all([getAssets(), getRisks()]);
-        setAssets(assetsData);
-        setRisks(risksData);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
+    setLoading(false);
   }, []);
 
   const [assetData, setAssetData] = useState({

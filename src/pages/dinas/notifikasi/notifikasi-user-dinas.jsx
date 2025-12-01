@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAssets, getRisks, getMaintenances } from "../../../api";
+
 import "./notifikasi-user-dinas.css";
 
 const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
@@ -25,8 +25,8 @@ const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
   const fetchAssets = async () => {
     setLoading(true);
     try {
-      const response = await getAssets();
-      setAssetList(response.data || []);
+      // API call removed as per plan
+      setAssetList([]);
     } catch (error) {
       console.error("Error fetching assets:", error);
       setAssetList([]);
@@ -38,8 +38,8 @@ const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
   const fetchRisks = async () => {
     setLoading(true);
     try {
-      const response = await getRisks();
-      setRiskList(response.data || []);
+      // API call removed as per plan
+      setRiskList([]);
     } catch (error) {
       console.error("Error fetching risks:", error);
       setRiskList([]);
@@ -51,8 +51,8 @@ const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
   const fetchMaintenances = async () => {
     setLoading(true);
     try {
-      const response = await getMaintenances();
-      setMaintenanceList(response.data || []);
+      // API call removed as per plan
+      setMaintenanceList([]);
     } catch (error) {
       console.error("Error fetching maintenances:", error);
       setMaintenanceList([]);

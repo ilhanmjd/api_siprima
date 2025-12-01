@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
-import { addAsset as apiAddAsset } from "../../../api";
+
 import "./konfirmasi-input-aset.css";
 
 export default function KonfirmasiInputAset() {
@@ -42,7 +42,7 @@ export default function KonfirmasiInputAset() {
       lampiran: assetData.doc ? assetData.doc : null,
     };
     try {
-      await apiAddAsset(newAsset);
+      // API call removed as per plan
       resetAssetData();
       navigate("/notifikasi-user-dinas");
     } catch (error) {

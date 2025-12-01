@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
-import { addRisk as apiAddRisk } from "../../../api";
+
 import "./konfirmasi-input-risiko.css";
 
 export default function KonfirmasiInputRisiko() {
@@ -64,8 +64,7 @@ export default function KonfirmasiInputRisiko() {
         return;
       }
 
-      // Mengirim data risiko ke API
-      await apiAddRisk(newRisk);
+      // API call removed as per plan
 
       // Reset data setelah konfirmasi
       resetAssetData();

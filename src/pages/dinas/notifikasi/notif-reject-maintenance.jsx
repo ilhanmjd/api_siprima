@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAssets, getRisks, getMaintenances } from "../../../api";
 import "./notif-reject-maintenance.css";
 
 export default function NotifRejectMaintenance() {

@@ -16,7 +16,7 @@ const STATUS_OPTIONS = [
   { label: "Decommission", value: "decommission" },
 ];
 
-export default function LaporanAset() {
+export default function Laporan() {
   const navigate = useNavigate();
   const [assets] = useState([]);
   const [risks] = useState([]);

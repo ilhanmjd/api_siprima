@@ -189,7 +189,7 @@ export default function Laporan() {
           {!isAssetReport && (
             <input
               type="text"
-              placeholder="Filter kriteria"
+              placeholder="Semua kriteria"
               value={kriteriaFilter}
               onChange={(e) => setKriteriaFilter(e.target.value)}
             />

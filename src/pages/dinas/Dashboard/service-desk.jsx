@@ -16,9 +16,8 @@ export default function ServiceDesk() {
 
         <div className="navbar-center">
           <span onClick={() => navigate("/Dashboard")}>Dashboard</span>
-          <span className="active" onClick={() => navigate("/service-desk")}>
-            Requests
-          </span>
+          <span className="active" onClick={() => navigate("/service-desk")}>Requests</span>
+          <span onClick={() => navigate("/laporan")}>Laporan</span>
           <span onClick={() => navigate("/faq")}>FAQ</span>
         </div>
 

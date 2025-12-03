@@ -33,9 +33,8 @@ export default function FAQ() {
         <div className="navbar-center">
           <span onClick={() => navigate("/Dashboard")}>Dashboard</span>
           <span onClick={() => navigate("/service-desk")}>Requests</span>
-          <span className="active" onClick={() => navigate("/faq")}>
-            FAQ
-          </span>
+          <span onClick={() => navigate("/laporan")}>Laporan</span>
+          <span className="active" onClick={() => navigate("/faq")}>FAQ</span>
         </div>
 
         <div className="navbar-right">

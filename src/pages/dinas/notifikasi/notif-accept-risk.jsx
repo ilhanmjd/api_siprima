@@ -27,10 +27,9 @@ export default function NotifikasiAcceptRisk() {
           <span className="brand">SIPRIMA</span>
         </div>
         <div className="navbar-center">
-          <span className="active" onClick={() => navigate("/Dashboard")}>
-            Dashboard
-          </span>
+          <span onClick={() => navigate("/Dashboard")}>Dashboard</span>
           <span onClick={() => navigate("/service-desk")}>Requests</span>
+          <span onClick={() => navigate("/laporan")}>Laporan</span>
           <span onClick={() => navigate("/faq")}>FAQ</span>
         </div>
         <div className="navbar-right">

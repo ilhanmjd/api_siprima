@@ -67,7 +67,7 @@ import VerifikasiRejectPenghapusanAset from "./pages/verifikator/hapus/Verifikas
 import VerifikasiAcceptPenghapusanAset from "./pages/verifikator/hapus/VerifikasiAcceptPenghapusanAset";
 import ServiceDesk from "./pages/dinas/Dashboard/service-desk";
 import FAQ from "./pages/dinas/Dashboard/FAQ";
-import LaporanAset from "./pages/dinas/Laporan/laporan";
+import Laporan from "./pages/dinas/Dashboard/laporan";
 
 // Komponen wrapper untuk halaman yang memerlukan autentikasi dan role-based access
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
@@ -146,7 +146,7 @@ const router = createBrowserRouter([
     path: "/laporan",
     element: (
       <ProtectedRoute allowedRoles={['User Dinas']}>
-        <LaporanAset />
+        <Laporan />
       </ProtectedRoute>
     ),
   },

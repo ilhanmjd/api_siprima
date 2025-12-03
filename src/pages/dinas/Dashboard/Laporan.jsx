@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Laporan.css";
+import "./laporan.css";
 
 const REPORT_OPTIONS = [
   { label: "Asset", value: "asset" },

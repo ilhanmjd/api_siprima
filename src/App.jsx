@@ -9,7 +9,7 @@ import {
 
 import { AssetProvider } from "./contexts/AssetContext";
 import Login from "./components/Login";
-import Dashboard from "./pages/dinas/Dashboard/Dashboard";
+import Dashboard from "./pages/dinas/Dashboard/Dashboard_dinas/Dashboard";
 import DashboardVerifikator from "./pages/verifikator/Dashboard/Dashboard-verifikator";
 import DashboardAuditor from "./pages/auditor/DashboardAuditor";
 import DashboardDiskominfo from "./pages/diskominfo/Dashboard-diskominfo";
@@ -65,9 +65,9 @@ import NotifikasiVerifikatorPenghapusanAset from "./pages/verifikator/hapus/Noti
 import VerifikatorPenghapusanAset from "./pages/verifikator/hapus/VerifikatorPenghapusanAset";
 import VerifikasiRejectPenghapusanAset from "./pages/verifikator/hapus/VerifikasiRejectPenghapusanAset";
 import VerifikasiAcceptPenghapusanAset from "./pages/verifikator/hapus/VerifikasiAcceptPenghapusanAset";
-import ServiceDesk from "./pages/dinas/Dashboard/service-desk";
-import FAQ from "./pages/dinas/Dashboard/FAQ";
-import Laporan from "./pages/dinas/Dashboard/Laporan";
+import ServiceDesk from "./pages/dinas/Dashboard/Request/service-desk";
+import FAQ from "./pages/dinas/Dashboard/FAQ/FAQ";
+import Laporan from "./pages/dinas/Dashboard/Laporan/Laporan";
 import LaporanQRCode from "./pages/dinas/qrcode/laporan_qrcode";
 
 // Komponen wrapper untuk halaman yang memerlukan autentikasi dan role-based access

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAssetContext } from "../../../contexts/AssetContext";
+import { useAssetContext } from "../../../../contexts/AssetContext";
 import "./Dashboard.css";
 
 export default function Dashboard() {

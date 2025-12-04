@@ -109,7 +109,7 @@ class SsoController extends Controller
         $userToken = $user->createToken('sso-token')->plainTextToken;
 
         // Redirect ke frontend dengan token
-        $frontendUrl = 'https://siprima.digitaltech.my.id/';
+        $frontendUrl = 'https://siprima.digitaltech.my.id/dashboard';
         $redirectUrl = $frontendUrl . '?token=' . urlencode($userToken);
         
         return redirect($redirectUrl);

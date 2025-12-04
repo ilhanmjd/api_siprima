@@ -92,13 +92,13 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
     if (allowedRoles.length > 0 && !allowedRoles.includes(role)) {
       // Redirect to role-specific dashboard
       switch (role) {
-        case 'user_dinas':
+        case 'staff':
           navigate("/Dashboard");
           break;
-        case 'verifikator':
+        case 'kepala_seksi':
           navigate("/Dashboard-verifikator");
           break;
-        case 'admin_dinas':
+        case 'admin_kota':
           navigate("/dashboard-diskominfo");
           break;
         case 'auditor':
@@ -130,7 +130,7 @@ const router = createBrowserRouter([
   {
     path: "/Dashboard",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <Dashboard />
       </ProtectedRoute>
     ),
@@ -138,7 +138,7 @@ const router = createBrowserRouter([
   {
     path: "/RiwayatPemeliharaan",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <RiwayatPemeliharaan />
       </ProtectedRoute>
     ),
@@ -146,7 +146,7 @@ const router = createBrowserRouter([
   {
     path: "/laporan",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <Laporan />
       </ProtectedRoute>
     ),
@@ -154,7 +154,7 @@ const router = createBrowserRouter([
   {
     path: "/laporan/qrcode",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <LaporanQRCode />
       </ProtectedRoute>
     ),
@@ -162,7 +162,7 @@ const router = createBrowserRouter([
   {
     path: "/notif-accept-Penghapusan-Aset",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <NotifAcceptPenghapusanAset />
       </ProtectedRoute>
     ),
@@ -170,7 +170,7 @@ const router = createBrowserRouter([
   {
     path: "/notif-reject-Penghapusan-Aset",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <NotifRejectPenghapusanAset />
       </ProtectedRoute>
     ),
@@ -178,7 +178,7 @@ const router = createBrowserRouter([
   {
     path: "/VerifikasiAset1",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <VerifikasiAset1 />
       </ProtectedRoute>
     ),
@@ -186,7 +186,7 @@ const router = createBrowserRouter([
   {
     path: "/VerifikasiAset2",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <VerifikasiAset2 />
       </ProtectedRoute>
     ),
@@ -194,7 +194,7 @@ const router = createBrowserRouter([
   {
     path: "/VerifikasiAset3",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <VerifikasiAset3 />
       </ProtectedRoute>
     ),
@@ -202,7 +202,7 @@ const router = createBrowserRouter([
   {
     path: "/VerifikasiRejectAsset",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <VerifikasiRejectAsset />
       </ProtectedRoute>
     ),
@@ -210,7 +210,7 @@ const router = createBrowserRouter([
   {
     path: "/VerifikasiAcceptAsset",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <VerifikasiAcceptAsset />
       </ProtectedRoute>
     ),
@@ -218,7 +218,7 @@ const router = createBrowserRouter([
   {
     path: "/notifikasi-verifikator-risiko",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <NotifikasiVerifikatorRisiko />
       </ProtectedRoute>
     ),
@@ -226,7 +226,7 @@ const router = createBrowserRouter([
   {
     path: "/VerifikasiRisiko1",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <VerifikasiRisiko1 />
       </ProtectedRoute>
     ),
@@ -234,7 +234,7 @@ const router = createBrowserRouter([
   {
     path: "/VerifikasiRisiko2",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <VerifikasiRisiko2 />
       </ProtectedRoute>
     ),
@@ -242,7 +242,7 @@ const router = createBrowserRouter([
   {
     path: "/VerifikasiRejectRisiko",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <VerifikasiRejectRisiko />
       </ProtectedRoute>
     ),
@@ -250,7 +250,7 @@ const router = createBrowserRouter([
   {
     path: "/VerifikasiAcceptRisiko",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <VerifikasiAcceptRisiko />
       </ProtectedRoute>
     ),
@@ -258,7 +258,7 @@ const router = createBrowserRouter([
   {
     path: "/notifikasi-verifikator-risk-treatment",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <NotifikasiVerifikatorRiskTreatment />
       </ProtectedRoute>
     ),
@@ -266,7 +266,7 @@ const router = createBrowserRouter([
   {
     path: "/VerifikasiRiskTreatment1",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <VerifikasiRiskTreatment1 />
       </ProtectedRoute>
     ),
@@ -274,7 +274,7 @@ const router = createBrowserRouter([
   {
     path: "/VerifikasiRiskTreatment2",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <VerifikasiRiskTreatment2 />
       </ProtectedRoute>
     ),
@@ -282,7 +282,7 @@ const router = createBrowserRouter([
   {
     path: "/VerifikasiRejectRiskTreatment",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <VerifikasiRejectRiskTreatment />
       </ProtectedRoute>
     ),
@@ -290,7 +290,7 @@ const router = createBrowserRouter([
   {
     path: "/VerifikasiAcceptRiskTreatment",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <VerifikasiAcceptRiskTreatment />
       </ProtectedRoute>
     ),
@@ -298,7 +298,7 @@ const router = createBrowserRouter([
   {
     path: "/notifikasi-verifikator-maintenance",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <NotifikasiVerifikatorMaintenance />
       </ProtectedRoute>
     ),
@@ -306,7 +306,7 @@ const router = createBrowserRouter([
   {
     path: "/VerifikasiMaintenance1",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <VerifikasiMaintenance1 />
       </ProtectedRoute>
     ),
@@ -314,7 +314,7 @@ const router = createBrowserRouter([
   {
     path: "/VerifikasiRejectMaintenance",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <VerifikasiRejectMaintenance />
       </ProtectedRoute>
     ),
@@ -322,7 +322,7 @@ const router = createBrowserRouter([
   {
     path: "/VerifikasiAcceptMaintenance",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <VerifikasiAcceptMaintenance />
       </ProtectedRoute>
     ),
@@ -330,7 +330,7 @@ const router = createBrowserRouter([
   {
     path: "/notifikasi-verifikator-penghapusan-aset",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <NotifikasiVerifikatorPenghapusanAset />
       </ProtectedRoute>
     ),
@@ -338,7 +338,7 @@ const router = createBrowserRouter([
   {
     path: "/verifikator-penghapusan-aset",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <VerifikatorPenghapusanAset />
       </ProtectedRoute>
     ),
@@ -346,7 +346,7 @@ const router = createBrowserRouter([
   {
     path: "/verifikasi-reject-penghapusan-aset",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <VerifikasiRejectPenghapusanAset />
       </ProtectedRoute>
     ),
@@ -354,7 +354,7 @@ const router = createBrowserRouter([
   {
     path: "/verifikasi-accept-penghapusan-aset",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <VerifikasiAcceptPenghapusanAset />
       </ProtectedRoute>
     ),
@@ -362,7 +362,7 @@ const router = createBrowserRouter([
   {
     path: "/service-desk",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <ServiceDesk />
       </ProtectedRoute>
     ),
@@ -370,7 +370,7 @@ const router = createBrowserRouter([
   {
     path: "/faq",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <FAQ />
       </ProtectedRoute>
     ),
@@ -378,7 +378,7 @@ const router = createBrowserRouter([
   {
     path: "/Dashboard-verifikator",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <DashboardVerifikator />
       </ProtectedRoute>
     ),
@@ -386,7 +386,7 @@ const router = createBrowserRouter([
   {
     path: "/notifikasi-verifikator-aset",
     element: (
-      <ProtectedRoute allowedRoles={['Verifikator']}>
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <NotifikasiVerifikatorAset />
       </ProtectedRoute>
     ),
@@ -394,7 +394,7 @@ const router = createBrowserRouter([
   {
     path: "/AsetInput1",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <AsetInput1 />
       </ProtectedRoute>
     ),
@@ -402,7 +402,7 @@ const router = createBrowserRouter([
   {
     path: "/AsetInput2",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <AsetInput2 />
       </ProtectedRoute>
     ),
@@ -410,7 +410,7 @@ const router = createBrowserRouter([
   {
     path: "/AsetInput3",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <AsetInput3 />
       </ProtectedRoute>
     ),
@@ -418,7 +418,7 @@ const router = createBrowserRouter([
   {
     path: "/konfirmasi-input-aset",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <KonfirmasiInputAset />
       </ProtectedRoute>
     ),
@@ -426,7 +426,7 @@ const router = createBrowserRouter([
   {
     path: "/notifikasi-user-dinas",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <NotifikasiUserDinasRisikoDariVerifikator />
       </ProtectedRoute>
     ),
@@ -434,7 +434,7 @@ const router = createBrowserRouter([
   {
     path: "/DashboardRisk",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <DashboardRisk />
       </ProtectedRoute>
     ),
@@ -442,7 +442,7 @@ const router = createBrowserRouter([
   {
     path: "/InputRisiko1",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <InputRisiko1 />
       </ProtectedRoute>
     ),
@@ -450,7 +450,7 @@ const router = createBrowserRouter([
   {
     path: "/InputRisiko2",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <InputRisiko2 />
       </ProtectedRoute>
     ),
@@ -458,7 +458,7 @@ const router = createBrowserRouter([
   {
     path: "/konfirmasi-input-risiko",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <KonfirmasiInputRisiko />
       </ProtectedRoute>
     ),
@@ -466,7 +466,7 @@ const router = createBrowserRouter([
   {
     path: "/konfirmasi-input-risk-treatment",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <KonfirmasiInputRiskTreatment />
       </ProtectedRoute>
     ),
@@ -474,7 +474,7 @@ const router = createBrowserRouter([
   {
     path: "/konfirmasi-input-maintenance",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <KonfirmasiInputMaintenance />
       </ProtectedRoute>
     ),
@@ -482,7 +482,7 @@ const router = createBrowserRouter([
   {
     path: "/RiskTreatment1",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <RiskTreatment1 />
       </ProtectedRoute>
     ),
@@ -490,7 +490,7 @@ const router = createBrowserRouter([
   {
     path: "/RiskTreatment2",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <RiskTreatment2 />
       </ProtectedRoute>
     ),
@@ -498,7 +498,7 @@ const router = createBrowserRouter([
   {
     path: "/Maintenance1",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <Maintenance1 />
       </ProtectedRoute>
     ),
@@ -506,7 +506,7 @@ const router = createBrowserRouter([
   {
     path: "/notif-accept-aset",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <NotifAcceptAset />
       </ProtectedRoute>
     ),
@@ -514,7 +514,7 @@ const router = createBrowserRouter([
   {
     path: "/notif-reject-aset",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <NotifRejectAset />
       </ProtectedRoute>
     ),
@@ -522,7 +522,7 @@ const router = createBrowserRouter([
   {
     path: "/notif-accept-risk",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <NotifAcceptRisk />
       </ProtectedRoute>
     ),
@@ -530,7 +530,7 @@ const router = createBrowserRouter([
   {
     path: "/notif-reject-risk",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <NotifRejectRisk />
       </ProtectedRoute>
     ),
@@ -538,7 +538,7 @@ const router = createBrowserRouter([
   {
     path: "/notif-accept-risk-treatment",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <NotifAcceptRiskTreatment />
       </ProtectedRoute>
     ),
@@ -546,7 +546,7 @@ const router = createBrowserRouter([
   {
     path: "/notif-reject-risk-treatment",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <NotifRejectRiskTreatment />
       </ProtectedRoute>
     ),
@@ -554,7 +554,7 @@ const router = createBrowserRouter([
   {
     path: "/notif-reject-maintenance",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <NotifRejectMaintenance />
       </ProtectedRoute>
     ),
@@ -562,7 +562,7 @@ const router = createBrowserRouter([
   {
     path: "/PenghapusanAset",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <PenghapusanAset />
       </ProtectedRoute>
     ),
@@ -570,7 +570,7 @@ const router = createBrowserRouter([
   {
     path: "/Konfirmasi-Penghapusan-Aset",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <KonfirmasiPenghapusanAset />
       </ProtectedRoute>
     ),
@@ -578,7 +578,7 @@ const router = createBrowserRouter([
   {
     path: "/JadwalPemeliharaan",
     element: (
-      <ProtectedRoute allowedRoles={['User Dinas']}>
+      <ProtectedRoute allowedRoles={['staff']}>
         <JadwalPemeliharaan />
       </ProtectedRoute>
     ),
@@ -586,7 +586,7 @@ const router = createBrowserRouter([
   {
     path: "/dashboard-auditor",
     element: (
-      <ProtectedRoute allowedRoles={['Auditor']}>
+      <ProtectedRoute allowedRoles={['auditor']}>
         <DashboardAuditor />
       </ProtectedRoute>
     ),
@@ -594,7 +594,7 @@ const router = createBrowserRouter([
   {
     path: "/dashboard-diskominfo",
     element: (
-      <ProtectedRoute allowedRoles={['Diskominfo']}>
+      <ProtectedRoute allowedRoles={['admin_kota']}>
         <DashboardDiskominfo />
       </ProtectedRoute>
     ),
@@ -602,7 +602,7 @@ const router = createBrowserRouter([
   {
     path: "/notifikasi-diskominfo",
     element: (
-      <ProtectedRoute allowedRoles={['Diskominfo']}>
+      <ProtectedRoute allowedRoles={['admin_kota']}>
         <NotifikasiDiskominfo />
       </ProtectedRoute>
     ),

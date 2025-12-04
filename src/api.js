@@ -52,7 +52,7 @@ export default {
       params: kategori_id ? { kategori_id } : {},
     }),
   getLokasi: () => api.get("/api/data-master/lokasi"),
-  getPenanggungJawab: () => api.get("/api/data-master/penanggungjawab"),
+  getPenanggungJawab: () => api.get("/api/data-master/penanggung-jawab"),
 
 
   // ========== ASSETS ==========

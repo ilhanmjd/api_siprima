@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
+import api from "../../../api";
 import "./AsetInput1.css";
 
 function AssetForm() {
@@ -11,12 +12,59 @@ function AssetForm() {
   const [isSubDropdownOpen, setIsSubDropdownOpen] = useState(false);
   const [subKategoriFilter, setSubKategoriFilter] = useState("");
 
+  const [kategoriOptions, setKategoriOptions] = useState([]);
+  const [subKategoriOptions, setSubKategoriOptions] = useState([]);
+  const [selectedKategoriId, setSelectedKategoriId] = useState(null);
+
+  useEffect(() => {
+    const fetchKategori = async () => {
+      try {
+        const response = await api.getKategori();
+        if (response.data && response.data.data && Array.isArray(response.data.data)) {
+          setKategoriOptions(response.data.data);
+        } else {
+          console.error("Unexpected response format for kategori:", response.data);
+          setKategoriOptions([]);
+        }
+      } catch (error) {
+        console.error("Error fetching kategori:", error);
+        setKategoriOptions([]);
+      }
+    };
+    fetchKategori();
+  }, []);
+
+  useEffect(() => {
+    if (selectedKategoriId) {
+      const fetchSubKategori = async () => {
+        try {
+          const response = await api.getSubKategori(selectedKategoriId);
+          if (response.data && response.data.data && Array.isArray(response.data.data)) {
+            // Filter sub-kategori based on kategori_id to ensure only relevant ones are shown
+            const filteredSubKategori = response.data.data.filter(option => option.kategori_id === selectedKategoriId);
+            setSubKategoriOptions(filteredSubKategori);
+          } else {
+            console.error("Unexpected response format for sub kategori:", response.data);
+            setSubKategoriOptions([]);
+          }
+        } catch (error) {
+          console.error("Error fetching sub kategori:", error);
+          setSubKategoriOptions([]);
+        }
+      };
+      fetchSubKategori();
+    } else {
+      setSubKategoriOptions([]);
+    }
+  }, [selectedKategoriId]);
+
   const handleChange = (e) => {
     updateAssetData({ [e.target.name]: e.target.value });
   };
 
-  const handleSelectChange = (value) => {
-    updateAssetData({ kategori: value });
+  const handleSelectChange = (option) => {
+    updateAssetData({ kategori: option.nama, sub_kategori: "" });
+    setSelectedKategoriId(option.id);
     setIsDropdownOpen(false);
   };
 
@@ -32,9 +80,8 @@ function AssetForm() {
     setIsSubDropdownOpen(true);
   };
 
-  const subKategoriOptions = ["Aset Laptop", "Aset Komputer", "Data Cloud", "Server"];
   const filteredOptions = subKategoriOptions.filter(option =>
-    option.toLowerCase().includes(subKategoriFilter.toLowerCase())
+    option && option.nama && option.nama.toLowerCase().includes(subKategoriFilter.toLowerCase())
   );
 
   const handleNext = () => {
@@ -97,8 +144,9 @@ function AssetForm() {
             {assetData.kategori || "Pilih Kategori"} <span>▾</span>
           </button>
           <div className={`dropdown-content ${isDropdownOpen ? 'show' : ''}`}>
-            <div onClick={() => handleSelectChange("Aset TI")}>Aset TI</div>
-            <div onClick={() => handleSelectChange("Non TI")}>Non TI</div>
+            {kategoriOptions.map((option) => (
+              <div key={option.id} onClick={() => handleSelectChange(option)}>{option.nama}</div>
+            ))}
           </div>
         </div>
 
@@ -116,8 +164,8 @@ function AssetForm() {
             <span className="dropdown-arrow" onClick={() => setIsSubDropdownOpen(!isSubDropdownOpen)}>▾</span>
           </div>
           <div className={`dropdown-content subkategori-dropdown ${isSubDropdownOpen ? 'show' : ''}`}>
-            {filteredOptions.map((option, index) => (
-              <div key={index} onClick={() => handleSubSelectChange(option)}>{option}</div>
+            {filteredOptions.map((option) => (
+              <div key={option.id} onClick={() => handleSubSelectChange(option.nama)}>{option.nama}</div>
             ))}
           </div>
         </div>

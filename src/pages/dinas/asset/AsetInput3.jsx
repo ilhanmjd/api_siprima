@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
+import api from "../../../api";
 import "./AsetInput3.css";
 
 function AssetForm() {
@@ -12,6 +13,42 @@ function AssetForm() {
   const [lokasiFilter, setLokasiFilter] = useState("");
   const [isPenanggungJawabDropdownOpen, setIsPenanggungJawabDropdownOpen] = useState(false);
   const [penanggungJawabFilter, setPenanggungJawabFilter] = useState("");
+
+  const [lokasiOptions, setLokasiOptions] = useState([]);
+  const [penanggungJawabOptions, setPenanggungJawabOptions] = useState([]);
+
+  useEffect(() => {
+    const fetchLokasi = async () => {
+      try {
+        const response = await api.getLokasi();
+        if (response.data && response.data.data && Array.isArray(response.data.data)) {
+          setLokasiOptions(response.data.data);
+        } else {
+          console.error("Unexpected response format for lokasi:", response.data);
+          setLokasiOptions([]);
+        }
+      } catch (error) {
+        console.error("Error fetching lokasi:", error);
+        setLokasiOptions([]);
+      }
+    };
+    const fetchPenanggungJawab = async () => {
+      try {
+        const response = await api.getPenanggungJawab();
+        if (response.data && response.data.data && Array.isArray(response.data.data)) {
+          setPenanggungJawabOptions(response.data.data);
+        } else {
+          console.error("Unexpected response format for penanggung jawab:", response.data);
+          setPenanggungJawabOptions([]);
+        }
+      } catch (error) {
+        console.error("Error fetching penanggung jawab:", error);
+        setPenanggungJawabOptions([]);
+      }
+    };
+    fetchLokasi();
+    fetchPenanggungJawab();
+  }, []);
 
   const handleChange = (e) => {
     updateAssetData({ [e.target.name]: e.target.value });
@@ -46,68 +83,12 @@ function AssetForm() {
     setIsPenanggungJawabDropdownOpen(true);
   };
 
-  const lokasiOptions = [
-    "Kantor Dinkes Lt.2",
-    "Gudang Diskominfo",
-    "Ruang Administrasi",
-    "Ruang Staf",
-    "Ruang TU",
-    "Ruang Server Diskominfo",
-    "Ruang Rapat Besar",
-    "Kantor Kecamatan Sukamaju",
-    "Ruang Pelayanan Publik",
-    "Ruang Bendahara",
-    "Ruang Keuangan",
-    "Ruang Arsip",
-    "Ruang Kepala Dinas",
-    "Ruang IT Support",
-    "Kantor Walikota Lt.1",
-    "Ruang Sekretariat",
-    "Ruang Rapat Utama",
-    "Ruang Operator Server",
-    "Gudang Aset Lama",
-    "Kantor Kelurahan Mekar Jaya",
-    "Ruang Pelayanan Kelurahan",
-    "Ruang Lurah",
-    "Kantor UPT Data Center",
-    "Ruang Backup Server",
-    "Ruang CCTV Monitoring",
-    "Ruang Helpdesk IT",
-    "Kantor Dinas Pendidikan",
-    "Ruang Guru Digital",
-    "Laboratorium Komputer",
-    "Ruang Evaluasi",
-    "Kantor Dinas Pertanian",
-    "Ruang Penyuluhan",
-    "Gudang Alat Pertanian",
-    "Kantor Dinas Perhubungan",
-    "Pos Pengawasan Lalu Lintas",
-    "Kantor Dinas Koperasi",
-    "Ruang UMKM Center",
-    "Kantor Dinas Sosial",
-    "Ruang Pelayanan Bantuan",
-    "Kantor Diskominfo Lt.3."
-  ];
-
   const filteredLokasiOptions = lokasiOptions.filter(option =>
-    option.toLowerCase().includes(lokasiFilter.toLowerCase())
+    option && option.nama && option.nama.toLowerCase().includes(lokasiFilter.toLowerCase())
   );
 
-  const penanggungJawabOptions = [
-    "Ahmad Surya",
-    "Budi Santoso",
-    "Citra Dewi",
-    "Dedi Rahman",
-    "Eka Putri",
-    "Fajar Nugroho",
-    "Gita Sari",
-    "Hendra Wijaya",
-    "Indah Lestari",
-    "Joko Prabowo"
-  ];
-
   const filteredPenanggungJawabOptions = penanggungJawabOptions.filter(option =>
-    option.toLowerCase().includes(penanggungJawabFilter.toLowerCase())
+    option && option.nama && option.nama.toLowerCase().includes(penanggungJawabFilter.toLowerCase())
   );
 
   const handleBack = () => {
@@ -175,8 +156,8 @@ function AssetForm() {
             <span className="dropdown-arrow" onClick={() => setIsPenanggungJawabDropdownOpen(!isPenanggungJawabDropdownOpen)}>▾</span>
           </div>
           <div className={`dropdown-content penanggung-jawab-dropdown ${isPenanggungJawabDropdownOpen ? 'show' : ''}`}>
-            {filteredPenanggungJawabOptions.map((option, index) => (
-              <div key={index} onClick={() => handlePenanggungJawabSelectChange(option)}>{option}</div>
+            {filteredPenanggungJawabOptions.map((option) => (
+              <div key={option.id} onClick={() => handlePenanggungJawabSelectChange(option.nama)}>{option.nama}</div>
             ))}
           </div>
         </div>
@@ -195,8 +176,8 @@ function AssetForm() {
             <span className="dropdown-arrow" onClick={() => setIsLokasiDropdownOpen(!isLokasiDropdownOpen)}>▾</span>
           </div>
           <div className={`dropdown-content lokasi-dropdown ${isLokasiDropdownOpen ? 'show' : ''}`}>
-            {filteredLokasiOptions.map((option, index) => (
-              <div key={index} onClick={() => handleLokasiSelectChange(option)}>{option}</div>
+            {filteredLokasiOptions.map((option) => (
+              <div key={option.id} onClick={() => handleLokasiSelectChange(option.nama)}>{option.nama}</div>
             ))}
           </div>
         </div>

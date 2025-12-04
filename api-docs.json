@@ -1,0 +1,4217 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "SIPRIMA API Documentation",
+        "description": "API Documentation untuk Sistem Informasi Prima (SIPRIMA)",
+        "contact": {
+            "email": "support@siprima.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8000",
+            "description": "API Server"
+        }
+    ],
+    "paths": {
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Login user",
+                "description": "Login user dengan email dan password untuk mendapatkan access token",
+                "operationId": "222b2625838e3c57e017987f73598fda",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login berhasil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Login successful"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "user": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "John Doe"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "example": "user@example.com"
+                                                        },
+                                                        "email_verified_at": {
+                                                            "type": "string",
+                                                            "nullable": true
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "datetime"
+                                                        },
+                                                        "updated_at": {
+                                                            "type": "string",
+                                                            "format": "datetime"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "access_token": {
+                                                    "type": "string",
+                                                    "example": "1|abcdefghijklmnopqrstuvwxyz"
+                                                },
+                                                "token_type": {
+                                                    "type": "string",
+                                                    "example": "Bearer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The provided credentials are incorrect."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "email": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The provided credentials are incorrect."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Logout user",
+                "description": "Logout user dan menghapus access token yang sedang digunakan",
+                "operationId": "ad65cbbd4e9f201619eae184a5961a98",
+                "responses": {
+                    "200": {
+                        "description": "Logout berhasil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Logged out successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/user": {
+            "get": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Get authenticated user",
+                "description": "Mendapatkan data user yang sedang login",
+                "operationId": "961ad57987905b44ae2e2f40b82e76de",
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan data user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "user": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "John Doe"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "example": "user@example.com"
+                                                        },
+                                                        "email_verified_at": {
+                                                            "type": "string",
+                                                            "nullable": true
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "datetime"
+                                                        },
+                                                        "updated_at": {
+                                                            "type": "string",
+                                                            "format": "datetime"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/data-master/kategori": {
+            "get": {
+                "tags": [
+                    "Data Master"
+                ],
+                "summary": "Get all kategori",
+                "description": "Mendapatkan daftar semua kategori (TI dan Non-TI)",
+                "operationId": "0b8282191a57a6ba4a3cf506d02b0401",
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan data kategori",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "nama": {
+                                                        "type": "string",
+                                                        "example": "TI"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "datetime"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "datetime"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/data-master/sub-kategori": {
+            "get": {
+                "tags": [
+                    "Data Master"
+                ],
+                "summary": "Get all sub-kategori",
+                "description": "Mendapatkan daftar semua sub-kategori dengan relasi ke kategori",
+                "operationId": "1444b13d414198d9e31315ead878b6bc",
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan data sub-kategori",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "nama": {
+                                                        "type": "string",
+                                                        "example": "Laptop"
+                                                    },
+                                                    "kategori_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "datetime"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "datetime"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/data-master/lokasi": {
+            "get": {
+                "tags": [
+                    "Data Master"
+                ],
+                "summary": "Get all lokasi",
+                "description": "Mendapatkan daftar semua lokasi asset",
+                "operationId": "e51f8bb80685dee95539d3b412519e01",
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan data lokasi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "nama": {
+                                                        "type": "string",
+                                                        "example": "Kantor Pusat"
+                                                    },
+                                                    "alamat": {
+                                                        "type": "string",
+                                                        "example": "Jl. Sudirman No. 123, Jakarta Pusat"
+                                                    },
+                                                    "latitude": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": -6.2088
+                                                    },
+                                                    "longitude": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 106.8456
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "datetime"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "datetime"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/data-master/penanggungjawab": {
+            "get": {
+                "tags": [
+                    "Data Master"
+                ],
+                "summary": "Get all penanggungjawab",
+                "description": "Mendapatkan daftar semua penanggung jawab asset",
+                "operationId": "590854af4ff3abcc4d2afae7872c1d53",
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan data penanggung jawab",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "nama": {
+                                                        "type": "string",
+                                                        "example": "Budi Santoso"
+                                                    },
+                                                    "jabatan": {
+                                                        "type": "string",
+                                                        "example": "Kepala Divisi IT"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "datetime"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "datetime"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/assets": {
+            "get": {
+                "tags": [
+                    "Assets"
+                ],
+                "summary": "Get all assets",
+                "description": "Mendapatkan daftar semua asset dengan relasi kategori, subkategori, lokasi, dan penanggung jawab",
+                "operationId": "7ec31142a2a1e2a05ac095eec4473640",
+                "parameters": [
+                    {
+                        "name": "kategori_id",
+                        "in": "query",
+                        "description": "Filter berdasarkan kategori ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter berdasarkan status (pending, diterima, ditolak, pemeliharaan)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan data assets",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "kategori_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "subkategori_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "lokasi_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "penanggungjawab_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "nama": {
+                                                        "type": "string",
+                                                        "example": "Laptop Dell Latitude 5420"
+                                                    },
+                                                    "deskripsi": {
+                                                        "type": "string",
+                                                        "example": "Laptop untuk keperluan kerja"
+                                                    },
+                                                    "tgl_perolehan": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "nilai_perolehan": {
+                                                        "type": "integer",
+                                                        "example": 12000000
+                                                    },
+                                                    "kondisi": {
+                                                        "type": "string",
+                                                        "example": "baik"
+                                                    },
+                                                    "lampiran_bukti": {
+                                                        "type": "string",
+                                                        "example": null
+                                                    },
+                                                    "is_usage": {
+                                                        "type": "string",
+                                                        "example": "active"
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "example": "diterima"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Assets"
+                ],
+                "summary": "Create new asset",
+                "description": "Membuat asset baru",
+                "operationId": "009a09a3ccd2d061f0a7f2e7b40696a9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "kategori_id",
+                                    "subkategori_id",
+                                    "lokasi_id",
+                                    "penanggungjawab_id",
+                                    "nama"
+                                ],
+                                "properties": {
+                                    "kategori_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "subkategori_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "lokasi_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "penanggungjawab_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "nama": {
+                                        "type": "string",
+                                        "example": "Laptop Dell Latitude 5420"
+                                    },
+                                    "deskripsi": {
+                                        "type": "string",
+                                        "example": "Laptop untuk keperluan kerja"
+                                    },
+                                    "tgl_perolehan": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2024-06-01 10:00:00"
+                                    },
+                                    "nilai_perolehan": {
+                                        "type": "integer",
+                                        "example": 12000000
+                                    },
+                                    "kondisi": {
+                                        "type": "string",
+                                        "enum": [
+                                            "baik",
+                                            "rusak-ringan",
+                                            "rusak-berat"
+                                        ],
+                                        "example": "baik"
+                                    },
+                                    "lampiran_bukti": {
+                                        "type": "string",
+                                        "example": "bukti.pdf"
+                                    },
+                                    "is_usage": {
+                                        "type": "string",
+                                        "enum": [
+                                            "active",
+                                            "inactive"
+                                        ],
+                                        "example": "active"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "pending",
+                                            "diterima",
+                                            "ditolak",
+                                            "pemeliharaan"
+                                        ],
+                                        "example": "pending"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Asset berhasil dibuat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Asset berhasil dibuat"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation error"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/assets/{id}": {
+            "get": {
+                "tags": [
+                    "Assets"
+                ],
+                "summary": "Get asset by ID",
+                "description": "Mendapatkan detail asset berdasarkan ID",
+                "operationId": "c350c4b3ce25b74af75712ce0e2675ba",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Asset ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan detail asset",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Asset tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Asset tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Assets"
+                ],
+                "summary": "Update asset",
+                "description": "Mengupdate data asset berdasarkan ID",
+                "operationId": "b5e1e1d7b4b147885862b3597820d9bf",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Asset ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "kategori_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "subkategori_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "lokasi_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "penanggungjawab_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "nama": {
+                                        "type": "string",
+                                        "example": "Laptop Dell Latitude 5420"
+                                    },
+                                    "deskripsi": {
+                                        "type": "string",
+                                        "example": "Laptop untuk keperluan kerja"
+                                    },
+                                    "tgl_perolehan": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2024-06-01 10:00:00"
+                                    },
+                                    "nilai_perolehan": {
+                                        "type": "integer",
+                                        "example": 12000000
+                                    },
+                                    "kondisi": {
+                                        "type": "string",
+                                        "enum": [
+                                            "baik",
+                                            "rusak-ringan",
+                                            "rusak-berat"
+                                        ],
+                                        "example": "baik"
+                                    },
+                                    "lampiran_bukti": {
+                                        "type": "string",
+                                        "example": "bukti.pdf"
+                                    },
+                                    "is_usage": {
+                                        "type": "string",
+                                        "enum": [
+                                            "active",
+                                            "inactive"
+                                        ],
+                                        "example": "active"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "pending",
+                                            "diterima",
+                                            "ditolak",
+                                            "pemeliharaan"
+                                        ],
+                                        "example": "diterima"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Asset berhasil diupdate",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Asset berhasil diupdate"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Asset tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Asset tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation error"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Assets"
+                ],
+                "summary": "Delete asset",
+                "description": "Menghapus asset berdasarkan ID",
+                "operationId": "e3fab23c9ce87df5bff3d910636bcafe",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Asset ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Asset berhasil dihapus",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Asset berhasil dihapus"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Asset tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Asset tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/dinas": {
+            "get": {
+                "tags": [
+                    "Dinas"
+                ],
+                "summary": "Get all dinas",
+                "description": "Mendapatkan daftar semua dinas",
+                "operationId": "7e609d737bdf8bd222bfbec8d6db92d5",
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan data dinas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data dinas berhasil diambil"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Dinas Pendidikan"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Gagal mengambil data dinas"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Dinas"
+                ],
+                "summary": "Create new dinas",
+                "description": "Membuat dinas baru",
+                "operationId": "0cbe432a4b98caf5a25e8b88ce15d608",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Dinas Pendidikan"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Dinas berhasil dibuat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data dinas berhasil ditambahkan"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Dinas Pendidikan"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validasi gagal"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Gagal menambahkan data dinas"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/dinas/{id}": {
+            "get": {
+                "tags": [
+                    "Dinas"
+                ],
+                "summary": "Get dinas by ID",
+                "description": "Mendapatkan detail dinas berdasarkan ID",
+                "operationId": "38cb038ef5bb1bdabeadc76a4ac616ad",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID dinas",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan data dinas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data dinas berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Dinas Pendidikan"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data dinas tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Gagal mengambil data dinas"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Dinas"
+                ],
+                "summary": "Update dinas",
+                "description": "Memperbarui data dinas berdasarkan ID",
+                "operationId": "7ab31fa8ba37b6b6338819bc5e4f3426",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID dinas",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Dinas Pendidikan"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Dinas berhasil diperbarui",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data dinas berhasil diperbarui"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Dinas Pendidikan"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data dinas tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validasi gagal"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Gagal memperbarui data dinas"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Dinas"
+                ],
+                "summary": "Delete dinas",
+                "description": "Menghapus data dinas berdasarkan ID",
+                "operationId": "8d910638396db16ff9ed673251a5c9f6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID dinas",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dinas berhasil dihapus",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data dinas berhasil dihapus"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data dinas tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Gagal menghapus data dinas"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/lokasis": {
+            "get": {
+                "tags": [
+                    "Lokasi"
+                ],
+                "summary": "Get all lokasis",
+                "description": "Mendapatkan daftar semua lokasi",
+                "operationId": "71c88bd4dd958593035a0f7c0ada0257",
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan data lokasis",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "nama": {
+                                                        "type": "string",
+                                                        "example": "Gedung A"
+                                                    },
+                                                    "alamat": {
+                                                        "type": "string",
+                                                        "example": "Jl. Sudirman No. 123"
+                                                    },
+                                                    "latitude": {
+                                                        "type": "string",
+                                                        "example": "-6.200000"
+                                                    },
+                                                    "longitude": {
+                                                        "type": "string",
+                                                        "example": "106.816666"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Lokasi"
+                ],
+                "summary": "Create new lokasi",
+                "description": "Membuat lokasi baru",
+                "operationId": "f0da28d483398e019e2d2f14398703b5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nama",
+                                    "alamat"
+                                ],
+                                "properties": {
+                                    "nama": {
+                                        "type": "string",
+                                        "example": "Gedung A"
+                                    },
+                                    "alamat": {
+                                        "type": "string",
+                                        "example": "Jl. Sudirman No. 123"
+                                    },
+                                    "latitude": {
+                                        "type": "string",
+                                        "example": "-6.200000"
+                                    },
+                                    "longitude": {
+                                        "type": "string",
+                                        "example": "106.816666"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Lokasi berhasil dibuat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Lokasi berhasil dibuat"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation error"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/lokasis/{id}": {
+            "get": {
+                "tags": [
+                    "Lokasi"
+                ],
+                "summary": "Get lokasi by ID",
+                "description": "Mendapatkan detail lokasi berdasarkan ID",
+                "operationId": "5b44d3309c1bfa66abc0ddbc2dcc279a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Lokasi ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan detail lokasi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Lokasi tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Lokasi tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Lokasi"
+                ],
+                "summary": "Update lokasi",
+                "description": "Mengupdate data lokasi berdasarkan ID",
+                "operationId": "3f6f68633ffc3d52649c2ce5f5072b29",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Lokasi ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nama": {
+                                        "type": "string",
+                                        "example": "Gedung A"
+                                    },
+                                    "alamat": {
+                                        "type": "string",
+                                        "example": "Jl. Sudirman No. 123"
+                                    },
+                                    "latitude": {
+                                        "type": "string",
+                                        "example": "-6.200000"
+                                    },
+                                    "longitude": {
+                                        "type": "string",
+                                        "example": "106.816666"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Lokasi berhasil diupdate",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Lokasi berhasil diupdate"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Lokasi tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Lokasi tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation error"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Lokasi"
+                ],
+                "summary": "Delete lokasi",
+                "description": "Menghapus lokasi berdasarkan ID",
+                "operationId": "570939545241d6461db75cbf1f2469f9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Lokasi ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lokasi berhasil dihapus",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Lokasi berhasil dihapus"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Lokasi tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Lokasi tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/penanggungjawabs": {
+            "get": {
+                "tags": [
+                    "Penanggungjawab"
+                ],
+                "summary": "Get all penanggungjawabs",
+                "description": "Mendapatkan daftar semua penanggungjawab",
+                "operationId": "1ecf7bedc21a123492801d359eb3f3be",
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan data penanggungjawabs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "nama": {
+                                                        "type": "string",
+                                                        "example": "John Doe"
+                                                    },
+                                                    "jabatan": {
+                                                        "type": "string",
+                                                        "example": "Manager IT"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Penanggungjawab"
+                ],
+                "summary": "Create new penanggungjawab",
+                "description": "Membuat penanggungjawab baru",
+                "operationId": "c215d85bfc9799faf1821fbcac64b561",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nama",
+                                    "jabatan"
+                                ],
+                                "properties": {
+                                    "nama": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "jabatan": {
+                                        "type": "string",
+                                        "example": "Manager IT"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Penanggungjawab berhasil dibuat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Penanggungjawab berhasil dibuat"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation error"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/penanggungjawabs/{id}": {
+            "get": {
+                "tags": [
+                    "Penanggungjawab"
+                ],
+                "summary": "Get penanggungjawab by ID",
+                "description": "Mendapatkan detail penanggungjawab berdasarkan ID",
+                "operationId": "29dc60821bd5371ea760c612d324736b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Penanggungjawab ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan detail penanggungjawab",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Penanggungjawab tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Penanggungjawab tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Penanggungjawab"
+                ],
+                "summary": "Update penanggungjawab",
+                "description": "Mengupdate data penanggungjawab berdasarkan ID",
+                "operationId": "648f961b90b3aa805ee574e9b9cda41a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Penanggungjawab ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nama": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "jabatan": {
+                                        "type": "string",
+                                        "example": "Manager IT"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Penanggungjawab berhasil diupdate",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Penanggungjawab berhasil diupdate"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Penanggungjawab tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Penanggungjawab tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation error"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Penanggungjawab"
+                ],
+                "summary": "Delete penanggungjawab",
+                "description": "Menghapus penanggungjawab berdasarkan ID",
+                "operationId": "5a041b125286fae9c9300b4a16b89023",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Penanggungjawab ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Penanggungjawab berhasil dihapus",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Penanggungjawab berhasil dihapus"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Penanggungjawab tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Penanggungjawab tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/sso/callback": {
+            "get": {
+                "tags": [
+                    "SSO Authentication"
+                ],
+                "summary": "Handle SSO Callback",
+                "description": "Menangani callback dari SSO server, membuat atau mengupdate user, dan generate token",
+                "operationId": "89fa72daabd259551880096c8de272aa",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "query",
+                        "description": "Token dari SSO server",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful authentication",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "user": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Admin Kota"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "example": "admin.kota@example.com"
+                                                        },
+                                                        "email_verified_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2025-11-27T22:05:05.000000Z"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2025-11-27T22:05:05.000000Z"
+                                                        },
+                                                        "updated_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2025-11-27T22:05:05.000000Z"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "1|abcdefghijklmnopqrstuvwxyz123456"
+                                                },
+                                                "menu": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Asset Management"
+                                                            },
+                                                            "url": {
+                                                                "type": "string",
+                                                                "example": "http://127.0.0.1:8000/api/v1/auth/sso/direct-login?redirect=/"
+                                                            },
+                                                            "logo": {
+                                                                "type": "string",
+                                                                "example": "siprima.png"
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "example": "Aset Management System"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Failed to authenticate with SSO"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sub-kategoris": {
+            "get": {
+                "tags": [
+                    "Sub Kategori"
+                ],
+                "summary": "Get all sub kategoris",
+                "description": "Mendapatkan daftar semua sub kategori dengan relasi kategori",
+                "operationId": "6d0dd55ae3a5639e22f01c16d87829bb",
+                "parameters": [
+                    {
+                        "name": "kategori_id",
+                        "in": "query",
+                        "description": "Filter berdasarkan kategori ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan data sub kategoris",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "kategori_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "nama": {
+                                                        "type": "string",
+                                                        "example": "Laptop"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Sub Kategori"
+                ],
+                "summary": "Create new sub kategori",
+                "description": "Membuat sub kategori baru",
+                "operationId": "1a5732f4fa462185205c4c90dc9fe9bb",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "kategori_id",
+                                    "nama"
+                                ],
+                                "properties": {
+                                    "kategori_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "nama": {
+                                        "type": "string",
+                                        "example": "Laptop"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Sub kategori berhasil dibuat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Sub kategori berhasil dibuat"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation error"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/sub-kategoris/{id}": {
+            "get": {
+                "tags": [
+                    "Sub Kategori"
+                ],
+                "summary": "Get sub kategori by ID",
+                "description": "Mendapatkan detail sub kategori berdasarkan ID",
+                "operationId": "edbdad5851bc46c11405e7317774e710",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Sub Kategori ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan detail sub kategori",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Sub kategori tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Sub kategori tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Sub Kategori"
+                ],
+                "summary": "Update sub kategori",
+                "description": "Mengupdate data sub kategori berdasarkan ID",
+                "operationId": "df5bb0a31395a73abf3977a1ef933eb6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Sub Kategori ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "kategori_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "nama": {
+                                        "type": "string",
+                                        "example": "Laptop"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Sub kategori berhasil diupdate",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Sub kategori berhasil diupdate"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Sub kategori tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Sub kategori tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation error"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Sub Kategori"
+                ],
+                "summary": "Delete sub kategori",
+                "description": "Menghapus sub kategori berdasarkan ID",
+                "operationId": "aaeb7c2dc57bb1f1f6e5b7f06e3b7c74",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Sub Kategori ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sub kategori berhasil dihapus",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Sub kategori berhasil dihapus"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Sub kategori tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Sub kategori tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/unit-kerjas": {
+            "get": {
+                "tags": [
+                    "Unit Kerja"
+                ],
+                "summary": "Get all unit kerjas",
+                "description": "Mendapatkan daftar semua unit kerja dengan relasi dinas",
+                "operationId": "2330100f1caa4679b0482a85e802a435",
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan data unit kerja",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data unit kerja berhasil diambil"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Bidang Pendidikan Dasar"
+                                                    },
+                                                    "dinas_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "dinas": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Dinas Pendidikan"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Gagal mengambil data unit kerja"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Unit Kerja"
+                ],
+                "summary": "Create new unit kerja",
+                "description": "Membuat unit kerja baru",
+                "operationId": "601c06c94696309d6e62479d6399bfb4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "dinas_id"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Bidang Pendidikan Dasar"
+                                    },
+                                    "dinas_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Unit kerja berhasil dibuat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data unit kerja berhasil ditambahkan"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Bidang Pendidikan Dasar"
+                                                },
+                                                "dinas_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "dinas": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Dinas Pendidikan"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validasi gagal"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Gagal menambahkan data unit kerja"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/unit-kerjas/{id}": {
+            "get": {
+                "tags": [
+                    "Unit Kerja"
+                ],
+                "summary": "Get unit kerja by ID",
+                "description": "Mendapatkan detail unit kerja berdasarkan ID dengan relasi dinas",
+                "operationId": "a9ba47f6349500822b05649e9df7945f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID unit kerja",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan data unit kerja",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data unit kerja berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Bidang Pendidikan Dasar"
+                                                },
+                                                "dinas_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "dinas": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Dinas Pendidikan"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data unit kerja tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Gagal mengambil data unit kerja"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Unit Kerja"
+                ],
+                "summary": "Update unit kerja",
+                "description": "Memperbarui data unit kerja berdasarkan ID",
+                "operationId": "322e005e6d5ad8f02f8f1dcc3ca8a304",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID unit kerja",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "dinas_id"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Bidang Pendidikan Dasar"
+                                    },
+                                    "dinas_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Unit kerja berhasil diperbarui",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data unit kerja berhasil diperbarui"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Bidang Pendidikan Dasar"
+                                                },
+                                                "dinas_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "dinas": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Dinas Pendidikan"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data unit kerja tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validasi gagal"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Gagal memperbarui data unit kerja"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Unit Kerja"
+                ],
+                "summary": "Delete unit kerja",
+                "description": "Menghapus data unit kerja berdasarkan ID",
+                "operationId": "e0649b2e981e0ab85d5eff31b2432842",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID unit kerja",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Unit kerja berhasil dihapus",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data unit kerja berhasil dihapus"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data unit kerja tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Gagal menghapus data unit kerja"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "sanctum": {
+                "type": "http",
+                "description": "Masukkan token dengan format: Bearer {token}",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "SSO Authentication",
+            "description": "Endpoint untuk Single Sign-On authentication"
+        },
+        {
+            "name": "Authentication",
+            "description": "Endpoint untuk autentikasi user"
+        },
+        {
+            "name": "Data Master",
+            "description": "Endpoint untuk data master (kategori, subkategori, lokasi, penanggung jawab)"
+        },
+        {
+            "name": "Assets",
+            "description": "Endpoint untuk manajemen asset"
+        },
+        {
+            "name": "Dinas",
+            "description": "Endpoint untuk manajemen dinas"
+        },
+        {
+            "name": "Unit Kerja",
+            "description": "Endpoint untuk manajemen unit kerja"
+        },
+        {
+            "name": "Lokasi",
+            "description": "Endpoint untuk manajemen lokasi"
+        },
+        {
+            "name": "Sub Kategori",
+            "description": "Endpoint untuk manajemen sub kategori"
+        },
+        {
+            "name": "Penanggungjawab",
+            "description": "Endpoint untuk manajemen penanggung jawab"
+        }
+    ]
+}

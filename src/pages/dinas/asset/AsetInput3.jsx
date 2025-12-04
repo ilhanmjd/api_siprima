@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
 import api from "../../../api";
@@ -16,6 +16,10 @@ function AssetForm() {
 
   const [lokasiOptions, setLokasiOptions] = useState([]);
   const [penanggungJawabOptions, setPenanggungJawabOptions] = useState([]);
+
+  const penanggungRef = useRef(null);
+  const lokasiRef = useRef(null);
+  const statusRef = useRef(null);
 
   useEffect(() => {
     const fetchLokasi = async () => {
@@ -96,11 +100,7 @@ function AssetForm() {
   };
 
   const handleNext = () => {
-    if (allFilled) {
-      navigate("/konfirmasi-input-aset");
-    } else {
-      alert("Harap isi semua field");
-    }
+    navigate("/konfirmasi-input-aset");
   };
 
   const allFilled = assetData.penanggung_jawab && assetData.lokasi && assetData.status;
@@ -151,6 +151,7 @@ function AssetForm() {
               value={assetData.penanggung_jawab || ""}
               onChange={handlePenanggungJawabInputChange}
               onClick={() => setIsPenanggungJawabDropdownOpen(!isPenanggungJawabDropdownOpen)}
+              ref={penanggungRef}
               placeholder="Pilih atau ketik Penanggung Jawab"
             />
             <span className="dropdown-arrow" onClick={() => setIsPenanggungJawabDropdownOpen(!isPenanggungJawabDropdownOpen)}>▾</span>
@@ -171,6 +172,7 @@ function AssetForm() {
               value={assetData.lokasi || ""}
               onChange={handleLokasiInputChange}
               onClick={() => setIsLokasiDropdownOpen(!isLokasiDropdownOpen)}
+              ref={lokasiRef}
               placeholder="Pilih atau ketik Lokasi"
             />
             <span className="dropdown-arrow" onClick={() => setIsLokasiDropdownOpen(!isLokasiDropdownOpen)}>▾</span>
@@ -188,6 +190,7 @@ function AssetForm() {
             type="button"
             className="dropdown-btn"
             onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
+            ref={statusRef}
           >
             {assetData.status || "Pilih Status"} <span>▾</span>
           </button>

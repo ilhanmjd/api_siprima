@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
 import "./AsetInput2.css";
@@ -8,14 +8,22 @@ function AssetForm() {
   const { assetData, updateAssetData } = useAssetContext();
 
   const [isKondisiDropdownOpen, setIsKondisiDropdownOpen] = useState(false);
+  const [selectedOptionIndex, setSelectedOptionIndex] = useState(-1);
 
-  const handleChange = (e) => {
-    updateAssetData({ [e.target.name]: e.target.value });
-  };
+  const tanggalRef = useRef(null);
+  const nilaiRef = useRef(null);
+  const kondisiRef = useRef(null);
+  const docRef = useRef(null);
 
   const handleKondisiSelectChange = (value) => {
     updateAssetData({ kondisi: value });
     setIsKondisiDropdownOpen(false);
+  };
+
+
+
+  const handleChange = (e) => {
+    updateAssetData({ [e.target.name]: e.target.value });
   };
 
   const handleFileChange = (e) => {
@@ -27,12 +35,10 @@ function AssetForm() {
   };
 
   const handleNext = () => {
-    if (allFilled) {
-      navigate("/AsetInput3");
-    } else {
-      alert("Harap isi semua field");
-    }
+    navigate("/AsetInput3");
   };
+
+
 
   const allFilled = assetData.tanggal_perolehan && assetData.nilai_perolehan && assetData.kondisi && assetData.doc;
 
@@ -72,13 +78,14 @@ function AssetForm() {
       </div>
 
       {/* === FORM === */}
-      <form className="asset-form">
+      <form className="asset-form" onSubmit={(e) => e.preventDefault()}>
         <label>Tanggal perolehan aset</label>
         <input
           type="date"
           name="tanggal_perolehan"
           value={assetData.tanggal_perolehan || ""}
           onChange={handleChange}
+          ref={tanggalRef}
         />
 
         <label>Nilai Perolehan Aset</label>
@@ -87,6 +94,7 @@ function AssetForm() {
           name="nilai_perolehan"
           value={assetData.nilai_perolehan || ""}
           onChange={handleChange}
+          ref={nilaiRef}
         />
 
         <label>Kondisi Aset</label>
@@ -95,19 +103,20 @@ function AssetForm() {
             type="button"
             className="dropdown-btn"
             onClick={() => setIsKondisiDropdownOpen(!isKondisiDropdownOpen)}
+            ref={kondisiRef}
           >
             {assetData.kondisi || "Pilih Kondisi"} <span>▾</span>
           </button>
           <div className={`dropdown-content ${isKondisiDropdownOpen ? 'show' : ''}`}>
-            <a href="#" onClick={(e) => { e.preventDefault(); handleKondisiSelectChange("Baik"); }}>Baik</a>
-            <a href="#" onClick={(e) => { e.preventDefault(); handleKondisiSelectChange("Sedang"); }}>Sedang</a>
-            <a href="#" onClick={(e) => { e.preventDefault(); handleKondisiSelectChange("Buruk"); }}>Buruk</a>
+            <a href="#" className={selectedOptionIndex === 0 ? 'selected' : ''} onClick={(e) => { e.preventDefault(); handleKondisiSelectChange("Baik"); }}>Baik</a>
+            <a href="#" className={selectedOptionIndex === 1 ? 'selected' : ''} onClick={(e) => { e.preventDefault(); handleKondisiSelectChange("Sedang"); }}>Sedang</a>
+            <a href="#" className={selectedOptionIndex === 2 ? 'selected' : ''} onClick={(e) => { e.preventDefault(); handleKondisiSelectChange("Buruk"); }}>Buruk</a>
           </div>
         </div>
 
         <label>Lampiran Bukti (PNG/PDF)</label>
         <div className="container">
-          <input type="file" id="file" accept=".png,.pdf" onChange={handleFileChange} />
+          <input type="file" id="file" accept=".png,.pdf" onChange={handleFileChange} ref={docRef} />
         </div>
 
         <div className="button-group">

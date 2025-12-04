@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
 import api from "../../../api";
@@ -15,6 +15,11 @@ function AssetForm() {
   const [kategoriOptions, setKategoriOptions] = useState([]);
   const [subKategoriOptions, setSubKategoriOptions] = useState([]);
   const [selectedKategoriId, setSelectedKategoriId] = useState(null);
+
+  const kategoriRef = useRef(null);
+  const subKategoriRef = useRef(null);
+  const namaRef = useRef(null);
+  const deskripsiRef = useRef(null);
 
   useEffect(() => {
     const fetchKategori = async () => {
@@ -33,6 +38,8 @@ function AssetForm() {
     };
     fetchKategori();
   }, []);
+
+
 
   useEffect(() => {
     if (selectedKategoriId) {
@@ -140,6 +147,7 @@ function AssetForm() {
             type="button"
             className="dropdown-btn"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            ref={kategoriRef}
           >
             {assetData.kategori || "Pilih Kategori"} <span>▾</span>
           </button>
@@ -159,6 +167,7 @@ function AssetForm() {
               value={assetData.sub_kategori || ""}
               onChange={handleSubKategoriInputChange}
               onClick={() => setIsSubDropdownOpen(!isSubDropdownOpen)}
+              ref={subKategoriRef}
               placeholder="Pilih atau ketik Sub Kategori"
             />
             <span className="dropdown-arrow" onClick={() => setIsSubDropdownOpen(!isSubDropdownOpen)}>▾</span>
@@ -176,6 +185,7 @@ function AssetForm() {
           name="nama"
           value={assetData.nama || ""}
           onChange={handleChange}
+          ref={namaRef}
         />
 
         <label>Deskripsi Aset</label>
@@ -184,6 +194,7 @@ function AssetForm() {
           name="deskripsi_aset"
           value={assetData.deskripsi_aset || ""}
           onChange={handleChange}
+          ref={deskripsiRef}
         />
 
         <button

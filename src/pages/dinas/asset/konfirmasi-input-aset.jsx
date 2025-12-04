@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
+import api from "../../../api.js";
 
 import "./konfirmasi-input-aset.css";
 
@@ -28,25 +29,57 @@ export default function KonfirmasiInputAset() {
       return;
     }
     setIsLoading(true);
-    const newAsset = {
-      kategori: assetData.kategori,
-      sub_kategori: assetData.sub_kategori,
-      nama: assetData.nama,
-      lokasi: assetData.lokasi,
-      penanggung_jawab: assetData.penanggung_jawab,
-      tanggal_perolehan: assetData.tanggal_perolehan,
-      nilai_perolehan: parseInt(assetData.nilai_perolehan),
-      kondisi: assetData.kondisi,
-      status: assetData.status,
-      deskripsi_aset: assetData.deskripsi_aset,
-      lampiran: assetData.doc ? assetData.doc : null,
-    };
     try {
-      // API call removed as per plan
+      // Fetch kategori to get kategori_id
+      const kategoriRes = await api.getKategori();
+      const kategori = kategoriRes.data.data.find(k => k.nama === assetData.kategori);
+      if (!kategori) throw new Error("Kategori tidak ditemukan.");
+      const kategori_id = kategori.id;
+
+      // Fetch sub_kategori using kategori_id to get subkategori_id
+      const subKategoriRes = await api.getSubKategori(kategori_id);
+      const subKategori = subKategoriRes.data.data.find(s => s.nama === assetData.sub_kategori);
+      if (!subKategori) throw new Error("Sub Kategori tidak ditemukan.");
+      const subkategori_id = subKategori.id;
+
+      // Parallel fetch lokasi and penanggung_jawab
+      const [lokasiRes, penanggungJawabRes] = await Promise.all([
+        api.getLokasi(),
+        api.getPenanggungJawab()
+      ]);
+
+      const lokasi = lokasiRes.data.data.find(l => l.nama === assetData.lokasi);
+      if (!lokasi) throw new Error("Lokasi tidak ditemukan.");
+      const lokasi_id = lokasi.id;
+
+      const penanggungJawab = penanggungJawabRes.data.data.find(p => p.nama === assetData.penanggung_jawab);
+      if (!penanggungJawab) throw new Error("Penanggung Jawab tidak ditemukan.");
+      const penanggungjawab_id = penanggungJawab.id;
+
+      // Construct newAsset with IDs
+      const newAsset = {
+        kategori_id: kategori_id,
+        subkategori_id: subkategori_id,
+        nama: assetData.nama,
+        lokasi_id: lokasi_id,
+        penanggungjawab_id: penanggungjawab_id,
+        tgl_perolehan: assetData.tanggal_perolehan,
+        nilai_perolehan: parseInt(assetData.nilai_perolehan),
+        kondisi: assetData.kondisi === 'Baik' ? 'baik' :
+                 assetData.kondisi === 'Sedang' ? 'sedang' :
+                 assetData.kondisi === 'Buruk' ? 'buruk' : assetData.kondisi,
+        is_usage: assetData.status === 'Active' ? 'active' : 'inactive',
+        deskripsi: assetData.deskripsi_aset,
+        lampiran_bukti: assetData.doc ? assetData.doc.name : null,
+      };
+
+      // Call POST /api/assets
+      await api.createAsset(newAsset);
+
       resetAssetData();
       navigate("/notifikasi-user-dinas");
     } catch (error) {
-      alert("Gagal menambahkan asset. Silakan coba lagi.");
+      alert(error.message || "Gagal menambahkan asset. Silakan coba lagi.");
     } finally {
       setIsLoading(false);
     }

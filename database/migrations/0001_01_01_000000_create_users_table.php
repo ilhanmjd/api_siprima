@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->foreignId('dinas_id')->constrained('dinas');
-            $table->foreignId('unit_kerja_id')->constrained('unit_kerja');
+            $table->foreignId('unit_kerja_id')->constrained('unit_kerjas');
             $table->foreignId('role_id')->constrained('roles');
             $table->string('nip')->nullable();
             $table->string('jenis_kelamin')->nullable();

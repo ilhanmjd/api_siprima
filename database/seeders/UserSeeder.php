@@ -18,9 +18,9 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Get roles
-        $roleUserDinas = Role::where('name', 'user_dinas')->first();
-        $roleVerifikator = Role::where('name', 'verifikator')->first();
-        $roleAdminDinas = Role::where('name', 'admin_dinas')->first();
+        $roleStaff = Role::where('name', 'staff')->first();
+        $roleKepalaSeksi = Role::where('name', 'kepala_seksi')->first();
+        $roleAdminKota = Role::where('name', 'admin_kota')->first();
         $roleAuditor = Role::where('name', 'auditor')->first();
 
         // Get sample dinas and unit kerja
@@ -29,43 +29,43 @@ class UserSeeder extends Seeder
         $unitKerjaPendidikanDasar = UnitKerja::where('name', 'Bidang Pendidikan Dasar')->first();
         $unitKerjaKesehatan = UnitKerja::where('name', 'Bidang Pelayanan Kesehatan')->first();
 
-        // User dengan role user_dinas
-        if ($roleUserDinas && $dinasPendidikan && $unitKerjaPendidikanDasar) {
+        // User dengan role staff
+        if ($roleStaff && $dinasPendidikan && $unitKerjaPendidikanDasar) {
             User::create([
-                'name' => 'User Dinas',
-                'email' => 'user.dinas@siprima.com',
+                'name' => 'Staff Dinas',
+                'email' => 'staff@siprima.com',
                 'password' => Hash::make('password123'),
                 'dinas_id' => $dinasPendidikan->id,
                 'unit_kerja_id' => $unitKerjaPendidikanDasar->id,
-                'role_id' => $roleUserDinas->id,
+                'role_id' => $roleStaff->id,
                 'nip' => '199001012020011001',
                 'jenis_kelamin' => 'Laki-laki',
             ]);
         }
 
-        // User dengan role verifikator
-        if ($roleVerifikator && $dinasKesehatan && $unitKerjaKesehatan) {
+        // User dengan role kepala_seksi
+        if ($roleKepalaSeksi && $dinasKesehatan && $unitKerjaKesehatan) {
             User::create([
-                'name' => 'Verifikator',
-                'email' => 'verifikator@siprima.com',
+                'name' => 'Kepala Seksi',
+                'email' => 'kepala.seksi@siprima.com',
                 'password' => Hash::make('password123'),
                 'dinas_id' => $dinasKesehatan->id,
                 'unit_kerja_id' => $unitKerjaKesehatan->id,
-                'role_id' => $roleVerifikator->id,
+                'role_id' => $roleKepalaSeksi->id,
                 'nip' => '199002022020022002',
                 'jenis_kelamin' => 'Perempuan',
             ]);
         }
 
-        // User dengan role admin_dinas
-        if ($roleAdminDinas && $dinasPendidikan && $unitKerjaPendidikanDasar) {
+        // User dengan role admin_kota
+        if ($roleAdminKota && $dinasPendidikan && $unitKerjaPendidikanDasar) {
             User::create([
-                'name' => 'Admin Dinas',
-                'email' => 'admin.dinas@siprima.com',
+                'name' => 'Admin Kota',
+                'email' => 'admin.kota@siprima.com',
                 'password' => Hash::make('password123'),
                 'dinas_id' => $dinasPendidikan->id,
                 'unit_kerja_id' => $unitKerjaPendidikanDasar->id,
-                'role_id' => $roleAdminDinas->id,
+                'role_id' => $roleAdminKota->id,
                 'nip' => '199003032020033003',
                 'jenis_kelamin' => 'Laki-laki',
             ]);

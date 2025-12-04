@@ -51,4 +51,28 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Get the dinas that owns the user.
+     */
+    public function dinas()
+    {
+        return $this->belongsTo(Dinas::class);
+    }
+
+    /**
+     * Get the unit kerja that owns the user.
+     */
+    public function unitKerja()
+    {
+        return $this->belongsTo(UnitKerja::class);
+    }
+
+    /**
+     * Get the role that owns the user.
+     */
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
 }

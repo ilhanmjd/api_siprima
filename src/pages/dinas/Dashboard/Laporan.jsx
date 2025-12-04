@@ -342,13 +342,28 @@ export default function Laporan() {
                             : "-"}
                         </td>
                         <td className="status-tag">{item?.status || "-"}</td>
-                        <td>QR Code</td>
+                        <td>
+                          <button
+                            type="button"
+                            style={{
+                              backgroundColor: '#2582ff',
+                              color: 'white',
+                              border: 'none',
+                              padding: '8px 16px',
+                              borderRadius: '999px',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            QR Code
+                          </button>
+                        </td>
                         <td>
                           <button
                             type="button"
                             className="download-btn"
                             onClick={() => handleDownloadAsset(item)}
                             disabled={!item?.lampiran_url}
+                            style={{ borderRadius: '10px' }}
                           >
                             Download
                           </button>

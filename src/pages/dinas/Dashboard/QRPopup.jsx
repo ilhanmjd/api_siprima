@@ -14,7 +14,7 @@ export default function QRPopup({ isOpen, asset, onClose }) {
 
   const makeQRText = () => {
     // Jika mau mengarahkan ke link, ganti isi sini
-    return "http://localhost:5173/laporan/qrcode";
+    return `http://localhost:5173/laporan/qrcode?id_asset=${idAsset}&nama_asset=${encodeURIComponent(namaAsset)}`;
   };
 
   useEffect(() => {

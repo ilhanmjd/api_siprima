@@ -99,6 +99,9 @@ class SsoController extends Controller
                 'email' => $userData['email'],
                 'password' => bcrypt(Str::random(32)), // Random password untuk SSO user
                 'email_verified_at' => $userData['email_verified_at'] ?? now(),
+                'dinas_id' => $userData['dinas_id'] ?? 1, // Default ke dinas_id 1 jika tidak ada
+                'unit_kerja_id' => $userData['unit_kerja_id'] ?? 1, // Default ke unit_kerja_id 1 jika tidak ada
+                'role_id' => $userData['role_id'] ?? 1, // Default ke role_id 1 jika tidak ada
             ]
         );
 

@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import QRPopup from "./QRPopup";
 import "./Laporan.css";
 
 const REPORT_OPTIONS = [
@@ -18,6 +19,10 @@ const STATUS_OPTIONS = [
 
 export default function Laporan() {
   const navigate = useNavigate();
+
+  const [showQR, setShowQR] = useState(false);
+  const [selectedAsset, setSelectedAsset] = useState(null);
+
   const [assets] = useState([
     {
       id: 1,
@@ -212,7 +217,8 @@ export default function Laporan() {
     : ["Nama Risiko", "Nama Aset", "Dinas", "Kriteria", "Status", "Tanggal", "Download"];
 
   return (
-    <div className="laporan-page">
+    <>
+      <div className="laporan-page">
       <nav className="navbar">
         <div className="navbar-left">
           <img src="/logo.png" alt="Logo" className="logo" />
@@ -346,7 +352,10 @@ export default function Laporan() {
                           <button
                             type="button"
                             disabled={item?.status !== 'active'}
-                            onClick={() => item?.status === 'active' && navigate("/laporan-qrcode")}
+                            onClick={() => {
+                              setSelectedAsset(item);
+                              setShowQR(true);
+                            }}
                             style={{
                               backgroundColor: item?.status === 'active' ? '#2582ff' : '#a0a0a0',
                               color: 'white',
@@ -404,5 +413,14 @@ export default function Laporan() {
         </div>
       </div>
     </div>
+
+    {showQR && (
+      <QRPopup
+        isOpen={showQR}
+        asset={selectedAsset}
+        onClose={() => setShowQR(false)}
+      />
+    )}
+  </>
   );
 }

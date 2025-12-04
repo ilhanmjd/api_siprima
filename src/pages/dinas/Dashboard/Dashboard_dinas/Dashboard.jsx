@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../../contexts/AssetContext";
+import api from "../../../../api";
 import "./Dashboard.css";
 
 export default function Dashboard() {
@@ -20,6 +21,21 @@ export default function Dashboard() {
       }
     } else if (title === "RISK") {
       navigate("/DashboardRisk");
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await api.logout();
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      navigate("/");
+    } catch (err) {
+      console.error('Logout failed:', err);
+      // Still clear localStorage and navigate even if API fails
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      navigate("/");
     }
   };
 
@@ -46,6 +62,12 @@ export default function Dashboard() {
             onClick={() => navigate("/notifikasi-user-dinas")}
           >
             🔔
+          </div>
+          <div
+            className="icon"
+            onClick={handleLogout}
+          >
+            <img src="/logout.png" alt="Logout" className="logo" />
           </div>
           
         </div>

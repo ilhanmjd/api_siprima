@@ -11,6 +11,21 @@ export default function DashboardVerifikator() {
     resetAssetData();
   }, [resetAssetData]);
 
+  const handleLogout = async () => {
+    try {
+      await api.logout();
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      navigate("/");
+    } catch (err) {
+      console.error('Logout failed:', err);
+      // Still clear localStorage and navigate even if API fails
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      navigate("/");
+    }
+  };
+
   const handleInputClick = (title, btn) => {
     if (title === "ASSET") {
       if (btn === "Verifikasi") {
@@ -50,6 +65,7 @@ export default function DashboardVerifikator() {
           >
             🔔
           </div> */}
+          <div className="icon" onClick={handleLogout}><img src="/logout.png" alt="Logout" className="logo" /></div>
         </div>
       </nav>
 

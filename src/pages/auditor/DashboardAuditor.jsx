@@ -1,8 +1,27 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../../api";
 import "./DashboardAuditor.css";
 
 
 export default function DashboardAuditor() {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await api.logout();
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      navigate("/");
+    } catch (err) {
+      console.error('Logout failed:', err);
+      // Still clear localStorage and navigate even if API fails
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      navigate("/");
+    }
+  };
+
   return (
     <div className="dashboard-container">
       {/* NAVBAR */}
@@ -16,6 +35,7 @@ export default function DashboardAuditor() {
         </div>
         <div className="navbar-right">
           <div className="icon">🔔</div>
+          <div className="icon" onClick={handleLogout}><img src="/logout.png" alt="Logout" className="logo" /></div>
         </div>
       </nav>
 

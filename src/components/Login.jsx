@@ -1,6 +1,7 @@
 // src/components/Login.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../api";
 
 import { Eye, EyeOff } from "lucide-react"; // Import ikon mata
 import styled from "styled-components";
@@ -177,10 +178,13 @@ const Login = () => {
     setLoading(true);
     setError('');
     try {
-      // API calls removed as per plan
-      // Simulate login success for now
-      localStorage.setItem('token', 'dummy-token');
-      localStorage.setItem('role', 'User Dinas'); // Default role
+      const response = await api.login(email, password);
+      const { data: loginData } = response.data;
+      const { access_token, user } = loginData;
+      const { role: userRole } = user;
+      const roleName = userRole.name;
+      localStorage.setItem('token', access_token);
+      localStorage.setItem('role', roleName);
       navigate("/Dashboard");
     } catch (err) {
       setError('Login gagal. Periksa email dan password Anda.');

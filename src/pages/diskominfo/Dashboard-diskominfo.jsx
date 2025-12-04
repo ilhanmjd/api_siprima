@@ -11,6 +11,21 @@ export default function DashboardDiskominfo() {
     resetAssetData();
   }, [resetAssetData]);
 
+  const handleLogout = async () => {
+    try {
+      await api.logout();
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      navigate("/");
+    } catch (err) {
+      console.error('Logout failed:', err);
+      // Still clear localStorage and navigate even if API fails
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      navigate("/");
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -38,6 +53,7 @@ export default function DashboardDiskominfo() {
           <div className="icon" onClick={() => navigate("")}>
             🔔
           </div>
+          <div className="icon" onClick={handleLogout}><img src="/logout.png" alt="Logout" className="logo" /></div>
         </div>
       </nav>
 

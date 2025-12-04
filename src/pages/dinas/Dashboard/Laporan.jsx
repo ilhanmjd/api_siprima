@@ -345,13 +345,15 @@ export default function Laporan() {
                         <td>
                           <button
                             type="button"
+                            disabled={item?.status !== 'active'}
+                            onClick={() => item?.status === 'active' && navigate("/laporan-qrcode")}
                             style={{
-                              backgroundColor: '#2582ff',
+                              backgroundColor: item?.status === 'active' ? '#2582ff' : '#a0a0a0',
                               color: 'white',
                               border: 'none',
                               padding: '8px 16px',
                               borderRadius: '999px',
-                              cursor: 'pointer'
+                              cursor: item?.status === 'active' ? 'pointer' : 'not-allowed'
                             }}
                           >
                             QR Code

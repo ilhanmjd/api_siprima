@@ -106,7 +106,7 @@ export default function NotifAcceptAset() {
                       key={index}
                       className="aset-item-page-accept"
                       style={{
-                        backgroundColor: asset.status !== "ditolak" && asset.status !== "pending" ? "#a9c9f8" : asset.status === "ditolak" ? "#ff3636" : undefined,
+                        backgroundColor: asset.status !== "ditolak" && asset.status !== "pending" ? "#a9c9f8" : undefined,
                         border: isSelected ? "2px solid #000" : "none",
                         cursor: "pointer"
                       }}
@@ -132,7 +132,7 @@ export default function NotifAcceptAset() {
                       key={index}
                       className="aset-item-page-reject"
                       style={{
-                        backgroundColor: risk.status === "ditolak" ? "#ff3636" : undefined,
+                        backgroundColor: asset.status !== "ditolak" && asset.status !== "pending" ? "#a9c9f8" : undefined,
                         border: isSelected ? "2px solid #000" : "none",
                         cursor: "pointer"
                       }}
@@ -158,7 +158,7 @@ export default function NotifAcceptAset() {
                       key={index}
                       className="aset-item-page-reject"
                       style={{
-                        backgroundColor: riskTreatment.status === "ditolak" ? "#ff3636" : undefined,
+                        backgroundColor: asset.status !== "ditolak" && asset.status !== "pending" ? "#a9c9f8" : undefined,
                         border: isSelected ? "2px solid #000" : "none",
                         cursor: "pointer"
                       }}
@@ -184,7 +184,7 @@ export default function NotifAcceptAset() {
                       key={index}
                       className="aset-item-page-reject"
                       style={{
-                        backgroundColor: maintenance.status === "ditolak" ? "#ff3636" : undefined,
+                        backgroundColor: maintenance.status !== "ditolak" && maintenance.status !== "pending" ? "#a9c9f8" : undefined,
                         border: isSelected ? "2px solid #000" : "none",
                         cursor: "pointer"
                       }}
@@ -210,7 +210,7 @@ export default function NotifAcceptAset() {
                       key={index}
                       className="aset-item-page-reject"
                       style={{
-                        backgroundColor: penghapusan_aset.status === "ditolak" ? "#ff3636" : undefined,
+                        backgroundColor: penghapusan_aset.status !== "ditolak" && penghapusan_aset.status !== "pending" ? "#a9c9f8" : undefined,
                         border: isSelected ? "2px solid #000" : "none",
                         cursor: "pointer"
                       }}

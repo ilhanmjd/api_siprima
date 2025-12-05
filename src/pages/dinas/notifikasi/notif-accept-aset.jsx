@@ -124,11 +124,24 @@ export default function NotifAcceptAset() {
           {selectedCategory === "Risk" && (
             <div className="aset-list">
               {loading ? <p>Loading...</p> :
-                riskList.map((risk) => (
-                  <div key={risk.id} className="aset-item-page-accept" style={{ backgroundColor: risk.status !== "ditolak" && risk.status !== "pending" ? "#a9c9f8" : risk.status === "ditolak" ? "#ff3636" : undefined }}>
-                    <span className="aset-name">{risk.nama}</span>
-                  </div>
-                ))
+                riskList.filter(risk => risk.status === "ditolak").map((risk, index) => {
+                  console.log('Risk item:', risk);
+                  const isSelected = selectedRisk && selectedRisk.id === risk.id;
+                  return (
+                    <div
+                      key={index}
+                      className="aset-item-page-reject"
+                      style={{
+                        backgroundColor: risk.status === "ditolak" ? "#ff3636" : undefined,
+                        border: isSelected ? "2px solid #000" : "none",
+                        cursor: "pointer"
+                      }}
+                      onClick={() => setSelectedRisk(risk)}
+                    >
+                      <span className="aset-name">{risk.nama}</span>
+                    </div>
+                  );
+                })
               }
             </div>
           )}
@@ -137,11 +150,24 @@ export default function NotifAcceptAset() {
           {selectedCategory === "Risk Treatment" && (
             <div className="aset-list">
               {loading ? <p>Loading...</p> :
-                riskTreatmentList.map((risk_treatment) => (
-                  <div key={risk_treatment.id} className="aset-item-page-accept" style={{ backgroundColor: risk_treatment.status !== "ditolak" && risk_treatment.status !== "pending" ? "#a9c9f8" : risk_treatment.status === "ditolak" ? "#ff3636" : undefined }}>
-                    <span className="aset-name">{risk_treatment.nama}</span>
-                  </div>
-                ))
+                riskTreatmentList.filter(riskTreatment => riskTreatment.status === "ditolak").map((riskTreatment, index) => {
+                  console.log('Risk Treatment item:', riskTreatment);
+                  const isSelected = selectedRiskTreatment && selectedRiskTreatment.id === riskTreatment.id;
+                  return (
+                    <div
+                      key={index}
+                      className="aset-item-page-reject"
+                      style={{
+                        backgroundColor: riskTreatment.status === "ditolak" ? "#ff3636" : undefined,
+                        border: isSelected ? "2px solid #000" : "none",
+                        cursor: "pointer"
+                      }}
+                      onClick={() => setSelectedRiskTreatment(riskTreatment)}
+                    >
+                      <span className="aset-name">{riskTreatment.nama}</span>
+                    </div>
+                  );
+                })
               }
             </div>
           )}
@@ -150,11 +176,24 @@ export default function NotifAcceptAset() {
           {selectedCategory === "Maintenance" && (
             <div className="aset-list">
               {loading ? <p>Loading...</p> :
-                maintenanceList.map((maintenance) => (
-                  <div key={maintenance.id} className="aset-item-page-accept" style={{ backgroundColor: maintenance.status !== "ditolak" && maintenance.status !== "pending" ? "#a9c9f8" : maintenance.status === "ditolak" ? "#ff3636" : undefined }}>
-                    <span className="aset-name">{maintenance.nama}</span>
-                  </div>
-                ))
+                maintenanceList.filter(maintenance => maintenance.status === "ditolak").map((maintenance, index) => {
+                  console.log('maintenance item:', maintenance);
+                  const isSelected = selectedMaintenance && selectedMaintenance.id === maintenance.id;
+                  return (
+                    <div
+                      key={index}
+                      className="aset-item-page-reject"
+                      style={{
+                        backgroundColor: maintenance.status === "ditolak" ? "#ff3636" : undefined,
+                        border: isSelected ? "2px solid #000" : "none",
+                        cursor: "pointer"
+                      }}
+                      onClick={() => setSelectedMaintenance(maintenance)}
+                    >
+                      <span className="aset-name">{maintenance.nama}</span>
+                    </div>
+                  );
+                })
               }
             </div>
           )}
@@ -163,11 +202,24 @@ export default function NotifAcceptAset() {
           {selectedCategory === "Penghapusan Aset" && (
             <div className="aset-list">
               {loading ? <p>Loading...</p> :
-                penghapusanasetList.map((penghapusan_aset) => (
-                  <div key={penghapusan_aset.id} className="aset-item-page-accept" style={{ backgroundColor: penghapusan_aset.status !== "ditolak" && penghapusan_aset.status !== "pending" ? "#a9c9f8" : penghapusan_aset.status === "ditolak" ? "#ff3636" : undefined }}>
-                    <span className="aset-name">{penghapusan_aset.nama}</span>
-                  </div>
-                ))
+                penghapusanasetList.filter(penghapusan_aset => penghapusan_aset.status === "ditolak").map((penghapusan_aset, index) => {
+                  console.log('Penghapusan Aset item:', penghapusan_aset);
+                  const isSelected = selectedPenghapusanAset && selectedPenghapusanAset.id === penghapusan_aset.id;
+                  return (
+                    <div
+                      key={index}
+                      className="aset-item-page-reject"
+                      style={{
+                        backgroundColor: penghapusan_aset.status === "ditolak" ? "#ff3636" : undefined,
+                        border: isSelected ? "2px solid #000" : "none",
+                        cursor: "pointer"
+                      }}
+                      onClick={() => setSelectedPenghapusanAset(penghapusan_aset)}
+                    >
+                      <span className="aset-name">{penghapusan_aset.nama}</span>
+                    </div>
+                  );
+                })
               }
             </div>
           )}

@@ -117,9 +117,13 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  overflow-x: hidden;
+  align-items: center;
 }
 
-.aset-item {
+.aset-item-page-accept {
+  width: 210px;
+  height: 36px;
   padding: 10px;
   border-radius: 8px;
   cursor: pointer;

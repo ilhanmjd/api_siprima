@@ -98,7 +98,7 @@ export default function NotifAcceptAset() {
           {selectedCategory === "Asset" && (
             <div className="aset-list">
               {loading ? <p>Loading...</p> :
-                assetList.map((asset, index) => {
+                assetList.filter(asset => asset.status !== "pending").map((asset, index) => {
                   console.log('Asset item:', asset);
                   const isSelected = selectedAsset && selectedAsset.id === asset.id;
                   return (
@@ -106,7 +106,7 @@ export default function NotifAcceptAset() {
                       key={index}
                       className="aset-item-page-accept"
                       style={{
-                        backgroundColor: asset.status !== "ditolak" && asset.status !== "pending" ? "#72a5ff" : asset.status === "ditolak" ? "#ff3636" : undefined,
+                        backgroundColor: asset.status !== "ditolak" && asset.status !== "pending" ? "#a9c9f8" : asset.status === "ditolak" ? "#ff3636" : undefined,
                         border: isSelected ? "2px solid #000" : "none",
                         cursor: "pointer"
                       }}
@@ -125,7 +125,7 @@ export default function NotifAcceptAset() {
             <div className="aset-list">
               {loading ? <p>Loading...</p> :
                 riskList.map((risk) => (
-                  <div key={risk.id} className="aset-item-page-accept" style={{ backgroundColor: risk.status !== "ditolak" && risk.status !== "pending" ? "#72a5ff" : risk.status === "ditolak" ? "#ff3636" : undefined }}>
+                  <div key={risk.id} className="aset-item-page-accept" style={{ backgroundColor: risk.status !== "ditolak" && risk.status !== "pending" ? "#a9c9f8" : risk.status === "ditolak" ? "#ff3636" : undefined }}>
                     <span className="aset-name">{risk.nama}</span>
                   </div>
                 ))
@@ -138,7 +138,7 @@ export default function NotifAcceptAset() {
             <div className="aset-list">
               {loading ? <p>Loading...</p> :
                 riskTreatmentList.map((risk_treatment) => (
-                  <div key={risk_treatment.id} className="aset-item-page-accept" style={{ backgroundColor: risk_treatment.status !== "ditolak" && risk_treatment.status !== "pending" ? "#72a5ff" : risk_treatment.status === "ditolak" ? "#ff3636" : undefined }}>
+                  <div key={risk_treatment.id} className="aset-item-page-accept" style={{ backgroundColor: risk_treatment.status !== "ditolak" && risk_treatment.status !== "pending" ? "#a9c9f8" : risk_treatment.status === "ditolak" ? "#ff3636" : undefined }}>
                     <span className="aset-name">{risk_treatment.nama}</span>
                   </div>
                 ))
@@ -151,7 +151,7 @@ export default function NotifAcceptAset() {
             <div className="aset-list">
               {loading ? <p>Loading...</p> :
                 maintenanceList.map((maintenance) => (
-                  <div key={maintenance.id} className="aset-item-page-accept" style={{ backgroundColor: maintenance.status !== "ditolak" && maintenance.status !== "pending" ? "#72a5ff" : maintenance.status === "ditolak" ? "#ff3636" : undefined }}>
+                  <div key={maintenance.id} className="aset-item-page-accept" style={{ backgroundColor: maintenance.status !== "ditolak" && maintenance.status !== "pending" ? "#a9c9f8" : maintenance.status === "ditolak" ? "#ff3636" : undefined }}>
                     <span className="aset-name">{maintenance.nama}</span>
                   </div>
                 ))
@@ -164,7 +164,7 @@ export default function NotifAcceptAset() {
             <div className="aset-list">
               {loading ? <p>Loading...</p> :
                 penghapusanasetList.map((penghapusan_aset) => (
-                  <div key={penghapusan_aset.id} className="aset-item-page-accept" style={{ backgroundColor: penghapusan_aset.status !== "ditolak" && penghapusan_aset.status !== "pending" ? "#72a5ff" : penghapusan_aset.status === "ditolak" ? "#ff3636" : undefined }}>
+                  <div key={penghapusan_aset.id} className="aset-item-page-accept" style={{ backgroundColor: penghapusan_aset.status !== "ditolak" && penghapusan_aset.status !== "pending" ? "#a9c9f8" : penghapusan_aset.status === "ditolak" ? "#ff3636" : undefined }}>
                     <span className="aset-name">{penghapusan_aset.nama}</span>
                   </div>
                 ))

@@ -45,7 +45,7 @@ export default function Dashboard() {
   return (
     <div className="dashboard-container">
       {/* Navbar */}
-      <nav className="navbar">
+      <nav className="navbar-dashboard">
         <div className="navbar-left">
           <img src="/logo.png" alt="Logo" className="logo" />
           <span className="brand">SIPRIMA</span>

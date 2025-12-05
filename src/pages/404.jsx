@@ -8,6 +8,18 @@ export default function NotFound() {
   const role = localStorage.getItem("role");
 
   const handleBack = () => {
+    // jika role tidak ditemukan → hapus credential → ke login
+    if (!role) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      localStorage.removeItem("user");
+      // kalau ada data lain tambahkan juga di sini
+
+      navigate("/"); // halaman login
+      return;
+    }
+
+    // jika role ada → arahkan ke dashboard sesuai role
     switch (role) {
       case "staff":
         navigate("/Dashboard");
@@ -25,8 +37,11 @@ export default function NotFound() {
         navigate("/dashboard-auditor");
         break;
 
-      // default jika role kosong / tidak ditemukan
       default:
+        // fallback kalau role tidak dikenali
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        localStorage.removeItem("user");
         navigate("/");
         break;
     }

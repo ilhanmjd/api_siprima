@@ -98,7 +98,7 @@ export default function NotifAcceptAset() {
           {selectedCategory === "Asset" && (
             <div className="aset-list">
               {loading ? <p>Loading...</p> :
-                assetList.filter(asset => asset.status !== "pending").map((asset, index) => {
+                assetList.filter(asset => asset.status !== "pending" && asset.status !== "ditolak").map((asset, index) => {
                   console.log('Asset item:', asset);
                   const isSelected = selectedAsset && selectedAsset.id === asset.id;
                   return (

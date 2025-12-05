@@ -1,32 +1,34 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
 import "./notifikasi-user-dinas.css";
+import api from "../../../api.js";
 
 const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
   const navigate = useNavigate();
-  const hasAssets = assets.length > 0;
   const [selectedCategory, setSelectedCategory] = useState("Asset");
   const [assetList, setAssetList] = useState([]);
   const [riskList, setRiskList] = useState([]);
+  const [riskTreatmentList, setRiskTreatmentList] = useState([]);
   const [maintenanceList, setMaintenanceList] = useState([]);
+  const [penghapusanasetList, setPenghapusanasetList] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (selectedCategory === "Asset") {
-      fetchAssets();
-    } else if (selectedCategory === "Risk") {
-      fetchRisks();
-    } else if (selectedCategory === "Maintenance") {
-      fetchMaintenances();
-    }
+    if (selectedCategory === "Asset") fetchAssets();
+    else if (selectedCategory === "Risk") fetchRisks();
+    else if (selectedCategory === "Maintenance") fetchMaintenances();
   }, [selectedCategory]);
 
   const fetchAssets = async () => {
     setLoading(true);
     try {
-      // API call removed as per plan
-      setAssetList([]);
+      const response = await api.getAssets();
+      console.log("Full response:", response);
+
+      const data = response.data.data; // INI YANG BENAR
+      setAssetList(data);
+
+      console.log("AssetList:", data);
     } catch (error) {
       console.error("Error fetching assets:", error);
       setAssetList([]);
@@ -38,7 +40,6 @@ const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
   const fetchRisks = async () => {
     setLoading(true);
     try {
-      // API call removed as per plan
       setRiskList([]);
     } catch (error) {
       console.error("Error fetching risks:", error);
@@ -51,7 +52,6 @@ const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
   const fetchMaintenances = async () => {
     setLoading(true);
     try {
-      // API call removed as per plan
       setMaintenanceList([]);
     } catch (error) {
       console.error("Error fetching maintenances:", error);
@@ -68,92 +68,44 @@ const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
           <img src="/logo.png" alt="Logo" className="logo" />
           <span className="brand">SIPRIMA</span>
         </div>
+
         <div className="navbar-center">
           <span onClick={() => navigate("/Dashboard")}>Dashboard</span>
           <span onClick={() => navigate("/service-desk")}>Requests</span>
           <span onClick={() => navigate("/laporan")}>Laporan</span>
           <span onClick={() => navigate("/faq")}>FAQ</span>
         </div>
+
         <div className="navbar-right">
-          <div
-            className="icon"
-            onClick={() => navigate("/notifikasi-user-dinas")}
-          >
+          <div className="icon" onClick={() => navigate("/notifikasi-user-dinas")}>
             🔔
           </div>
         </div>
       </nav>
 
-      {/* Breadcrumb */}
       <div className="breadcrumb">
-        <span onClick={() => navigate("/Dashboard")}>Dashboard</span> {">"}{" "}
-        Notification
+        <span onClick={() => navigate("/Dashboard")}>Dashboard</span> {">"} Notification
       </div>
 
-      {/* Form Card */}
       <div className="form-card">
-        <div
-          className="form-header"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "10px",
-          }}
-        >
+        <div className="form-header">
           <img src="/logo.png" alt="icon" className="form-icon" />
           <h1>Notification</h1>
         </div>
 
         <div className="content-box">
           <h2 className="content-title">Verification</h2>
-          <div
-            className="dropdown-container"
-            style={{
-              marginBottom: "30px",
-              textAlign: "left",
-              animation: "fadeInUp 0.5s ease-out",
-            }}
-          >
-            <label
-              htmlFor="category-select"
-              style={{
-                fontWeight: "500",
-                color: "#111",
-                marginBottom: "8px",
-                display: "block",
-                animation: "fadeIn 0.3s ease-out 0.2s both",
-              }}
-            >
+
+          <div className="dropdown-container">
+            <label htmlFor="category-select" className="dropdown-label">
               Pilih Kategori:
             </label>
+
             <select
               id="category-select"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              style={{
-                padding: "12px 16px",
-                borderRadius: "8px",
-                border: "1px solid #d1d5db",
-                backgroundColor: "#ffffff",
-                boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-                fontSize: "16px",
-                color: "#374151",
-                cursor: "pointer",
-                transition: "all 0.3s ease-in-out",
-                width: "200px",
-                animation: "slideInLeft 0.5s ease-out 0.4s both",
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = "#3b82f6";
-                e.target.style.boxShadow = "0 0 0 3px rgba(59, 130, 246, 0.1)";
-                e.target.style.transform = "scale(1.02)";
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = "#d1d5db";
-                e.target.style.boxShadow = "0 1px 3px rgba(0, 0, 0, 0.1)";
-                e.target.style.transform = "scale(1)";
-              }}
+              className="dropdown-select"
             >
               <option value="Asset">Asset</option>
               <option value="Risk">Risk</option>
@@ -162,194 +114,87 @@ const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
               <option value="Penghapusan Aset">Penghapusan Aset</option>
             </select>
           </div>
+
+          {/* ===================== ASSET ===================== */}
           {selectedCategory === "Asset" && (
             <div className="aset-list">
-              {loading ? (
-                <p>Loading...</p>
-              ) : (
-                assetList.map((asset) => (
-                  <div key={asset.id} className="aset-item">
-                    <span className="aset-name">{asset.nama}</span>
-                    <button className="verification-button under-review">
-                      UnderReview
-                    </button>
-                  </div>
-                ))
-              )}
+              {loading ? <p>Loading...</p> :
+                assetList.map((asset, index) => {
+                  console.log('Asset item:', asset);
+                  return (
+                    <div key={index} className="aset-item">
+                      <span className="aset-name">{asset.nama}</span>
+                      {asset.status === "pending" && <button className="verification-button under-review">UnderReview</button>}
+                      {asset.status !== "ditolak" && asset.status !== "pending" && <button className="verification-button accepted" onClick={() => navigate('/notif-accept-aset', { state: { id: asset.id, nama: asset.nama } })}>Accepted</button>}
+                      {asset.status === "ditolak" && <button className="verification-button rejected">Rejected</button>}
+                    </div>
+                  );
+                })
+              }
             </div>
           )}
+
+          {/* ===================== RISK ===================== */}
           {selectedCategory === "Risk" && (
             <div className="aset-list">
-              {loading ? (
-                <p>Loading...</p>
-              ) : (
+              {loading ? <p>Loading...</p> :
                 riskList.map((risk) => (
                   <div key={risk.id} className="aset-item">
-                    <span className="aset-name">{risk.judul}</span>
-                    <button className="verification-button under-review">
-                      UnderReview
-                    </button>
+                    <span className="aset-name">{risk.nama}</span>
+                    {risk.status === "pending" && <button className="verification-button under-review">UnderReview</button>}
+                    {risk.status !== "ditolak" && risk.status !== "pending" && <button className="verification-button accepted" onClick={() => navigate('/notif-accept-risk', { state: { id: risk.id, nama: risk.nama } })}>Accepted</button>}
+                    {risk.status === "ditolak" && <button className="verification-button rejected">Rejected</button>}
                   </div>
                 ))
-              )}
+              }
             </div>
           )}
+
+          {/* ===================== RISK TREATMENT ===================== */}
           {selectedCategory === "Risk Treatment" && (
             <div className="aset-list">
-              <div className="aset-item">
-                <span className="aset-name">Aset Laptop</span>
-                <button className="verification-button under-review">
-                  UnderReview
-                </button>
-              </div>
-              <div className="aset-item">
-                <span className="aset-name">Aset Komputer</span>
-                <button
-                  className="verification-button accepted"
-                  onClick={() => navigate("/notif-accept-risk-treatment")}
-                >
-                  Accepted
-                </button>
-              </div>
-              <div className="aset-item">
-                <span className="aset-name">Data Cloud</span>
-                <button
-                  className="verification-button rejected"
-                  onClick={() => navigate("//notif-reject-risk-treatment")}
-                >
-                  Rejected
-                </button>
-              </div>
-              <div className="aset-item">
-                <span className="aset-name">Server</span>
-                <button
-                  className="verification-button rejected"
-                  onClick={() => navigate("/notif-reject-risk-treatment")}
-                >
-                  Rejected
-                </button>
-              </div>
-              <div className="aset-item">
-                <span className="aset-name">Microsoft Office</span>
-                <button
-                  className="verification-button accepted"
-                  onClick={() => navigate("/notif-accept-risk-treatment")}
-                >
-                  Accepted
-                </button>
-              </div>
-              <div className="aset-item">
-                <span className="aset-name">Router</span>
-                <button className="verification-button under-review">
-                  UnderReview
-                </button>
-              </div>
-              <div className="aset-item">
-                <span className="aset-name">Printer</span>
-                <button
-                  className="verification-button rejected"
-                  onClick={() => navigate("/notif-reject-risk-treatment")}
-                >
-                  Rejected
-                </button>
-              </div>
-              <div className="aset-item">
-                <span className="aset-name">Firewall</span>
-                <button
-                  className="verification-button accepted"
-                  onClick={() => navigate("/notif-accept-risk-treatment")}
-                >
-                  Accepted
-                </button>
-              </div>
-            </div>
-          )}
-          {selectedCategory === "Maintenance" && (
-            <div className="aset-list">
-              {loading ? (
-                <p>Loading...</p>
-              ) : (
-                maintenanceList.map((maintenance) => (
-                  <div key={maintenance.id} className="aset-item">
-                    <span className="aset-name">
-                      {maintenance.nama || maintenance.judul}
-                    </span>
-                    <button className="verification-button under-review">
-                      UnderReview
-                    </button>
+              {loading ? <p>Loading...</p> :
+                riskTreatmentList.map((risk_treatment) => (
+                  <div key={risk_treatment.id} className="aset-item">
+                    <span className="aset-name">{risk_treatment.nama}</span>
+                    {risk_treatment.status === "pending" && <button className="verification-button under-review">UnderReview</button>}
+                    {risk_treatment.status !== "ditolak" && risk_treatment.status !== "pending" && <button className="verification-button accepted" onClick={() => navigate('/notif-accept-risk-treatment', { state: { id: risk_treatment.id, nama: risk_treatment.nama } })}>Accepted</button>}
+                    {risk_treatment.status === "ditolak" && <button className="verification-button rejected">Rejected</button>}
                   </div>
                 ))
-              )}
+              }
             </div>
           )}
+
+          {/* ===================== MAINTENANCE ===================== */}
+          {selectedCategory === "Maintenance" && (
+            <div className="aset-list">
+              {loading ? <p>Loading...</p> :
+                maintenanceList.map((maintenance) => (
+                  <div key={maintenance.id} className="aset-item">
+                    <span className="aset-name">{maintenance.nama}</span>
+                    {maintenance.status === "pending" && <button className="verification-button under-review">UnderReview</button>}
+                    {maintenance.status !== "ditolak" && maintenance.status !== "pending" && <button className="verification-button accepted" onClick={() => navigate('/notif-accept-maintenance', { state: { id: maintenance.id, nama: maintenance.nama } })}>Accepted</button>}
+                    {maintenance.status === "ditolak" && <button className="verification-button rejected">Rejected</button>}
+                  </div>
+                ))
+              }
+            </div>
+          )}
+
+          {/* ===================== PENGHAPUSAN ASET ===================== */}
           {selectedCategory === "Penghapusan Aset" && (
             <div className="aset-list">
-              <div className="aset-item">
-                <span className="aset-name">Aset Laptop</span>
-                <button className="verification-button under-review">
-                  UnderReview
-                </button>
-              </div>
-              <div className="aset-item">
-                <span className="aset-name">Aset Komputer</span>
-                <button
-                  className="verification-button accepted"
-                  onClick={() => navigate("/notif-accept-Penghapusan-Aset")}
-                >
-                  Accepted
-                </button>
-              </div>
-              <div className="aset-item">
-                <span className="aset-name">Data Cloud</span>
-                <button
-                  className="verification-button rejected"
-                  onClick={() => navigate("/notif-reject-Penghapusan-Aset")}
-                >
-                  Rejected
-                </button>
-              </div>
-              <div className="aset-item">
-                <span className="aset-name">Server</span>
-                <button
-                  className="verification-button rejected"
-                  onClick={() => navigate("/notif-reject-Penghapusan-Aset")}
-                >
-                  Rejected
-                </button>
-              </div>
-              <div className="aset-item">
-                <span className="aset-name">Microsoft Office</span>
-                <button
-                  className="verification-button accepted"
-                  onClick={() => navigate("/notif-accept-Penghapusan-Aset")}
-                >
-                  Accepted
-                </button>
-              </div>
-              <div className="aset-item">
-                <span className="aset-name">Router</span>
-                <button className="verification-button under-review">
-                  UnderReview
-                </button>
-              </div>
-              <div className="aset-item">
-                <span className="aset-name">Printer</span>
-                <button
-                  className="verification-button rejected"
-                  onClick={() => navigate("/notif-reject-Penghapusan-Aset")}
-                >
-                  Rejected
-                </button>
-              </div>
-              <div className="aset-item">
-                <span className="aset-name">Firewall</span>
-                <button
-                  className="verification-button accepted"
-                  onClick={() => navigate("/notif-accept-Penghapusan-Aset")}
-                >
-                  Accepted
-                </button>
-              </div>
+              {loading ? <p>Loading...</p> :
+                penghapusanasetList.map((penghapusan_aset) => (
+                  <div key={penghapusan_aset.id} className="aset-item">
+                    <span className="aset-name">{penghapusan_aset.nama}</span>
+                    {penghapusan_aset.status === "pending" && <button className="verification-button under-review">UnderReview</button>}
+                    {penghapusan_aset.status !== "ditolak" && penghapusan_aset.status !== "pending" && <button className="verification-button accepted" onClick={() => navigate('/notif-accept-penghapusan-aset', { state: { id: penghapusan_aset.id, nama: penghapusan_aset.nama } })}>Accepted</button>}
+                    {penghapusan_aset.status === "ditolak" && <button className="verification-button rejected">Rejected</button>}
+                  </div>
+                ))
+              }
             </div>
           )}
         </div>

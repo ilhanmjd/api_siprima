@@ -1,24 +1,48 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./notif-accept-aset.css";
+import api from "../../../api.js";
 
 export default function NotifAcceptAset() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [selectedCategory, setSelectedCategory] = useState("Asset");
+  const [selectedAsset, setSelectedAsset] = useState(null);
   const [assetList, setAssetList] = useState([]);
   const [riskList, setRiskList] = useState([]);
   const [maintenanceList, setMaintenanceList] = useState([]);
+  const [riskTreatmentList, setRiskTreatmentList] = useState([]);
+  const [penghapusanasetList, setPenghapusanasetList] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
-    // Simulate API calls by setting empty arrays
-    setAssetList([]);
+    api.getAssets()
+      .then(response => {
+        const data = response.data.data;
+        setAssetList(data);
+
+        // Auto-select asset if state is passed
+        const state = location.state;
+        if (state && state.id) {
+          const asset = data.find(a => a.id === state.id);
+          if (asset) {
+            setSelectedAsset(asset);
+          }
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching assets:', error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
     setRiskList([]);
     setMaintenanceList([]);
-    setLoading(false);
-  }, []);
+    setRiskTreatmentList([]);
+    setPenghapusanasetList([]);
+  }, [location.state]);
 
   return (
     <div className="page-wrapper">
@@ -27,6 +51,7 @@ export default function NotifAcceptAset() {
           <img src="/logo.png" alt="Logo" className="logo" />
           <span className="brand">SIPRIMA</span>
         </div>
+
         <div className="navbar-center">
           <span onClick={() => navigate("/Dashboard")}>Dashboard</span>
           <span onClick={() => navigate("/service-desk")}>Requests</span>
@@ -44,65 +69,22 @@ export default function NotifAcceptAset() {
         </div>
       </nav>
 
-      {/* Breadcrumb */}
       <div className="breadcrumb">
-        <span onClick={() => navigate("/Dashboard")}>Dashboard</span> {">"}{" "}
-        Notification
+        <span onClick={() => navigate("/Dashboard")}>Dashboard</span> {">"} Notification
       </div>
 
-      {/* Main content */}
       <div className="main-content">
-        {/* Sidebar */}
         <aside className="sidebar">
-          <div
-            className="dropdown-container"
-            style={{
-              marginBottom: "22.5px",
-              textAlign: "left",
-              animation: "fadeInUp 0.5s ease-out",
-              fontSize: "12px",
-            }}
-          >
-            <label
-              htmlFor="category-select"
-              style={{
-                fontWeight: "500",
-                color: "#111",
-                marginBottom: "6px",
-                display: "block",
-                animation: "fadeIn 0.3s ease-out 0.2s both",
-                fontSize: "12px",
-              }}
-            >
+          <div className="dropdown-container">
+            <label htmlFor="category-select" className="dropdown-label">
               Pilih Kategori:
             </label>
+
             <select
               id="category-select"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              style={{
-                padding: "9px 12px",
-                borderRadius: "6px",
-                border: "1px solid #d1d5db",
-                backgroundColor: "#ffffff",
-                boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-                fontSize: "12px",
-                color: "#374151",
-                cursor: "pointer",
-                transition: "all 0.3s ease-in-out",
-                width: "150px",
-                animation: "slideInLeft 0.5s ease-out 0.4s both",
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = "#3b82f6";
-                e.target.style.boxShadow = "0 0 0 3px rgba(59, 130, 246, 0.1)";
-                e.target.style.transform = "scale(1.02)";
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = "#d1d5db";
-                e.target.style.boxShadow = "0 1px 3px rgba(0, 0, 0, 0.1)";
-                e.target.style.transform = "scale(1)";
-              }}
+              className="dropdown-select"
             >
               <option value="Asset">Asset</option>
               <option value="Risk">Risk</option>
@@ -111,268 +93,102 @@ export default function NotifAcceptAset() {
               <option value="Penghapusan Aset">Penghapusan Aset</option>
             </select>
           </div>
+
+          {/* ===================== ASSET ===================== */}
           {selectedCategory === "Asset" && (
             <div className="aset-list">
-              {loading ? (
-                <p>Loading...</p>
-              ) : (
-                assetList.map((asset) => (
-                  <div
-                    key={asset.id}
-                    className="aset-item"
-                    style={{ backgroundColor: "#9C9C9C" }}
-                  >
-                    <span className="aset-name" style={{ color: "black" }}>
-                      {asset.nama}
-                    </span>
-                  </div>
-                ))
-              )}
-            </div>
-          )}
-          {selectedCategory === "Risk" && (
-            <div className="aset-list" style={{ fontSize: "12px" }}>
-              {loading ? (
-                <p style={{ fontSize: "12px" }}>Loading...</p>
-              ) : (
-                riskList.map((risk) => (
-                  <div
-                    key={risk.id}
-                    className="aset-item"
-                    style={{ fontSize: "12px", backgroundColor: "#9C9C9C" }}
-                  >
-                    <span
-                      className="aset-name"
-                      style={{ fontSize: "12px", color: "black" }}
+              {loading ? <p>Loading...</p> :
+                assetList.map((asset, index) => {
+                  console.log('Asset item:', asset);
+                  const isSelected = selectedAsset && selectedAsset.id === asset.id;
+                  return (
+                    <div
+                      key={index}
+                      className="aset-item"
+                      style={{
+                        backgroundColor: asset.status !== "ditolak" && asset.status !== "pending" ? "#72a5ff" : asset.status === "ditolak" ? "#ff3636" : undefined,
+                        border: isSelected ? "2px solid #000" : "none",
+                        cursor: "pointer"
+                      }}
+                      onClick={() => setSelectedAsset(asset)}
                     >
-                      {risk.judul}
-                    </span>
+                      <span className="aset-name">{asset.nama}</span>
+                    </div>
+                  );
+                })
+              }
+            </div>
+          )}
+
+          {/* ===================== RISK ===================== */}
+          {selectedCategory === "Risk" && (
+            <div className="aset-list">
+              {loading ? <p>Loading...</p> :
+                riskList.map((risk) => (
+                  <div key={risk.id} className="aset-item" style={{ backgroundColor: risk.status !== "ditolak" && risk.status !== "pending" ? "#72a5ff" : risk.status === "ditolak" ? "#ff3636" : undefined }}>
+                    <span className="aset-name">{risk.nama}</span>
                   </div>
                 ))
-              )}
+              }
             </div>
           )}
+
+          {/* ===================== RISK TREATMENT ===================== */}
           {selectedCategory === "Risk Treatment" && (
-            <div className="aset-list" style={{ fontSize: "12px" }}>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#9C9C9C" }}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "black" }}
-                >
-                  Aset Laptop
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#0845C9" }}
-                onClick={() => navigate("/notif-accept-risk-treatment")}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "white" }}
-                >
-                  Aset Komputer
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#FF0004" }}
-                onClick={() => navigate("/notif-reject-risk-treatment")}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "white" }}
-                >
-                  Data Cloud
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#FF0004" }}
-                onClick={() => navigate("/notif-reject-risk-treatment")}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "white" }}
-                >
-                  Server
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#0845C9" }}
-                onClick={() => navigate("/notif-accept-risk-treatment")}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "white" }}
-                >
-                  Microsoft Office
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#9C9C9C" }}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "black" }}
-                >
-                  Router
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#FF0004" }}
-                onClick={() => navigate("/notif-reject-risk-treatment")}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "white" }}
-                >
-                  Printer
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#0845C9" }}
-                onClick={() => navigate("/notif-accept-risk-treatment")}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "white" }}
-                >
-                  Firewall
-                </span>
-              </div>
+            <div className="aset-list">
+              {loading ? <p>Loading...</p> :
+                riskTreatmentList.map((risk_treatment) => (
+                  <div key={risk_treatment.id} className="aset-item" style={{ backgroundColor: risk_treatment.status !== "ditolak" && risk_treatment.status !== "pending" ? "#72a5ff" : risk_treatment.status === "ditolak" ? "#ff3636" : undefined }}>
+                    <span className="aset-name">{risk_treatment.nama}</span>
+                  </div>
+                ))
+              }
             </div>
           )}
+
+          {/* ===================== MAINTENANCE ===================== */}
+          {selectedCategory === "Maintenance" && (
+            <div className="aset-list">
+              {loading ? <p>Loading...</p> :
+                maintenanceList.map((maintenance) => (
+                  <div key={maintenance.id} className="aset-item" style={{ backgroundColor: maintenance.status !== "ditolak" && maintenance.status !== "pending" ? "#72a5ff" : maintenance.status === "ditolak" ? "#ff3636" : undefined }}>
+                    <span className="aset-name">{maintenance.nama}</span>
+                  </div>
+                ))
+              }
+            </div>
+          )}
+
+          {/* ===================== PENGHAPUSAN ASET ===================== */}
           {selectedCategory === "Penghapusan Aset" && (
-            <div className="aset-list" style={{ fontSize: "12px" }}>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#9C9C9C" }}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "black" }}
-                >
-                  Aset Laptop
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#0845C9" }}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "white" }}
-                >
-                  Aset Komputer
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#FF0004" }}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "white" }}
-                >
-                  Data Cloud
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#FF0004" }}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "white" }}
-                >
-                  Server
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#0845C9" }}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "white" }}
-                >
-                  Microsoft Office
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#9C9C9C" }}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "black" }}
-                >
-                  Router
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#FF0004" }}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "white" }}
-                >
-                  Printer
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#0845C9" }}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "white" }}
-                >
-                  Firewall
-                </span>
-              </div>
+            <div className="aset-list">
+              {loading ? <p>Loading...</p> :
+                penghapusanasetList.map((penghapusan_aset) => (
+                  <div key={penghapusan_aset.id} className="aset-item" style={{ backgroundColor: penghapusan_aset.status !== "ditolak" && penghapusan_aset.status !== "pending" ? "#72a5ff" : penghapusan_aset.status === "ditolak" ? "#ff3636" : undefined }}>
+                    <span className="aset-name">{penghapusan_aset.nama}</span>
+                  </div>
+                ))
+              }
             </div>
           )}
         </aside>
 
-        {/* Asset detail panel */}
+        {/* Detail Panel */}
         <section className="asset-detail">
           <div className="asset-card">
             <div className="asset-header">
-              <h3>Aset Laptop</h3>
-              <span className="asset-date">10/10/2025 - 17:23:34 PM</span>
+              <h3>{selectedAsset ? selectedAsset.nama : "Aset Laptop"}</h3>
+              <span className="asset-date">{selectedAsset && selectedAsset.tgl_perolehan ? new Date(selectedAsset.tgl_perolehan).toLocaleString() : "10/10/2025 - 17:23:34 PM"}</span>
             </div>
+
             <div className="asset-body">
-              <p>
-                <b>Kategori</b> :{" "}
-              </p>
-              <p>
-                <b>Nama Asset</b> :{" "}
-              </p>
-              <p>
-                <b>Kode Asset</b> :{" "}
-              </p>
-              <p>
-                <b>Person in Change</b> :{" "}
-              </p>
-              <p className="asset-id">
-                <b>ID ASSET :</b>
-              </p>
-              <p>
-                <b>Kondisi Asset</b> :{" "}
-              </p>
-              <p>
-                <b>Deskripsi Asset</b> :{" "}
-              </p>
+              <p><b>Kategori</b> : {selectedAsset && selectedAsset.kategori ? String(selectedAsset.kategori.nama || "") : ""}</p>
+              <p><b>Nama Asset</b> : {selectedAsset ? String(selectedAsset.nama || "") : ""}</p>
+              <p><b>Kode Asset</b> : {selectedAsset ? String(selectedAsset.kode_asset || "") : ""}</p>
+              <p><b>Person in Change</b> : {selectedAsset && selectedAsset.penanggungjawab ? String(selectedAsset.penanggungjawab.nama || "") : ""}</p>
+              <p className="asset-id"><b>ID ASSET :</b> {selectedAsset ? String(selectedAsset.id || "") : ""}</p>
+              <p><b>Kondisi Asset</b> : {selectedAsset ? String(selectedAsset.kondisi || "") : ""}</p>
+              <p><b>Deskripsi Asset</b> : {selectedAsset ? String(selectedAsset.deskripsi || "") : ""}</p>
             </div>
           </div>
 

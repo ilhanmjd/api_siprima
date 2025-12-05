@@ -69,6 +69,8 @@ import ServiceDesk from "./pages/dinas/Dashboard/Request/service-desk";
 import FAQ from "./pages/dinas/Dashboard/FAQ/FAQ";
 import Laporan from "./pages/dinas/Dashboard/Laporan/Laporan";
 import LaporanQRCode from "./pages/dinas/qrcode/laporan_qrcode";
+import NotFound from "./pages/404";
+
 
 // Komponen wrapper untuk halaman yang memerlukan autentikasi dan role-based access
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
@@ -606,6 +608,10 @@ const router = createBrowserRouter([
         <NotifikasiDiskominfo />
       </ProtectedRoute>
     ),
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);
 

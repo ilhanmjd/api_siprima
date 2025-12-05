@@ -1,11 +1,33 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
+import api from "../../../api";
 import "./PenghapusanAset.css";
 
 function PenghapusanAset() {
   const navigate = useNavigate();
   const { assetData, updateAssetData } = useAssetContext();
+  const [assets, setAssets] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchAssets = async () => {
+      try {
+        const response = await api.getAssets();
+        const filteredAssets = Array.isArray(response.data.data)
+          ? response.data.data.filter(asset => asset.status !== 'pending' && asset.status !== 'ditolak')
+          : [];
+        setAssets(filteredAssets);
+      } catch (err) {
+        setError("Failed to load assets");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAssets();
+  }, []);
 
   const handleChange = (e) => {
     updateAssetData({ [e.target.name]: e.target.value });
@@ -15,21 +37,25 @@ function PenghapusanAset() {
     updateAssetData({ [e.target.name]: e.target.files[0] });
   };
 
+  const handleSelectChange = (asset) => {
+    updateAssetData({ idAset: asset.id });
+    setIsDropdownOpen(false);
+  };
+
   const handleSubmit = () => {
     // Logika untuk submit penghapusan aset
     console.log("Data penghapusan aset:", assetData);
     // Navigasi ke halaman konfirmasi penghapusan aset
-    navigate("/Konfirmasi-PenghapusanAset");
+    navigate("/konfirmasi-penghapusan-aset");
   };
 
   const handleBack = () => {
     navigate("/Dashboard");
   };
 
-  const step1Active = assetData.idAset;
-  const connectorActive = assetData.idAset && assetData.alasanPenghapusan;
-  const step2Active =
-    assetData.idAset && assetData.alasanPenghapusan && assetData.lampiran;
+  const step1Active = true;
+  const connectorActive = false;
+  const step2Active = false;
 
   const allFilled =
     assetData.idAset && assetData.alasanPenghapusan && assetData.lampiran;
@@ -88,13 +114,29 @@ function PenghapusanAset() {
         }}
       >
         <label>ID Aset</label>
-        <input
-          type="text"
-          name="idAset"
-          value={assetData.idAset || ""}
-          onChange={handleChange}
-          required
-        />
+{loading ? (
+  <p>Loading assets...</p>
+) : error ? (
+  <p>{error}</p>
+) : (
+  <div className="dropdown">
+    <button
+      type="button"
+      className="dropdown-btn"
+      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+    >
+      {assetData.idAset ? `${assetData.idAset} - ${assets.find(asset => asset.id === assetData.idAset)?.nama}` : "Pilih ID Aset"} <span>▾</span>
+    </button>
+    <div className={`dropdown-content ${isDropdownOpen ? 'show' : ''}`}>
+      {assets.map((asset) => (
+        <div key={asset.id} onClick={() => handleSelectChange(asset)}>
+          {asset.id} - {asset.nama}
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
 
         <label>Alasan Penghapusan</label>
         <input

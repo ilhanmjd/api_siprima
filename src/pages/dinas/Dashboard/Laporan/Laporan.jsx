@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import QRPopup from "./QRPopup";
+import api from "../../../../api";
 import "./Laporan.css";
 
 const REPORT_OPTIONS = [
@@ -14,7 +15,6 @@ const STATUS_OPTIONS = [
   { label: "Inactive", value: "inactive" },
   { label: "Maintenance", value: "maintenance" },
   { label: "Retired", value: "retired" },
-  { label: "Decommission", value: "decommission" },
 ];
 
 export default function Laporan() {
@@ -23,48 +23,29 @@ export default function Laporan() {
   const [showQR, setShowQR] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState(null);
 
-  const [assets] = useState([
-    {
-      id: 1,
-      nama: 'Komputer Kantor',
-      dinas: { nama: 'Dinas Komunikasi dan Informatika' },
-      tanggal_perolehan: '2023-01-15',
-      status: 'active',
-      lampiran_url: 'http://example.com/lampiran1.pdf'
-    },
-    {
-      id: 2,
-      nama: 'Mobil Dinas',
-      dinas: { nama: 'Dinas Perhubungan' },
-      tanggal_perolehan: '2022-05-20',
-      status: 'maintenance',
-      lampiran_url: 'http://example.com/lampiran2.pdf'
-    },
-    {
-      id: 3,
-      nama: 'Server Utama',
-      dinas: { nama: 'Dinas Komunikasi dan Informatika' },
-      tanggal_perolehan: '2021-10-10',
-      status: 'active',
-      lampiran_url: 'http://example.com/lampiran3.pdf'
-    },
-    {
-      id: 4,
-      nama: 'Printer Multifungsi',
-      dinas: { nama: 'Dinas Pendidikan' },
-      tanggal_perolehan: '2023-03-05',
-      status: 'inactive',
-      lampiran_url: 'http://example.com/lampiran4.pdf'
-    },
-    {
-      id: 5,
-      nama: 'Proyektor',
-      dinas: { nama: 'Dinas Kesehatan' },
-      tanggal_perolehan: '2022-12-01',
-      status: 'retired',
-      lampiran_url: 'http://example.com/lampiran5.pdf'
-    }
-  ]);
+  const [assets, setAssets] = useState([]);
+  const [loadingAssets, setLoadingAssets] = useState(true);
+  const [errorAssets, setErrorAssets] = useState(null);
+
+  useEffect(() => {
+    const fetchAssets = async () => {
+      try {
+        setLoadingAssets(true);
+        const response = await api.getAssets();
+        console.log("API Response:", response);
+        console.log("Response data:", response.data);
+        const filteredAssets = (response.data.data || []).filter(asset => asset.status !== "pending" && asset.status !== "ditolak");
+        setAssets(filteredAssets);
+      } catch (error) {
+        console.error("Error fetching assets:", error);
+        setErrorAssets("Gagal memuat data aset. Silakan coba lagi.");
+      } finally {
+        setLoadingAssets(false);
+      }
+    };
+
+    fetchAssets();
+  }, []);
   const [risks] = useState([
     {
       id: 1,
@@ -121,14 +102,14 @@ export default function Laporan() {
 
   const filteredAssets = useMemo(() => {
     return (Array.isArray(assets) ? assets : []).filter((asset) => {
-      const status = String(asset?.status || "").toLowerCase();
+      const status = String(asset?.is_usage || "").toLowerCase();
       if (statusFilter && status !== statusFilter.toLowerCase()) {
         return false;
       }
       if (search) {
         const term = search.toLowerCase();
         const name = (asset?.nama || asset?.nama_aset || "").toLowerCase();
-        const dinas = (asset?.dinas?.nama || asset?.dinas || "").toLowerCase();
+        const dinas = (asset?.lokasi?.nama || asset?.lokasi || "").toLowerCase();
         if (
           !name.includes(term) &&
           !dinas.includes(term) &&
@@ -137,7 +118,7 @@ export default function Laporan() {
           return false;
         }
       }
-      const acquisition = asset?.tanggal_perolehan;
+      const acquisition = asset?.tgl_perolehan;
       if ((dateFrom || dateTo) && acquisition) {
         const assetDate = new Date(acquisition);
         if (dateFrom && assetDate < new Date(dateFrom)) {
@@ -210,8 +191,8 @@ export default function Laporan() {
 
   const isAssetReport = reportType === "asset";
   const rows = isAssetReport ? filteredAssets : filteredRisks;
-  const loading = false;
-  const error = null;
+  const loading = isAssetReport ? loadingAssets : false;
+  const error = isAssetReport ? errorAssets : null;
   const headers = isAssetReport
     ? ["Nama Aset", "Dinas", "Tanggal", "Status", "QR Code", "Download"]
     : ["Nama Risiko", "Nama Aset", "Dinas", "Kriteria", "Status", "Tanggal", "Download"];
@@ -341,28 +322,27 @@ export default function Laporan() {
                     return (
                       <tr key={item?.asset_id ?? item?.id}>
                         <td>{item?.nama || item?.nama_aset || "-"}</td>
-                        <td>{item?.dinas?.nama || item?.dinas || "-"}</td>
+                        <td>{item?.lokasi?.nama || item?.lokasi || "-"}</td>
                         <td>
-                          {item?.tanggal_perolehan
-                            ? new Date(item.tanggal_perolehan).toLocaleDateString("id-ID")
+                          {item?.tgl_perolehan
+                            ? new Date(item.tgl_perolehan).toLocaleDateString("id-ID")
                             : "-"}
                         </td>
-                        <td className="status-tag">{item?.status || "-"}</td>
+                        <td className="status-tag">{item?.is_usage || "-"}</td>
                         <td>
                           <button
                             type="button"
-                            disabled={item?.status !== 'active'}
                             onClick={() => {
                               setSelectedAsset(item);
                               setShowQR(true);
                             }}
                             style={{
-                              backgroundColor: item?.status === 'active' ? '#2582ff' : '#a0a0a0',
+                              backgroundColor: '#2582ff',
                               color: 'white',
                               border: 'none',
                               padding: '8px 16px',
                               borderRadius: '999px',
-                              cursor: item?.status === 'active' ? 'pointer' : 'not-allowed'
+                              cursor: 'pointer'
                             }}
                           >
                             QR Code

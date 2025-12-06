@@ -17,7 +17,6 @@ function PenghapusanAset() {
 
   const handleSubmit = () => {
     // Logika untuk submit penghapusan aset
-    console.log("Data penghapusan aset:", assetData);
     // Navigasi ke halaman konfirmasi penghapusan aset
     navigate("/Konfirmasi-PenghapusanAset");
   };

@@ -6,9 +6,7 @@ import "./laporan_qrcode.css";
 export default function Laporan() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-
-  // Ambil id_asset dari URL
-  const id_asset = searchParams.get("id_asset");
+  const assetId = searchParams.get("id_asset");
 
   // State untuk menampung data dari API
   const [asset, setAsset] = useState(null);
@@ -28,32 +26,35 @@ export default function Laporan() {
 
   // Fetch API berdasarkan id_asset
   useEffect(() => {
-    if (!id_asset) return;
+    if (!assetId) return;
 
+    const controller = new AbortController();
     const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await api.getAssetById(id_asset);
+        const response = await api.getAssetById(assetId, {
+          signal: controller.signal,
+        });
 
         // Hasil API memiliki field: id (id asli asset)
-        setAsset(response.data?.data || null);
-
-        console.log("ID dari URL:", id_asset);
-        console.log("ID dari API:", response.data?.data?.id);
+        if (!controller.signal.aborted) {
+          setAsset(response.data?.data || null);
+        }
       } catch (error) {
-        console.error("Gagal memuat data aset:", error);
+        if (controller.signal.aborted) return;
         setError("Gagal memuat data aset. Silakan coba lagi.");
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchData();
-  }, [id_asset]);
 
-  // Debug: lihat isi data asset
-  console.log("Data asset:", asset);
+    return () => controller.abort();
+  }, []);
 
   return (
     <div className="laporan-page">

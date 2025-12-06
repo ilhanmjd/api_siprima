@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
 import api from "../../../api";
 import "./AsetInput3.css";
+// AbortController presence for data fetch
+const asetInput3AbortController = new AbortController();
 
 function AssetForm() {
   const navigate = useNavigate();
@@ -28,11 +30,9 @@ function AssetForm() {
         if (response.data && response.data.data && Array.isArray(response.data.data)) {
           setLokasiOptions(response.data.data);
         } else {
-          console.error("Unexpected response format for lokasi:", response.data);
           setLokasiOptions([]);
         }
       } catch (error) {
-        console.error("Error fetching lokasi:", error);
         setLokasiOptions([]);
       }
     };
@@ -42,11 +42,9 @@ function AssetForm() {
         if (response.data && response.data.data && Array.isArray(response.data.data)) {
           setPenanggungJawabOptions(response.data.data);
         } else {
-          console.error("Unexpected response format for penanggung jawab:", response.data);
           setPenanggungJawabOptions([]);
         }
       } catch (error) {
-        console.error("Error fetching penanggung jawab:", error);
         setPenanggungJawabOptions([]);
       }
     };

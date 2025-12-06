@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
 import "./InputRisiko2.css";
@@ -16,6 +16,10 @@ function InputRisiko2() {
     if (numericLevel >= 15 && numericLevel <= 25) return "High";
     return "";
   };
+
+  const { level_awal: levelAwal } = assetData;
+  const derivedKriteria = deriveKriteria(levelAwal);
+  const statusValue = assetData.status || "Baru";
 
   const handleChange = (e) => {
     updateAssetData({ [e.target.name]: e.target.value });
@@ -40,6 +44,10 @@ function InputRisiko2() {
 
   const handleNext = () => {
     if (allFilled) {
+      updateAssetData({
+        kriteria: derivedKriteria,
+        status: statusValue,
+      });
       navigate("/konfirmasi-input-risiko");
     } else {
       alert("Harap isi semua field");
@@ -50,22 +58,9 @@ function InputRisiko2() {
     assetData.probabilitas &&
     assetData.dampak_nilai &&
     assetData.level_awal &&
-    assetData.kriteria &&
     assetData.prioritas &&
-    assetData.status;
-
-  useEffect(() => {
-    if (assetData.status !== "Baru") {
-      updateAssetData({ status: "Baru" });
-    }
-  }, [assetData.status, updateAssetData]);
-
-  useEffect(() => {
-    const derived = deriveKriteria(assetData.level_awal);
-    if (derived !== assetData.kriteria) {
-      updateAssetData({ kriteria: derived });
-    }
-  }, [assetData.level_awal, assetData.kriteria, updateAssetData]);
+    derivedKriteria &&
+    statusValue;
 
   return (
     <div className="asset-container">

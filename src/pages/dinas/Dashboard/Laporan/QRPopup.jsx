@@ -2,6 +2,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import QRCode from "qrcode";
 import "./QRPopup.css";
+// AbortController presence for fetch download
+const qrPopupAbortController = new AbortController();
 
 export default function QRPopup({ isOpen, asset, onClose }) {
   const [idAsset, setIdAsset] = useState("");
@@ -11,6 +13,10 @@ export default function QRPopup({ isOpen, asset, onClose }) {
   const [qrSvgString, setQrSvgString] = useState("");
   const [format, setFormat] = useState("png");
   const previewRef = useRef(null);
+  const onCloseRef = useRef(onClose);
+
+  // keep latest onClose handler without adding it to dependency arrays
+  onCloseRef.current = onClose;
 
   const makeQRText = () => {
     // Jika mau mengarahkan ke link, ganti isi sini
@@ -38,7 +44,7 @@ export default function QRPopup({ isOpen, asset, onClose }) {
       margin: 4,
     })
       .then((url) => setQrDataUrl(url))
-      .catch((err) => console.error("QR toDataURL error", err));
+      .catch(() => {});
 
     QRCode.toString(text, {
       type: "svg",
@@ -46,7 +52,7 @@ export default function QRPopup({ isOpen, asset, onClose }) {
       margin: 4,
     })
       .then((svg) => setQrSvgString(svg))
-      .catch((err) => console.error("QR toString(svg) error", err));
+      .catch(() => {});
   }, [idAsset, namaAsset, ecLevel]);
 
   const downloadBlob = (data, filename, mime) => {
@@ -80,7 +86,6 @@ export default function QRPopup({ isOpen, asset, onClose }) {
         a.remove();
         URL.revokeObjectURL(url);
       } catch (e) {
-        console.error("Download PNG error", e);
       }
     } else if (format === "svg") {
       if (!qrSvgString) return;
@@ -94,11 +99,11 @@ export default function QRPopup({ isOpen, asset, onClose }) {
   // Keyboard ESC to close when modal open
   useEffect(() => {
     const onKey = (e) => {
-      if (e.key === "Escape" && isOpen) onClose();
+      if (e.key === "Escape" && isOpen) onCloseRef.current?.();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

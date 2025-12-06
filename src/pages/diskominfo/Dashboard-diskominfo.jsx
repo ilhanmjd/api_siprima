@@ -1,25 +1,34 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../contexts/AssetContext";
+import api from "../../api";
 import "./dashboard-diskominfo.css";
 
 export default function DashboardDiskominfo() {
   const navigate = useNavigate();
   const { resetAssetData, loading, error, assets, risks } = useAssetContext();
+  const logoutControllerRef = useRef(null);
 
   useEffect(() => {
     resetAssetData();
-  }, [resetAssetData]);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      logoutControllerRef.current?.abort();
+    };
+  }, []);
 
   const handleLogout = async () => {
+    const controller = new AbortController();
+    logoutControllerRef.current = controller;
     try {
-      await api.logout();
+      await api.logout({ signal: controller.signal });
       localStorage.removeItem('token');
       localStorage.removeItem('role');
       navigate("/");
     } catch (err) {
-      console.error('Logout failed:', err);
-      // Still clear localStorage and navigate even if API fails
+      if (controller.signal.aborted) return;
       localStorage.removeItem('token');
       localStorage.removeItem('role');
       navigate("/");

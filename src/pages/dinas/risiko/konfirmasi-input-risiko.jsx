@@ -74,7 +74,6 @@ export default function KonfirmasiInputRisiko() {
         state: { defaultCategory: "Risk" },
       });
     } catch (error) {
-      console.error("Error adding risk:", error);
       alert("Terjadi kesalahan saat menambahkan risiko. Silakan coba lagi.");
     } finally {
       setLoading(false);

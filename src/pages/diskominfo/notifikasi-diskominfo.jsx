@@ -17,7 +17,6 @@ function NotifikasiDiskominfo() {
 
   const handleSubmit = () => {
     // Logika untuk submit data dari Diskominfo
-    console.log("Data dari Diskominfo:", assetData);
     // Navigasi ke halaman konfirmasi atau halaman selanjutnya
     // navigate("/konfirmasi-diskominfo");
   };

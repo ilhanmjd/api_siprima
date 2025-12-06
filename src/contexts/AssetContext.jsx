@@ -24,8 +24,13 @@ export const AssetProvider = ({ children }) => {
   const [loadingAssets, setLoadingAssets] = useState(false);
   const [assetsError, setAssetsError] = useState(null);
 
+  const assetsRef = useRef([]);
   const assetsPromiseRef = useRef(null);
   const assetsControllerRef = useRef(null);
+
+  useEffect(() => {
+    assetsRef.current = assets;
+  }, [assets]);
 
   useEffect(() => {
     return () => {
@@ -39,8 +44,8 @@ export const AssetProvider = ({ children }) => {
     if (assetsPromiseRef.current) {
       return assetsPromiseRef.current;
     }
-    if (assets.length) {
-      return assets;
+    if (assetsRef.current.length) {
+      return assetsRef.current;
     }
 
     const controller = new AbortController();
@@ -59,6 +64,7 @@ export const AssetProvider = ({ children }) => {
           ? response.data.data
           : [];
         setAssets(list);
+        assetsRef.current = list;
         return list;
       } catch (err) {
         if (controller.signal.aborted) return null;

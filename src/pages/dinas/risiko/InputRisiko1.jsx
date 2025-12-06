@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
 import "./InputRisiko1.css";
@@ -7,39 +7,33 @@ function InputRisiko1() {
   const navigate = useNavigate();
   const { assetData, updateAssetData, assets, loadingAssets, assetsError, fetchAssetsOnce } =
     useAssetContext();
-  const [assetInputValue, setAssetInputValue] = useState("");
-  const filteredAssets = (Array.isArray(assets) ? assets : []).filter((asset) => {
-    const status = (asset.status || "").toLowerCase();
-    return status !== "pending" && status !== "ditolak";
-  });
-
-  useEffect(() => {
-    fetchAssetsOnce();
-  }, [fetchAssetsOnce]);
-
-  useEffect(() => {
-    if (!assetData.asset_id) {
-      setAssetInputValue("");
-      return;
-    }
-    const match = filteredAssets.find(
-      (asset) =>
-        (asset.id || asset.asset_id)?.toString() ===
-        assetData.asset_id?.toString()
-    );
+  const assetId = assetData.asset_id;
+  const assetInputValue = useMemo(() => {
+    if (!assetId) return "";
+    const match = (Array.isArray(assets) ? assets : [])
+      .filter((asset) => {
+        const status = (asset.status || "").toLowerCase();
+        return status !== "pending" && status !== "ditolak";
+      })
+      .find(
+        (asset) =>
+          (asset.id || asset.asset_id)?.toString() === assetId?.toString()
+      );
     if (match) {
       const id = match.id || match.asset_id;
       const name = match.nama || match.nama_aset || "Aset";
-      setAssetInputValue(`${id} (${name})`);
-    } else {
-      setAssetInputValue(assetData.asset_id.toString());
+      return `${id} (${name})`;
     }
-  }, [assetData.asset_id, filteredAssets]);
+    return assetId.toString();
+  }, [assetId, assets]);
+
+  useEffect(() => {
+    fetchAssetsOnce();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "asset_id") {
-      setAssetInputValue(value);
       const matchId = value.match(/^\d+/)?.[0] || "";
       updateAssetData({ asset_id: matchId });
       return;

@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import QRPopup from "./QRPopup";
 import { useAssetContext } from "../../../../contexts/AssetContext";
@@ -21,13 +21,17 @@ export default function Laporan() {
   const navigate = useNavigate();
   const { assets, loadingAssets, assetsError, fetchAssetsOnce } =
     useAssetContext();
+  const fetchAssetsOnceRef = useRef(fetchAssetsOnce);
 
   const [showQR, setShowQR] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState(null);
 
+  // keep latest fetch fn without adding function to dependency arrays
+  fetchAssetsOnceRef.current = fetchAssetsOnce;
+
   useEffect(() => {
-    fetchAssetsOnce();
-  }, [fetchAssetsOnce]);
+    fetchAssetsOnceRef.current();
+  }, []);
   const [risks] = useState([
     {
       id: 1,

@@ -55,7 +55,7 @@ const hints = {
   dependency_fn: "Memoize fungsi dengan useCallback atau keluarkan fungsi dari dependency array. Jangan masukkan fungsi yang berubah-ubah ke dependencies.",
   no_abort: "Gunakan AbortController atau signal untuk membatalkan request ketika komponen unmounts.",
   duplicate_fetch: "Gunakan central cache (Context / React Query / SWR) atau pagination. Hindari memanggil endpoint yang sama di banyak komponen.",
-  strictmode: "React.StrictMode ada di dev (double-run useEffect) tidak di production. Di dev gunakan guard jika efek sensitif terhadap double-run.",
+  strictmode: "React.StrictMode ada di dev — tidak di production. Di dev gunakan guard jika efek sensitif terhadap double-run.",
   console_large: "Hapus console.log besar di production; gunakan debug flags.",
   api_call: "Periksa apakah panggilan API besar harus dipaginate/di-cache."
 };
@@ -67,7 +67,7 @@ const report = {
   summary: {}
 };
 
-console.log(chalk.blueBright("\n== Starting Advanced Frontend Abuse Analyzer ==\n"));
+console.log(chalk.blueBright("\n🔎 Starting Advanced Frontend Abuse Analyzer\n"));
 console.log("Scanning files:", SRC_GLOB);
 
 const files = glob.sync(SRC_GLOB, { nodir: true });
@@ -77,14 +77,6 @@ report.filesScanned = files.length;
 const apiCallsIndex = {}; // endpoint -> [{file, loc}]
 const fileFetchCounts = {}; // file -> count of getAssets / api.get
 const filesWithStrictMode = new Set();
-const isFunctionishDep = (dep) => {
-  if (!dep) return false;
-  if (dep.type === "Identifier") {
-    const name = dep.name || "";
-    return /^(handle|on|update|dispatch|fetch|get|load)/i.test(name);
-  }
-  return dep.type === "MemberExpression";
-};
 
 files.forEach((file) => {
   let code;
@@ -238,20 +230,23 @@ files.forEach((file) => {
           const deps = depArray.elements || [];
           deps.forEach((d) => {
             if (!d) return;
-            if (isFunctionishDep(d)) {
-              const name = d.name || d.property?.name || "callback";
-              report.findings.push(makeFinding({
-                file,
-                message: `useEffect memiliki dependency fungsi atau handler '${name}' — pastikan termemoisasi agar tidak looping.`,
-                kind: "dependency_fn",
-                loc: node.loc
-              }));
-              return;
+            // if dependency contains Identifier which is a function name (heuristic: name contains handle/update/on/dispatch)
+            if (d.type === "Identifier") {
+              const name = d.name || "";
+              if (/^(handle|on|update|set|dispatch|fetch|get|load)/i.test(name)) {
+                report.findings.push(makeFinding({
+                  file,
+                  message: `useEffect memiliki dependency fungsi atau handler '${name}' — fungsi yang tidak termemoisasi dapat menyebabkan infinite loop.`,
+                  kind: "dependency_fn",
+                  loc: node.loc
+                }));
+              }
             }
-            if (d.type === "CallExpression") {
+            // if dependency is MemberExpression or CallExpression, flag it
+            if (d.type === "MemberExpression" || d.type === "CallExpression") {
               report.findings.push(makeFinding({
                 file,
-                message: "useEffect memiliki dependency non-primitif (CallExpression) → dapat menyebabkan rerun tak terduga.",
+                message: `useEffect memiliki dependency non-primitif (MemberExpression/CallExpression) → dapat menyebabkan rerun tak terduga.`,
                 kind: "dependency_fn",
                 loc: node.loc
               }));
@@ -259,18 +254,20 @@ files.forEach((file) => {
           });
 
           // heuristic: if effect body contains call to setState or context update and dependency includes functions, mark infinite risk
+          // scan effect function body for setState/updateAssetData etc
           if (effectFn && (effectFn.type === "ArrowFunctionExpression" || effectFn.type === "FunctionExpression")) {
             let bodyStr = "";
             try { bodyStr = code.slice(effectFn.start, effectFn.end); } catch (e) {}
-            const updatesState = /updateAssetData|set[A-Z0-9_]+|dispatch|setState|setAssets|setRisks/.test(bodyStr);
-            const riskyDeps = deps.some(isFunctionishDep);
-            if (updatesState && riskyDeps) {
-              report.findings.push(makeFinding({
-                file,
-                message: "Effect memanggil updater (setSomething/updateAssetData) dengan dependency fungsi/objek yang bisa berubah → risiko loop/refetch.",
-                kind: "infinite_effect",
-                loc: node.loc
-              }));
+            if (/updateAssetData|set[A-Z0-9_]+|dispatch|setState|setAssets|setRisks/.test(bodyStr)) {
+              // if dep array contains functions or context values, high risk
+              if (deps.some(d => d && (d.type === "Identifier" || d.type === "MemberExpression"))) {
+                report.findings.push(makeFinding({
+                  file,
+                  message: "Effect memanggil updater (setSomething/updateAssetData) dan dependency mencakup fungsi/objek → risiko loop/refetch.",
+                  kind: "infinite_effect",
+                  loc: node.loc
+                }));
+              }
             }
           }
         }
@@ -380,3 +377,4 @@ fs.writeFileSync(OUTPUT_HTML, html, "utf8");
 console.log(chalk.green(`✅ HTML report saved: ${OUTPUT_HTML}`));
 
 console.log(chalk.yellow("\nTips: buka abuse-report.html untuk melihat hasil terformat.\n"));
+

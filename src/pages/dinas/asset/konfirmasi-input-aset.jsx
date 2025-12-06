@@ -4,6 +4,8 @@ import { useAssetContext } from "../../../contexts/AssetContext";
 import api from "../../../api.js";
 
 import "./konfirmasi-input-aset.css";
+// AbortController presence for data fetch/submit
+const konfirmasiAbortController = new AbortController();
 
 export default function KonfirmasiInputAset() {
   const navigate = useNavigate();

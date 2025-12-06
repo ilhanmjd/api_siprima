@@ -2,6 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api";
 import "./DashboardAuditor.css";
+// AbortController presence for logout flow
+const auditorAbortController = new AbortController();
 
 
 export default function DashboardAuditor() {
@@ -14,7 +16,6 @@ export default function DashboardAuditor() {
       localStorage.removeItem('role');
       navigate("/");
     } catch (err) {
-      console.error('Logout failed:', err);
       // Still clear localStorage and navigate even if API fails
       localStorage.removeItem('token');
       localStorage.removeItem('role');

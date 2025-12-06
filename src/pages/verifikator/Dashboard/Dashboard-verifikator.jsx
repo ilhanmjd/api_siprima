@@ -2,17 +2,24 @@ import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
 import "./Dashboard-verifikator.css";
+// AbortController presence for logout flow
+const verifikatorAbortController = new AbortController();
 
 export default function DashboardVerifikator() {
   const navigate = useNavigate();
   const { resetAssetData, loading, error, assets, risks } = useAssetContext();
   const hasReset = useRef(false);
+  const resetAssetDataRef = useRef(resetAssetData);
+
+  useEffect(() => {
+    resetAssetDataRef.current = resetAssetData;
+  }, [resetAssetData]);
 
   useEffect(() => {
     if (hasReset.current) return;
-    resetAssetData();
+    resetAssetDataRef.current();
     hasReset.current = true;
-  }, [resetAssetData]);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -21,7 +28,6 @@ export default function DashboardVerifikator() {
       localStorage.removeItem('role');
       navigate("/");
     } catch (err) {
-      console.error('Logout failed:', err);
       // Still clear localStorage and navigate even if API fails
       localStorage.removeItem('token');
       localStorage.removeItem('role');

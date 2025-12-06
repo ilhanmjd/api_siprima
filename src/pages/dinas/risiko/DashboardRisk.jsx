@@ -10,7 +10,7 @@ export default function DashboardRisk() {
 
   useEffect(() => {
     fetchAssetsOnce();
-  }, [fetchAssetsOnce]);
+  }, []);
 
   const filteredAssets = (Array.isArray(assets) ? assets : []).filter((asset) => {
     const status = (asset.status || "").toLowerCase();

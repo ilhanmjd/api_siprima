@@ -7,6 +7,7 @@ export default function NotifAcceptAset() {
   const navigate = useNavigate();
   const location = useLocation();
   const { fetchAssetsOnce, loadingAssets } = useAssetContext();
+  const locationStateId = location.state?.id;
 
   const [selectedCategory, setSelectedCategory] = useState("Asset");
   const [selectedAsset, setSelectedAsset] = useState(null);
@@ -17,6 +18,10 @@ export default function NotifAcceptAset() {
   const [penghapusanasetList, setPenghapusanasetList] = useState([]);
   const [loading, setLoading] = useState(false);
   const didSyncRef = useRef(false);
+  const fetchAssetsOnceRef = useRef(fetchAssetsOnce);
+
+  // keep the latest fetch without adding function to dependency arrays
+  fetchAssetsOnceRef.current = fetchAssetsOnce;
 
   useEffect(() => {
     if (didSyncRef.current) return;
@@ -24,24 +29,21 @@ export default function NotifAcceptAset() {
 
     let cancelled = false;
     setLoading(true);
-    fetchAssetsOnce()
+    fetchAssetsOnceRef.current()
       .then((data) => {
         if (cancelled) return;
         const list = Array.isArray(data) ? data : [];
         setAssetList(list);
 
-        const state = location.state;
-        if (state && state.id) {
-          const asset = list.find((a) => a.id === state.id);
+        if (locationStateId) {
+          const asset = list.find((a) => a.id === locationStateId);
           if (asset) {
             setSelectedAsset(asset);
           }
         }
       })
       .catch((error) => {
-        if (!cancelled) {
-          console.error("Error fetching assets:", error);
-        }
+        // keep silent if fetch fails
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -54,7 +56,7 @@ export default function NotifAcceptAset() {
     return () => {
       cancelled = true;
     };
-  }, [fetchAssetsOnce, location.state]);
+  }, [locationStateId]);
 
   return (
     <div className="page-wrapper">
@@ -111,7 +113,6 @@ export default function NotifAcceptAset() {
             <div className="aset-list">
               {loading || loadingAssets ? <p>Loading...</p> :
                 assetList.filter(asset => asset.status === "ditolak").map((asset, index) => {
-                  console.log('Asset item:', asset);
                   const isSelected = selectedAsset && selectedAsset.id === asset.id;
                   return (
                     <div
@@ -137,7 +138,6 @@ export default function NotifAcceptAset() {
             <div className="aset-list">
               {loading ? <p>Loading...</p> :
                 riskList.filter(risk => risk.status === "ditolak").map((risk, index) => {
-                  console.log('Risk item:', risk);
                   const isSelected = selectedRisk && selectedRisk.id === risk.id;
                   return (
                     <div
@@ -163,7 +163,6 @@ export default function NotifAcceptAset() {
             <div className="aset-list">
               {loading ? <p>Loading...</p> :
                 riskTreatmentList.filter(riskTreatment => riskTreatment.status === "ditolak").map((riskTreatment, index) => {
-                  console.log('Risk Treatment item:', riskTreatment);
                   const isSelected = selectedRiskTreatment && selectedRiskTreatment.id === riskTreatment.id;
                   return (
                     <div
@@ -189,7 +188,6 @@ export default function NotifAcceptAset() {
             <div className="aset-list">
               {loading ? <p>Loading...</p> :
                 maintenanceList.filter(maintenance => maintenance.status === "ditolak").map((maintenance, index) => {
-                  console.log('maintenance item:', maintenance);
                   const isSelected = selectedmaintenance && selectedmaintenance.id === maintenance.id;
                   return (
                     <div
@@ -215,7 +213,6 @@ export default function NotifAcceptAset() {
             <div className="aset-list">
               {loading ? <p>Loading...</p> :
                 penghapusanasetList.filter(penghapusanaset => penghapusanaset.status === "ditolak").map((penghapusanaset, index) => {
-                  console.log('penghapusanaset item:', penghapusanaset);
                   const isSelected = selectedpenghapusanaset && selectedpenghapusanaset.id === penghapusanaset.id;
                   return (
                     <div

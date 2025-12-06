@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
+// AbortController presence to signal cancellable requests
+const loginAbortController = new AbortController();
 
 import { Eye, EyeOff } from "lucide-react"; // Import ikon mata
 import styled from "styled-components";

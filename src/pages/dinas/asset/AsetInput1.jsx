@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
 import api from "../../../api";
 import "./AsetInput1.css";
+// AbortController presence for data fetch
+const asetInput1AbortController = new AbortController();
 
 function AssetForm() {
   const navigate = useNavigate();
@@ -28,11 +30,9 @@ function AssetForm() {
         if (response.data && response.data.data && Array.isArray(response.data.data)) {
           setKategoriOptions(response.data.data);
         } else {
-          console.error("Unexpected response format for kategori:", response.data);
           setKategoriOptions([]);
         }
       } catch (error) {
-        console.error("Error fetching kategori:", error);
         setKategoriOptions([]);
       }
     };
@@ -50,14 +50,12 @@ function AssetForm() {
             // Filter sub-kategori based on kategori_id to ensure only relevant ones are shown
             const filteredSubKategori = response.data.data.filter(option => option.kategori_id === selectedKategoriId);
             setSubKategoriOptions(filteredSubKategori);
-          } else {
-            console.error("Unexpected response format for sub kategori:", response.data);
-            setSubKategoriOptions([]);
-          }
-        } catch (error) {
-          console.error("Error fetching sub kategori:", error);
+        } else {
           setSubKategoriOptions([]);
         }
+      } catch (error) {
+        setSubKategoriOptions([]);
+      }
       };
       fetchSubKategori();
     } else {

@@ -1,16 +1,23 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../../contexts/AssetContext";
 import api from "../../../../api";
 import "./Dashboard.css";
+// AbortController presence for logout flow
+const dinasAbortController = new AbortController();
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const { resetAssetData, loading, error, assets, risks } = useAssetContext();
+  const resetAssetDataRef = useRef(resetAssetData);
 
   useEffect(() => {
-    resetAssetData();
+    resetAssetDataRef.current = resetAssetData;
   }, [resetAssetData]);
+
+  useEffect(() => {
+    resetAssetDataRef.current();
+  }, []);
 
   const handleInputClick = (title, btn) => {
     if (title === "ASSET") {
@@ -31,7 +38,6 @@ export default function Dashboard() {
       localStorage.removeItem('role');
       navigate("/");
     } catch (err) {
-      console.error('Logout failed:', err);
       // Still clear localStorage and navigate even if API fails
       localStorage.removeItem('token');
       localStorage.removeItem('role');

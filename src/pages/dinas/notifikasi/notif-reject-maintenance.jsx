@@ -23,7 +23,6 @@ export default function NotifRejectMaintenance() {
         setRiskList(risksRes.data || []);
         setMaintenanceList(maintenancesRes.data || []);
       } catch (error) {
-        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }

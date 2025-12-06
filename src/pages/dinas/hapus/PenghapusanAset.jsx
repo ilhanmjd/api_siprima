@@ -1,5 +1,5 @@
 //path: "/PenghapusanAset"
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
 import "./PenghapusanAset.css";
@@ -10,16 +10,20 @@ function PenghapusanAset() {
     useAssetContext();
   const [loading, setLoading] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const fetchAssetsOnceRef = useRef(fetchAssetsOnce);
+
+  // keep latest fetch fn without adding it to dependency arrays
+  fetchAssetsOnceRef.current = fetchAssetsOnce;
 
   useEffect(() => {
     let cancelled = false;
-    fetchAssetsOnce().finally(() => {
+    fetchAssetsOnceRef.current().finally(() => {
       if (!cancelled) setLoading(false);
     });
     return () => {
       cancelled = true;
     };
-  }, [fetchAssetsOnce]);
+  }, []);
 
   const handleChange = (e) => {
     updateAssetData({ [e.target.name]: e.target.value });
@@ -36,7 +40,6 @@ function PenghapusanAset() {
 
   const handleSubmit = () => {
     // Logika untuk submit penghapusan aset
-    console.log("Data penghapusan aset:", assetData);
     // Navigasi ke halaman konfirmasi penghapusan aset
     navigate("/konfirmasi-penghapusan-aset");
   };

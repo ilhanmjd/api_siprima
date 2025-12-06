@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./notifikasi-user-dinas.css";
 import { useAssetContext } from "../../../contexts/AssetContext";
@@ -7,6 +7,8 @@ const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { assets: cachedAssets, fetchAssetsOnce, loadingAssets } = useAssetContext();
+  const fetchAssetsOnceRef = useRef(fetchAssetsOnce);
+  const defaultCategory = location.state?.defaultCategory;
   const [selectedCategory, setSelectedCategory] = useState(
     location.state?.defaultCategory || "Asset"
   );
@@ -17,54 +19,46 @@ const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
   const [penghapusanasetList, setPenghapusanasetList] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (location.state?.defaultCategory) {
-      setSelectedCategory(location.state.defaultCategory);
-    }
-  }, [location.state]);
+  // Keep latest fetch function without putting it as a dependency to avoid analyzer loop warnings
+  fetchAssetsOnceRef.current = fetchAssetsOnce;
 
   useEffect(() => {
-    if (selectedCategory === "Asset") fetchAssets();
-    else if (selectedCategory === "Risk") fetchRisks();
-    else if (selectedCategory === "Maintenance") fetchMaintenances();
+    if (defaultCategory) {
+      setSelectedCategory(defaultCategory);
+    }
+  }, [defaultCategory]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        if (selectedCategory === "Asset") {
+          const data = await fetchAssetsOnceRef.current?.();
+          if (!cancelled) {
+            setAssetList(Array.isArray(data) ? data : []);
+          }
+        } else if (selectedCategory === "Risk") {
+          if (!cancelled) setRiskList([]);
+        } else if (selectedCategory === "Maintenance") {
+          if (!cancelled) setMaintenanceList([]);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          if (selectedCategory === "Asset") setAssetList([]);
+          if (selectedCategory === "Risk") setRiskList([]);
+          if (selectedCategory === "Maintenance") setMaintenanceList([]);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    loadData();
+    return () => {
+      cancelled = true;
+    };
   }, [selectedCategory]);
-
-  const fetchAssets = async () => {
-    setLoading(true);
-    try {
-      const data = await fetchAssetsOnce();
-      setAssetList(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Error fetching assets:", error);
-      setAssetList([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchRisks = async () => {
-    setLoading(true);
-    try {
-      setRiskList([]);
-    } catch (error) {
-      console.error("Error fetching risks:", error);
-      setRiskList([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchMaintenances = async () => {
-    setLoading(true);
-    try {
-      setMaintenanceList([]);
-    } catch (error) {
-      console.error("Error fetching maintenances:", error);
-      setMaintenanceList([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="page-wrapper">
@@ -125,7 +119,6 @@ const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
             <div className="aset-list">
               {loading || loadingAssets ? <p>Loading...</p> :
                 assetList.map((asset, index) => {
-                  console.log('Asset item:', asset);
                   return (
                     <div key={index} className="aset-item">
                       <span className="aset-name">{asset.nama}</span>

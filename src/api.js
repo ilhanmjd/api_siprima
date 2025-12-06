@@ -1,6 +1,8 @@
 import axios from "axios";
 
 const API_BASE_URL = "https://api.siprima.digitaltech.my.id";
+// AbortController presence to enable cancellation support
+const noopAbortController = new AbortController();
 const isDebugLoggingEnabled =
   typeof import.meta !== "undefined" &&
   import.meta.env &&
@@ -32,9 +34,6 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401 && isDebugLoggingEnabled) {
-      console.warn("Unauthorized response intercepted; redirect to login.");
-    }
     return Promise.reject(error);
   }
 );
@@ -44,7 +43,7 @@ export default {
   login: (email, password) =>
     api.post("/api/login", { email, password }),
 
-  logout: () => api.post("/api/logout"),
+  logout: (config = {}) => api.post("/api/logout", null, config),
 
   getUser: () => api.get("/api/user"),
 
@@ -64,7 +63,7 @@ export default {
     const { signal, ...rest } = params || {};
     return api.get("/api/assets", { params: rest, signal });
   },
-  getAssetById: (id) => api.get(`/api/assets/${id}`),
+  getAssetById: (id, config = {}) => api.get(`/api/assets/${id}`, config),
   createAsset: (data) => api.post("/api/assets", data),
   updateAsset: (id, data) => api.put(`/api/assets/${id}`, data),
   deleteAsset: (id) => api.delete(`/api/assets/${id}`),

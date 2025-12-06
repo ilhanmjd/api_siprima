@@ -95,7 +95,6 @@ function VerifikasiAset3() {
 
   const handleRejectSubmit = () => {
     // Here you can handle the rejection reason, e.g., send to API
-    console.log("Rejection reason:", rejectReason);
     setIsRejectModalOpen(false);
     setRejectReason("");
     navigate("/VerifikasiRejectAsset");

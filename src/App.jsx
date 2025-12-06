@@ -1,5 +1,5 @@
 // src/App.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   createBrowserRouter,
   RouterProvider,
@@ -77,13 +77,18 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const rolesKey = Array.isArray(allowedRoles) ? allowedRoles.join(",") : "";
+  const navigateRef = useRef(navigate);
+
+  useEffect(() => {
+    navigateRef.current = navigate;
+  }, [navigate]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     const role = localStorage.getItem("role");
 
     if (!token) {
-      navigate("/");
+      navigateRef.current("/");
       setIsLoading(false);
       return;
     }
@@ -94,19 +99,19 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
       // Redirect to role-specific dashboard
       switch (role) {
         case 'staff':
-          navigate("/Dashboard");
+          navigateRef.current("/Dashboard");
           break;
         case 'kepala_seksi':
-          navigate("/Dashboard-verifikator");
+          navigateRef.current("/Dashboard-verifikator");
           break;
         case 'admin_kota':
-          navigate("/dashboard-diskominfo");
+          navigateRef.current("/dashboard-diskominfo");
           break;
         case 'auditor':
-          navigate("/dashboard-auditor");
+          navigateRef.current("/dashboard-auditor");
           break;
         default:
-          navigate("/");
+          navigateRef.current("/");
       }
       setIsLoading(false);
       return;
@@ -114,7 +119,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
 
     setIsAuthorized(true);
     setIsLoading(false);
-  }, [navigate, rolesKey]);
+  }, [rolesKey]);
 
   if (isLoading) {
     return <div>Loading...</div>;

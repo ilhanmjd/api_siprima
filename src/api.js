@@ -56,7 +56,10 @@ export default {
 
 
   // ========== ASSETS ==========
-  getAssets: (params = {}) => api.get("/api/assets", { params }),
+  getAssets: (params = {}) => {
+    const { signal, ...rest } = params || {};
+    return api.get("/api/assets", { params: rest, signal });
+  },
   getAssetById: (id) => api.get(`/api/assets/${id}`),
   createAsset: (data) => api.post("/api/assets", data),
   updateAsset: (id, data) => api.put(`/api/assets/${id}`, data),

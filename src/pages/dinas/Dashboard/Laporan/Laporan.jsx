@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import QRPopup from "./QRPopup";
-import api from "../../../../api";
+import { useAssetContext } from "../../../../contexts/AssetContext";
 import "./Laporan.css";
 
 const REPORT_OPTIONS = [
@@ -19,33 +19,15 @@ const STATUS_OPTIONS = [
 
 export default function Laporan() {
   const navigate = useNavigate();
+  const { assets, loadingAssets, assetsError, fetchAssetsOnce } =
+    useAssetContext();
 
   const [showQR, setShowQR] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState(null);
 
-  const [assets, setAssets] = useState([]);
-  const [loadingAssets, setLoadingAssets] = useState(true);
-  const [errorAssets, setErrorAssets] = useState(null);
-
   useEffect(() => {
-    const fetchAssets = async () => {
-      try {
-        setLoadingAssets(true);
-        const response = await api.getAssets();
-        console.log("API Response:", response);
-        console.log("Response data:", response.data);
-        const filteredAssets = (response.data.data || []).filter(asset => asset.status !== "pending" && asset.status !== "ditolak");
-        setAssets(filteredAssets);
-      } catch (error) {
-        console.error("Error fetching assets:", error);
-        setErrorAssets("Gagal memuat data aset. Silakan coba lagi.");
-      } finally {
-        setLoadingAssets(false);
-      }
-    };
-
-    fetchAssets();
-  }, []);
+    fetchAssetsOnce();
+  }, [fetchAssetsOnce]);
   const [risks] = useState([
     {
       id: 1,
@@ -101,7 +83,9 @@ export default function Laporan() {
   const [dateTo, setDateTo] = useState("");
 
   const filteredAssets = useMemo(() => {
-    return (Array.isArray(assets) ? assets : []).filter((asset) => {
+    return (Array.isArray(assets) ? assets : [])
+      .filter((asset) => asset.status !== "pending" && asset.status !== "ditolak")
+      .filter((asset) => {
       const status = String(asset?.is_usage || "").toLowerCase();
       if (statusFilter && status !== statusFilter.toLowerCase()) {
         return false;
@@ -192,7 +176,7 @@ export default function Laporan() {
   const isAssetReport = reportType === "asset";
   const rows = isAssetReport ? filteredAssets : filteredRisks;
   const loading = isAssetReport ? loadingAssets : false;
-  const error = isAssetReport ? errorAssets : null;
+  const error = isAssetReport ? assetsError : null;
   const headers = isAssetReport
     ? ["Nama Aset", "Dinas", "Tanggal", "Status", "QR Code", "Download"]
     : ["Nama Risiko", "Nama Aset", "Dinas", "Kriteria", "Status", "Tanggal", "Download"];

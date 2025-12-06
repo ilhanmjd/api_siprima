@@ -1,34 +1,25 @@
 //path: "/PenghapusanAset"
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
-import api from "../../../api";
 import "./PenghapusanAset.css";
 
 function PenghapusanAset() {
   const navigate = useNavigate();
-  const { assetData, updateAssetData } = useAssetContext();
-  const [assets, setAssets] = useState([]);
+  const { assetData, updateAssetData, assets, fetchAssetsOnce, loadingAssets, assetsError } =
+    useAssetContext();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
-    const fetchAssets = async () => {
-      try {
-        const response = await api.getAssets();
-        const filteredAssets = Array.isArray(response.data.data)
-          ? response.data.data.filter(asset => asset.status !== 'pending' && asset.status !== 'ditolak')
-          : [];
-        setAssets(filteredAssets);
-      } catch (err) {
-        setError("Failed to load assets");
-      } finally {
-        setLoading(false);
-      }
+    let cancelled = false;
+    fetchAssetsOnce().finally(() => {
+      if (!cancelled) setLoading(false);
+    });
+    return () => {
+      cancelled = true;
     };
-    fetchAssets();
-  }, []);
+  }, [fetchAssetsOnce]);
 
   const handleChange = (e) => {
     updateAssetData({ [e.target.name]: e.target.value });
@@ -57,6 +48,12 @@ function PenghapusanAset() {
   const step1Active = true;
   const connectorActive = false;
   const step2Active = false;
+
+  const filteredAssets = useMemo(() => {
+    return (Array.isArray(assets) ? assets : []).filter(
+      (asset) => asset.status !== "pending" && asset.status !== "ditolak"
+    );
+  }, [assets]);
 
   const allFilled =
     assetData.idAset && assetData.alasanPenghapusan && assetData.lampiran;
@@ -115,10 +112,10 @@ function PenghapusanAset() {
         }}
       >
         <label>ID Aset</label>
-{loading ? (
+{loadingAssets || loading ? (
   <p>Loading assets...</p>
-) : error ? (
-  <p>{error}</p>
+) : assetsError ? (
+  <p>{assetsError}</p>
 ) : (
   <div className="dropdown">
     <button
@@ -129,7 +126,7 @@ function PenghapusanAset() {
       {assetData.idAset ? `${assetData.idAset} - ${assets.find(asset => asset.id === assetData.idAset)?.nama}` : "Pilih ID Aset"} <span>▾</span>
     </button>
     <div className={`dropdown-content ${isDropdownOpen ? 'show' : ''}`}>
-      {assets.map((asset) => (
+      {filteredAssets.map((asset) => (
         <div key={asset.id} onClick={() => handleSelectChange(asset)}>
           {asset.id} - {asset.nama}
         </div>

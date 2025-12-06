@@ -4,8 +4,9 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  useRef,
 } from "react";
-
+import api from "../api";
 
 const AssetContext = createContext();
 
@@ -19,14 +20,60 @@ export const useAssetContext = () => {
 
 export const AssetProvider = ({ children }) => {
   const [assets, setAssets] = useState([]);
-  const [risks, setRisks] = useState([]);
-  const [loading, setLoading] = useState(true); // Tambahkan state loading
-  const [error, setError] = useState(null); // Tambahkan state error
+  const [risks] = useState([]);
+  const [loadingAssets, setLoadingAssets] = useState(false);
+  const [assetsError, setAssetsError] = useState(null);
 
-  // API calls removed as per plan
+  const assetsPromiseRef = useRef(null);
+  const assetsControllerRef = useRef(null);
+
   useEffect(() => {
-    setLoading(false);
+    return () => {
+      if (assetsControllerRef.current) {
+        assetsControllerRef.current.abort();
+      }
+    };
   }, []);
+
+  const fetchAssetsOnce = useCallback(async () => {
+    if (assetsPromiseRef.current) {
+      return assetsPromiseRef.current;
+    }
+    if (assets.length) {
+      return assets;
+    }
+
+    const controller = new AbortController();
+    assetsControllerRef.current = controller;
+
+    const promise = (async () => {
+      try {
+        setLoadingAssets(true);
+        setAssetsError(null);
+        const response = await api.getAssets({
+          page: 1,
+          limit: 50,
+          signal: controller.signal,
+        });
+        const list = Array.isArray(response?.data?.data)
+          ? response.data.data
+          : [];
+        setAssets(list);
+        return list;
+      } catch (err) {
+        if (controller.signal.aborted) return null;
+        setAssetsError(err.message || "Gagal memuat aset");
+        return null;
+      } finally {
+        setLoadingAssets(false);
+        assetsPromiseRef.current = null;
+        assetsControllerRef.current = null;
+      }
+    })();
+
+    assetsPromiseRef.current = promise;
+    return promise;
+  }, [assets]);
 
   const [assetData, setAssetData] = useState({
     kategori: "",
@@ -44,11 +91,9 @@ export const AssetProvider = ({ children }) => {
     statusAsset: "Aktif",
   });
 
-
-
-  const updateAssetData = (newData) => {
+  const updateAssetData = useCallback((newData) => {
     setAssetData((prevData) => ({ ...prevData, ...newData }));
-  };
+  }, []);
 
   const resetAssetData = useCallback(() => {
     setAssetData({
@@ -68,36 +113,19 @@ export const AssetProvider = ({ children }) => {
     });
   }, []);
 
-  const addAsset = async (newAsset) => {
-    try {
-      const addedAsset = await apiAddAsset(newAsset);
-      setAssets((prevAssets) => [...prevAssets, addedAsset]);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  const addRisk = async (newRisk) => {
-    try {
-      const addedRisk = await apiAddRisk(newRisk);
-      setRisks((prevRisks) => [...prevRisks, addedRisk]);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
   return (
     <AssetContext.Provider
       value={{
         assets,
         risks,
         assetData,
-        loading,
-        error,
+        loadingAssets,
+        assetsError,
+        loading: loadingAssets,
+        error: assetsError,
         updateAssetData,
         resetAssetData,
-        addAsset,
-        addRisk,
+        fetchAssetsOnce,
       }}
     >
       {children}

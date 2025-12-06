@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./notifikasi-user-dinas.css";
-import api from "../../../api.js";
+import { useAssetContext } from "../../../contexts/AssetContext";
 
 const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { assets: cachedAssets, fetchAssetsOnce, loadingAssets } = useAssetContext();
   const [selectedCategory, setSelectedCategory] = useState(
     location.state?.defaultCategory || "Asset"
   );
@@ -31,13 +32,8 @@ const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
   const fetchAssets = async () => {
     setLoading(true);
     try {
-      const response = await api.getAssets();
-      console.log("Full response:", response);
-
-      const data = response.data.data; // INI YANG BENAR
-      setAssetList(data);
-
-      console.log("AssetList:", data);
+      const data = await fetchAssetsOnce();
+      setAssetList(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching assets:", error);
       setAssetList([]);
@@ -127,7 +123,7 @@ const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
           {/* ===================== ASSET ===================== */}
           {selectedCategory === "Asset" && (
             <div className="aset-list">
-              {loading ? <p>Loading...</p> :
+              {loading || loadingAssets ? <p>Loading...</p> :
                 assetList.map((asset, index) => {
                   console.log('Asset item:', asset);
                   return (

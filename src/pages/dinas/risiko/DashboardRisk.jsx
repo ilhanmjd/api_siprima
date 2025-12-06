@@ -1,37 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../../../api";
 import { useAssetContext } from "../../../contexts/AssetContext";
 import "./DashboardRisk.css";
 
 export default function DashboardRisk() {
   const navigate = useNavigate();
-  const { updateAssetData } = useAssetContext();
-  const [assets, setAssets] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { updateAssetData, assets, loadingAssets, assetsError, fetchAssetsOnce } =
+    useAssetContext();
 
   useEffect(() => {
-    const fetchAssets = async () => {
-      try {
-        const response = await api.getAssets();
-        const data = Array.isArray(response?.data?.data)
-          ? response.data.data
-          : [];
-        const filteredAssets = data.filter((asset) => {
-          const status = (asset.status || "").toLowerCase();
-          return status !== "pending" && status !== "ditolak";
-        });
-        setAssets(filteredAssets);
-      } catch (err) {
-        setError("Gagal memuat daftar aset");
-      } finally {
-        setLoading(false);
-      }
-    };
+    fetchAssetsOnce();
+  }, [fetchAssetsOnce]);
 
-    fetchAssets();
-  }, []);
+  const filteredAssets = (Array.isArray(assets) ? assets : []).filter((asset) => {
+    const status = (asset.status || "").toLowerCase();
+    return status !== "pending" && status !== "ditolak";
+  });
 
   return (
     <div className="dashboard-risk-page">
@@ -68,16 +52,16 @@ export default function DashboardRisk() {
 
       <div className="content-box">
         <h2 className="content-title">Active Asset List</h2>
-        {loading ? (
+        {loadingAssets ? (
           <p>Loading assets...</p>
-        ) : error ? (
-          <p>{error}</p>
+        ) : assetsError ? (
+          <p>{assetsError}</p>
         ) : (
           <div className="risk-list">
-            {assets.length === 0 ? (
+            {filteredAssets.length === 0 ? (
               <p>Tidak ada aset aktif.</p>
             ) : (
-              assets.map((asset) => (
+              filteredAssets.map((asset) => (
                 <div className="risk-item" key={asset.id || asset.nama}>
                   <span className="risk-name">{asset.nama}</span>
                   <button

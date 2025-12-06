@@ -1,45 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../../../api";
 import { useAssetContext } from "../../../contexts/AssetContext";
 import "./InputRisiko1.css";
 
 function InputRisiko1() {
   const navigate = useNavigate();
-  const { assetData, updateAssetData } = useAssetContext();
-  const [assets, setAssets] = useState([]);
-  const [loadingAssets, setLoadingAssets] = useState(true);
-  const [error, setError] = useState(null);
+  const { assetData, updateAssetData, assets, loadingAssets, assetsError, fetchAssetsOnce } =
+    useAssetContext();
   const [assetInputValue, setAssetInputValue] = useState("");
+  const filteredAssets = (Array.isArray(assets) ? assets : []).filter((asset) => {
+    const status = (asset.status || "").toLowerCase();
+    return status !== "pending" && status !== "ditolak";
+  });
 
   useEffect(() => {
-    const fetchAssets = async () => {
-      try {
-        const response = await api.getAssets();
-        const data = Array.isArray(response?.data?.data)
-          ? response.data.data
-          : [];
-        const filteredAssets = data.filter((asset) => {
-          const status = (asset.status || "").toLowerCase();
-          return status !== "pending" && status !== "ditolak";
-        });
-        setAssets(filteredAssets);
-      } catch (err) {
-        setError("Gagal memuat data aset");
-      } finally {
-        setLoadingAssets(false);
-      }
-    };
-
-    fetchAssets();
-  }, []);
+    fetchAssetsOnce();
+  }, [fetchAssetsOnce]);
 
   useEffect(() => {
     if (!assetData.asset_id) {
       setAssetInputValue("");
       return;
     }
-    const match = assets.find(
+    const match = filteredAssets.find(
       (asset) =>
         (asset.id || asset.asset_id)?.toString() ===
         assetData.asset_id?.toString()
@@ -51,7 +34,7 @@ function InputRisiko1() {
     } else {
       setAssetInputValue(assetData.asset_id.toString());
     }
-  }, [assetData.asset_id, assets]);
+  }, [assetData.asset_id, filteredAssets]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -126,7 +109,7 @@ function InputRisiko1() {
           readOnly
           placeholder={loadingAssets ? "Memuat aset..." : "Pilih atau ketik ID aset"}
         />
-        {error && <p className="asset-error">{error}</p>}
+        {assetsError && <p className="asset-error">{assetsError}</p>}
 
         <label>Judul Risiko</label>
         <input

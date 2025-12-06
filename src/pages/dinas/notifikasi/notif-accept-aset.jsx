@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./notif-accept-aset.css";
-import api from "../../../api.js";
+import { useAssetContext } from "../../../contexts/AssetContext";
 
 export default function NotifAcceptAset() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { updateAssetData, fetchAssetsOnce, loadingAssets } = useAssetContext();
 
   const [selectedCategory, setSelectedCategory] = useState("Asset");
   const [selectedAsset, setSelectedAsset] = useState(null);
@@ -15,34 +16,72 @@ export default function NotifAcceptAset() {
   const [riskTreatmentList, setRiskTreatmentList] = useState([]);
   const [penghapusanasetList, setPenghapusanasetList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const didSyncRef = useRef(false);
+
+  const handleSelectAsset = useCallback(
+    (asset) => {
+      setSelectedAsset(asset);
+      if (asset) {
+        updateAssetData({ asset_id: asset.id || asset.asset_id || "" });
+      }
+    },
+    [updateAssetData]
+  );
 
   useEffect(() => {
-    setLoading(true);
-    api.getAssets()
-      .then(response => {
-        const data = response.data.data;
-        setAssetList(data);
+    if (didSyncRef.current) return;
+    didSyncRef.current = true;
 
-        // Auto-select asset if state is passed
+    let cancelled = false;
+    setLoading(true);
+    fetchAssetsOnce()
+      .then((data) => {
+        if (cancelled) return;
+        const list = Array.isArray(data) ? data : [];
+        setAssetList(list);
+
         const state = location.state;
         if (state && state.id) {
-          const asset = data.find(a => a.id === state.id);
+          const asset = list.find(
+            (a) =>
+              String(a.id ?? a.asset_id ?? "") === String(state.id ?? "")
+          );
           if (asset) {
-            setSelectedAsset(asset);
+            handleSelectAsset(asset);
           }
         }
       })
-      .catch(error => {
-        console.error('Error fetching assets:', error);
+      .catch((error) => {
+        if (!cancelled) {
+          console.error("Error fetching assets:", error);
+        }
       })
       .finally(() => {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       });
+
     setRiskList([]);
     setMaintenanceList([]);
     setRiskTreatmentList([]);
     setPenghapusanasetList([]);
-  }, [location.state]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [fetchAssetsOnce, handleSelectAsset, location.state]);
+
+  const activeAssets = assetList.filter(
+    (asset) =>
+      asset.status !== "pending" && asset.status !== "ditolak"
+  );
+
+  const handleRiskNavigation = () => {
+    const targetAsset = selectedAsset || activeAssets[0];
+    if (targetAsset) {
+      handleSelectAsset(targetAsset);
+      navigate("/InputRisiko1");
+    }
+  };
 
   return (
     <div className="page-wrapper">
@@ -97,20 +136,23 @@ export default function NotifAcceptAset() {
           {/* ===================== ASSET ===================== */}
           {selectedCategory === "Asset" && (
             <div className="aset-list">
-              {loading ? <p>Loading...</p> :
-                assetList.filter(asset => asset.status !== "pending" && asset.status !== "ditolak").map((asset, index) => {
+              {loading || loadingAssets ? <p>Loading...</p> :
+                activeAssets.map((asset) => {
                   console.log('Asset item:', asset);
-                  const isSelected = selectedAsset && selectedAsset.id === asset.id;
+                  const isSelected =
+                    selectedAsset &&
+                    (selectedAsset.id ?? selectedAsset.asset_id) ===
+                      (asset.id ?? asset.asset_id);
                   return (
                     <div
-                      key={index}
+                      key={asset.id ?? asset.nama}
                       className="aset-item-page-accept"
                       style={{
-                        backgroundColor: asset.status !== "ditolak" && asset.status !== "pending" ? "#a9c9f8" : undefined,
+                        backgroundColor: "#a9c9f8",
                         border: isSelected ? "2px solid #000" : "none",
                         cursor: "pointer"
                       }}
-                      onClick={() => setSelectedAsset(asset)}
+                      onClick={() => handleSelectAsset(asset)}
                     >
                       <span className="aset-name">{asset.nama}</span>
                     </div>
@@ -246,7 +288,7 @@ export default function NotifAcceptAset() {
 
           <button
             className="risk-btn"
-            onClick={() => navigate("/InputRisiko1")}
+            onClick={handleRiskNavigation}
           >
             Risiko
           </button>

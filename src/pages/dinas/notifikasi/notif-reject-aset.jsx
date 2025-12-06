@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./notif-reject-aset.css";
-import api from "../../../api.js";
+import { useAssetContext } from "../../../contexts/AssetContext";
 
 export default function NotifAcceptAset() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { fetchAssetsOnce, loadingAssets } = useAssetContext();
 
   const [selectedCategory, setSelectedCategory] = useState("Asset");
   const [selectedAsset, setSelectedAsset] = useState(null);
@@ -15,34 +16,45 @@ export default function NotifAcceptAset() {
   const [riskTreatmentList, setRiskTreatmentList] = useState([]);
   const [penghapusanasetList, setPenghapusanasetList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const didSyncRef = useRef(false);
 
   useEffect(() => {
-    setLoading(true);
-    api.getAssets()
-      .then(response => {
-        const data = response.data.data;
-        setAssetList(data);
+    if (didSyncRef.current) return;
+    didSyncRef.current = true;
 
-        // Auto-select asset if state is passed
+    let cancelled = false;
+    setLoading(true);
+    fetchAssetsOnce()
+      .then((data) => {
+        if (cancelled) return;
+        const list = Array.isArray(data) ? data : [];
+        setAssetList(list);
+
         const state = location.state;
         if (state && state.id) {
-          const asset = data.find(a => a.id === state.id);
+          const asset = list.find((a) => a.id === state.id);
           if (asset) {
             setSelectedAsset(asset);
           }
         }
       })
-      .catch(error => {
-        console.error('Error fetching assets:', error);
+      .catch((error) => {
+        if (!cancelled) {
+          console.error("Error fetching assets:", error);
+        }
       })
       .finally(() => {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       });
     setRiskList([]);
     setMaintenanceList([]);
     setRiskTreatmentList([]);
     setPenghapusanasetList([]);
-  }, [location.state]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [fetchAssetsOnce, location.state]);
 
   return (
     <div className="page-wrapper">
@@ -97,7 +109,7 @@ export default function NotifAcceptAset() {
           {/* ===================== ASSET ===================== */}
           {selectedCategory === "Asset" && (
             <div className="aset-list">
-              {loading ? <p>Loading...</p> :
+              {loading || loadingAssets ? <p>Loading...</p> :
                 assetList.filter(asset => asset.status === "ditolak").map((asset, index) => {
                   console.log('Asset item:', asset);
                   const isSelected = selectedAsset && selectedAsset.id === asset.id;

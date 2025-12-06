@@ -1,21 +1,22 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import api from "../../../api.js";
 import "./laporan_qrcode.css";
-
-
 
 export default function Laporan() {
   const navigate = useNavigate();
-  const [assets] = useState([
-    {
-      id: 1,
-      nama: 'Komputer Kantor',
-      dinas: { nama: 'Dinas Komunikasi dan Informatika' },
-      tanggal_perolehan: '2023-01-15',
-      status: 'active',
-      lampiran_url: 'http://example.com/lampiran1.pdf'
-    },
-  ]);
+  const [searchParams] = useSearchParams();
+
+  // Ambil id_asset dari URL
+  const id_asset = searchParams.get("id_asset");
+
+  // State untuk menampung data dari API
+  const [asset, setAsset] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const headers = ["ID Asset", "Nama Aset", "Dinas", "Tanggal", "Status", "Download"];
+  const rows = asset ? [asset] : [];
 
   const handleDownloadAsset = (asset) => {
     if (asset?.lampiran_url) {
@@ -25,10 +26,34 @@ export default function Laporan() {
     }
   };
 
-  const rows = assets;
-  const loading = false;
-  const error = null;
-  const headers = ["Nama Aset", "Dinas", "Tanggal", "Status", "Download"];
+  // Fetch API berdasarkan id_asset
+  useEffect(() => {
+    if (!id_asset) return;
+
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await api.getAssetById(id_asset);
+
+        // Hasil API memiliki field: id (id asli asset)
+        setAsset(response.data?.data || null);
+
+        console.log("ID dari URL:", id_asset);
+        console.log("ID dari API:", response.data?.data?.id);
+      } catch (error) {
+        console.error("Gagal memuat data aset:", error);
+        setError("Gagal memuat data aset. Silakan coba lagi.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id_asset]);
+
+  // Debug: lihat isi data asset
+  console.log("Data asset:", asset);
 
   return (
     <div className="laporan-page">
@@ -50,7 +75,6 @@ export default function Laporan() {
           >
             🔔
           </div>
-          
         </div>
       </nav>
 
@@ -93,15 +117,16 @@ export default function Laporan() {
                 </tr>
               ) : (
                 rows.map((item) => (
-                  <tr key={item?.asset_id ?? item?.id}>
-                    <td>{item?.nama || item?.nama_aset || "-"}</td>
-                    <td>{item?.dinas?.nama || item?.dinas || "-"}</td>
+                  <tr key={item?.id}>
+                    <td>{item?.id || "-"}</td>
+                    <td>{item?.nama || "-"}</td>
+                    <td>{item?.lokasi?.nama || "-"}</td>
                     <td>
-                      {item?.tanggal_perolehan
-                        ? new Date(item.tanggal_perolehan).toLocaleDateString("id-ID")
+                      {item?.tgl_perolehan
+                        ? new Date(item.tgl_perolehan).toLocaleDateString("id-ID")
                         : "-"}
                     </td>
-                    <td className="status-tag">{item?.status || "-"}</td>
+                    <td className="status-tag">{item?.is_usage || "-"}</td>
                     <td>
                       <button
                         type="button"

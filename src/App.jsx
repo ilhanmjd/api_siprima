@@ -76,6 +76,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const rolesKey = Array.isArray(allowedRoles) ? allowedRoles.join(",") : "";
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -113,7 +114,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
 
     setIsAuthorized(true);
     setIsLoading(false);
-  }, [navigate, allowedRoles]);
+  }, [navigate, rolesKey]);
 
   if (isLoading) {
     return <div>Loading...</div>;

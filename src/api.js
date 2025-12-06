@@ -1,6 +1,10 @@
 import axios from "axios";
 
 const API_BASE_URL = "https://api.siprima.digitaltech.my.id";
+const isDebugLoggingEnabled =
+  typeof import.meta !== "undefined" &&
+  import.meta.env &&
+  (import.meta.env.DEV || import.meta.env.VITE_DEBUG_LOGS === "true");
 
 // Ambil token dari localStorage
 const getToken = () => localStorage.getItem("token");
@@ -28,8 +32,8 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      console.warn("Unauthorized, redirect to login.");
+    if (error.response?.status === 401 && isDebugLoggingEnabled) {
+      console.warn("Unauthorized response intercepted; redirect to login.");
     }
     return Promise.reject(error);
   }

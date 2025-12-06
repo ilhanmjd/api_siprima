@@ -1,4 +1,4 @@
-/**
+/** "npm run analyze"
  * analyzer.js
  * Advanced Frontend Abuse Analyzer (AST-based)
  *

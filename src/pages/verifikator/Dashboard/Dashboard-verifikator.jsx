@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
 import "./Dashboard-verifikator.css";
@@ -6,9 +6,12 @@ import "./Dashboard-verifikator.css";
 export default function DashboardVerifikator() {
   const navigate = useNavigate();
   const { resetAssetData, loading, error, assets, risks } = useAssetContext();
+  const hasReset = useRef(false);
 
   useEffect(() => {
+    if (hasReset.current) return;
     resetAssetData();
+    hasReset.current = true;
   }, [resetAssetData]);
 
   const handleLogout = async () => {

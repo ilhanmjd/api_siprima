@@ -1,3 +1,4 @@
+// path: Konfirmasi-Penghapusan-Aset
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";

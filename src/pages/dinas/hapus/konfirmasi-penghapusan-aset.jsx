@@ -1,4 +1,4 @@
-// path: Konfirmasi-Penghapusan-Aset
+//path: "/Konfirmasi-Penghapusan-Aset"
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
@@ -24,7 +24,9 @@ export default function KonfirmasiPenghapusanAset() {
     resetAssetData();
 
     // Navigate ke halaman notifikasi
-    navigate("/notifikasi-user-dinas");
+    navigate("/notifikasi-user-dinas", {
+      state: { defaultCategory: "Penghapusan Aset" },
+    });
   };
 
   return (

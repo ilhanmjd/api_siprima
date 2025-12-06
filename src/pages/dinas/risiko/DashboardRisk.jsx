@@ -1,15 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../../../api";
 import "./DashboardRisk.css";
 
 export default function DashboardRisk() {
   const navigate = useNavigate();
-  const items = [
-    { name: "Aset Laptop" },
-    { name: "Aset Komputer" },
-    { name: "Data Cloud" },
-    { name: "Server" },
-  ];
+  const [assets, setAssets] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchAssets = async () => {
+      try {
+        const response = await api.getAssets();
+        const data = Array.isArray(response?.data?.data)
+          ? response.data.data
+          : [];
+        const filteredAssets = data.filter((asset) => {
+          const status = (asset.status || "").toLowerCase();
+          return status !== "pending" && status !== "ditolak";
+        });
+        setAssets(filteredAssets);
+      } catch (err) {
+        setError("Gagal memuat daftar aset");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAssets();
+  }, []);
 
   return (
     <div className="dashboard-risk-page">
@@ -46,19 +66,29 @@ export default function DashboardRisk() {
 
       <div className="content-box">
         <h2 className="content-title">Active Asset List</h2>
-        <div className="risk-list">
-          {items.map((item, index) => (
-            <div className="risk-item" key={index}>
-              <span className="risk-name">{item.name}</span>
-              <button
-                className="risk-button"
-                onClick={() => navigate("/InputRisiko1")}
-              >
-                Risiko
-              </button>
-            </div>
-          ))}
-        </div>
+        {loading ? (
+          <p>Loading assets...</p>
+        ) : error ? (
+          <p>{error}</p>
+        ) : (
+          <div className="risk-list">
+            {assets.length === 0 ? (
+              <p>Tidak ada aset aktif.</p>
+            ) : (
+              assets.map((asset) => (
+                <div className="risk-item" key={asset.id || asset.nama}>
+                  <span className="risk-name">{asset.nama}</span>
+                  <button
+                    className="risk-button"
+                    onClick={() => navigate("/InputRisiko1")}
+                  >
+                    Risiko
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

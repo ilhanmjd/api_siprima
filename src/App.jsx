@@ -34,8 +34,6 @@ import RiwayatPemeliharaan from "./pages/dinas/risiko/RiwayatPemeliharaan";
 import NotifRejectAset from "./pages/dinas/notifikasi/notif-reject-aset";
 import NotifRejectMaintenance from "./pages/dinas/notifikasi/notif-reject-maintenance";
 import NotifAcceptAset from "./pages/dinas/notifikasi/notif-accept-aset";
-import NotifAcceptPenghapusanAset from "./pages/dinas/notifikasi/NotifAcceptPenghapusanAset";
-import NotifRejectPenghapusanAset from "./pages/dinas/notifikasi/NotifRejectPenghapusanAset";
 import NotifAcceptRisk from "./pages/dinas/notifikasi/notif-accept-risk";
 import NotifRejectRisk from "./pages/dinas/notifikasi/notif-reject-risk";
 import NotifAcceptRiskTreatment from "./pages/dinas/notifikasi/notif-accept-risk-treatment";
@@ -158,22 +156,6 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute allowedRoles={['staff']}>
         <LaporanQRCode />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/notif-accept-Penghapusan-Aset",
-    element: (
-      <ProtectedRoute allowedRoles={['staff']}>
-        <NotifAcceptPenghapusanAset />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/notif-reject-Penghapusan-Aset",
-    element: (
-      <ProtectedRoute allowedRoles={['staff']}>
-        <NotifRejectPenghapusanAset />
       </ProtectedRoute>
     ),
   },

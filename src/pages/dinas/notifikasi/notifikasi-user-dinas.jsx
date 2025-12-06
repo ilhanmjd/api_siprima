@@ -1,17 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./notifikasi-user-dinas.css";
 import api from "../../../api.js";
 
 const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState("Asset");
+  const location = useLocation();
+  const [selectedCategory, setSelectedCategory] = useState(
+    location.state?.defaultCategory || "Asset"
+  );
   const [assetList, setAssetList] = useState([]);
   const [riskList, setRiskList] = useState([]);
   const [riskTreatmentList, setRiskTreatmentList] = useState([]);
   const [maintenanceList, setMaintenanceList] = useState([]);
   const [penghapusanasetList, setPenghapusanasetList] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (location.state?.defaultCategory) {
+      setSelectedCategory(location.state.defaultCategory);
+    }
+  }, [location.state]);
 
   useEffect(() => {
     if (selectedCategory === "Asset") fetchAssets();

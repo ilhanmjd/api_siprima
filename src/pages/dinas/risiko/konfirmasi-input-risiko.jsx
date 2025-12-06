@@ -69,8 +69,10 @@ export default function KonfirmasiInputRisiko() {
       // Reset data setelah konfirmasi
       resetAssetData();
 
-      // Navigate ke halaman notifikasi
-      navigate("/notifikasi-user-dinas");
+      // Navigate ke halaman notifikasi dengan tab Risk terpilih
+      navigate("/notifikasi-user-dinas", {
+        state: { defaultCategory: "Risk" },
+      });
     } catch (error) {
       console.error("Error adding risk:", error);
       alert("Terjadi kesalahan saat menambahkan risiko. Silakan coba lagi.");
@@ -127,51 +129,51 @@ export default function KonfirmasiInputRisiko() {
         <form className="form-grid">
           <div>
             <label>ID Aset</label>
-            <input type="text" value={assetData.asset_id} readOnly />
+            <input type="text" value={assetData.asset_id ?? ""} readOnly />
           </div>
           <div>
             <label>Judul Risiko</label>
-            <input type="text" value={assetData.judul} readOnly />
+            <input type="text" value={assetData.judul ?? ""} readOnly />
           </div>
 
           <div>
             <label>Deskripsi Risiko</label>
-            <input type="text" value={assetData.deskripsi} readOnly />
+            <input type="text" value={assetData.deskripsi ?? ""} readOnly />
           </div>
           <div>
             <label>Penyebab</label>
-            <input type="text" value={assetData.penyebab} readOnly />
+            <input type="text" value={assetData.penyebab ?? ""} readOnly />
           </div>
 
           <div>
             <label>Dampak</label>
-            <input type="text" value={assetData.dampak} readOnly />
+            <input type="text" value={assetData.dampak ?? ""} readOnly />
           </div>
           <div>
             <label>Probabilitas</label>
-            <input type="text" value={assetData.probabilitas} readOnly />
+            <input type="text" value={assetData.probabilitas ?? ""} readOnly />
           </div>
 
           <div>
             <label>Nilai Dampak</label>
-            <input type="text" value={assetData.dampak_nilai} readOnly />
+            <input type="text" value={assetData.dampak_nilai ?? ""} readOnly />
           </div>
           <div>
             <label>Level Risiko</label>
-            <input type="text" value={assetData.level_awal} readOnly />
+            <input type="text" value={assetData.level_awal ?? ""} readOnly />
           </div>
 
           <div>
             <label>Kriteria</label>
-            <input type="text" value={assetData.kriteria} readOnly />
+            <input type="text" value={assetData.kriteria ?? ""} readOnly />
           </div>
           <div>
             <label>Prioritas</label>
-            <input type="text" value={assetData.prioritas} readOnly />
+            <input type="text" value={assetData.prioritas ?? ""} readOnly />
           </div>
           <div>
             <label>Status</label>
-            <input type="text" value={assetData.status} readOnly />
+            <input type="text" value={assetData.status ?? ""} readOnly />
           </div>
         </form>
 

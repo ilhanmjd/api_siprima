@@ -10,6 +10,7 @@ function InputRisiko1() {
   const [assets, setAssets] = useState([]);
   const [loadingAssets, setLoadingAssets] = useState(true);
   const [error, setError] = useState(null);
+  const [assetInputValue, setAssetInputValue] = useState("");
 
   useEffect(() => {
     const fetchAssets = async () => {
@@ -33,10 +34,31 @@ function InputRisiko1() {
     fetchAssets();
   }, []);
 
+  useEffect(() => {
+    if (!assetData.asset_id) {
+      setAssetInputValue("");
+      return;
+    }
+    const match = assets.find(
+      (asset) =>
+        (asset.id || asset.asset_id)?.toString() ===
+        assetData.asset_id?.toString()
+    );
+    if (match) {
+      const id = match.id || match.asset_id;
+      const name = match.nama || match.nama_aset || "Aset";
+      setAssetInputValue(`${id} (${name})`);
+    } else {
+      setAssetInputValue(assetData.asset_id.toString());
+    }
+  }, [assetData.asset_id, assets]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "asset_id") {
-      updateAssetData({ asset_id: value });
+      setAssetInputValue(value);
+      const matchId = value.match(/^\d+/)?.[0] || "";
+      updateAssetData({ asset_id: matchId });
       return;
     }
     updateAssetData({ [name]: value });
@@ -97,25 +119,13 @@ function InputRisiko1() {
       {/* === FORM === */}
       <form className="asset-form">
         <label>ID Aset</label>
-        <select
+        <input
+          type="text"
           name="asset_id"
-          value={assetData.asset_id?.toString() || ""}
-          onChange={handleChange}
-          disabled={loadingAssets || assets.length === 0}
-        >
-          <option value="">
-            {loadingAssets ? "Memuat aset..." : "Pilih ID aset"}
-          </option>
-          {assets.map((asset) => {
-            const id = (asset.id || asset.asset_id)?.toString() || "";
-            const name = asset.nama || asset.nama_aset || "Aset";
-            return (
-              <option key={id} value={id}>
-                {`${id} (${name})`}
-              </option>
-            );
-          })}
-        </select>
+          value={assetInputValue}
+          readOnly
+          placeholder={loadingAssets ? "Memuat aset..." : "Pilih atau ketik ID aset"}
+        />
         {error && <p className="asset-error">{error}</p>}
 
         <label>Judul Risiko</label>

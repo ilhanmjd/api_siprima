@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
 import "./InputRisiko2.css";
@@ -6,9 +6,32 @@ import "./InputRisiko2.css";
 function InputRisiko2() {
   const navigate = useNavigate();
   const { assetData, updateAssetData } = useAssetContext();
+  const [openDropdown, setOpenDropdown] = useState("");
+
+  const deriveKriteria = (level) => {
+    const numericLevel = parseInt(level, 10);
+    if (Number.isNaN(numericLevel)) return "";
+    if (numericLevel >= 1 && numericLevel <= 6) return "Low";
+    if (numericLevel >= 7 && numericLevel <= 14) return "Medium";
+    if (numericLevel >= 15 && numericLevel <= 25) return "High";
+    return "";
+  };
 
   const handleChange = (e) => {
     updateAssetData({ [e.target.name]: e.target.value });
+  };
+
+  const handleSelect = (name, value) => {
+    const updates = { [name]: value };
+    if (name === "level_awal") {
+      updates.kriteria = deriveKriteria(value);
+    }
+    updateAssetData(updates);
+    setOpenDropdown("");
+  };
+
+  const toggleDropdown = (name) => {
+    setOpenDropdown((prev) => (prev === name ? "" : name));
   };
 
   const handleBack = () => {
@@ -30,6 +53,19 @@ function InputRisiko2() {
     assetData.kriteria &&
     assetData.prioritas &&
     assetData.status;
+
+  useEffect(() => {
+    if (assetData.status !== "Baru") {
+      updateAssetData({ status: "Baru" });
+    }
+  }, [assetData.status, updateAssetData]);
+
+  useEffect(() => {
+    const derived = deriveKriteria(assetData.level_awal);
+    if (derived !== assetData.kriteria) {
+      updateAssetData({ kriteria: derived });
+    }
+  }, [assetData.level_awal, assetData.kriteria, updateAssetData]);
 
   return (
     <div className="asset-container">
@@ -68,70 +104,114 @@ function InputRisiko2() {
       {/* === FORM === */}
       <form className="asset-form">
         <label>Probabilitas</label>
-        <select
-          name="probabilitas"
-          value={assetData.probabilitas || ""}
-          onChange={handleChange}
-          className="dropdown-input"
-        >
-          <option value="">Pilih probabilitas</option>
-          {[1, 2, 3, 4, 5].map((val) => (
-            <option key={val} value={val}>
-              {val}
-            </option>
-          ))}
-        </select>
+        <div className="dropdown">
+          <button
+            type="button"
+            className="dropdown-btn"
+            onClick={() => toggleDropdown("probabilitas")}
+          >
+            {assetData.probabilitas || "Pilih Probabilitas"} <span>▾</span>
+          </button>
+          <div
+            className={`dropdown-content ${
+              openDropdown === "probabilitas" ? "show" : ""
+            }`}
+          >
+            {[1, 2, 3, 4, 5].map((option) => (
+              <div
+                key={option}
+                onClick={() => handleSelect("probabilitas", option.toString())}
+              >
+                {option}
+              </div>
+            ))}
+          </div>
+        </div>
 
         <label>Nilai Dampak</label>
-        <select
-          name="dampak_nilai"
-          value={assetData.dampak_nilai || ""}
-          onChange={handleChange}
-          className="dropdown-input"
-        >
-          <option value="">Pilih nilai dampak</option>
-          {[1, 2, 3, 4, 5].map((val) => (
-            <option key={val} value={val}>
-              {val}
-            </option>
-          ))}
-        </select>
+        <div className="dropdown">
+          <button
+            type="button"
+            className="dropdown-btn"
+            onClick={() => toggleDropdown("dampak_nilai")}
+          >
+            {assetData.dampak_nilai || "Pilih Nilai Dampak"} <span>▾</span>
+          </button>
+          <div
+            className={`dropdown-content ${
+              openDropdown === "dampak_nilai" ? "show" : ""
+            }`}
+          >
+            {[1, 2, 3, 4, 5].map((option) => (
+              <div
+                key={option}
+                onClick={() => handleSelect("dampak_nilai", option.toString())}
+              >
+                {option}
+              </div>
+            ))}
+          </div>
+        </div>
 
         <label>Level Risiko</label>
-        <input
-          type="text"
-          name="level_awal"
-          value={assetData.level_awal || ""}
-          onChange={handleChange}
-        />
+        <div className="dropdown">
+          <button
+            type="button"
+            className="dropdown-btn"
+            onClick={() => toggleDropdown("level_awal")}
+          >
+            {assetData.level_awal || "Pilih Level Risiko"} <span>▾</span>
+          </button>
+          <div
+            className={`dropdown-content ${
+              openDropdown === "level_awal" ? "show" : ""
+            }`}
+          >
+            {Array.from({ length: 25 }, (_, i) => i + 1).map((option) => (
+              <div
+                key={option}
+                onClick={() => handleSelect("level_awal", option.toString())}
+              >
+                {option}
+              </div>
+            ))}
+          </div>
+        </div>
 
-        <label>Kriteria</label>
+        <label>Kriteria (otomatis)</label>
         <input
           type="text"
-          name="kriteria"
-          value={assetData.kriteria || ""}
-          onChange={handleChange}
+          value={deriveKriteria(assetData.level_awal) || ""}
+          readOnly
         />
 
         <label>Prioritas</label>
-        <select
-          name="prioritas"
-          value={assetData.prioritas || ""}
-          onChange={handleChange}
-          className="dropdown-input"
-        >
-          <option value="">Pilih prioritas</option>
-          <option value="Low">Low</option>
-          <option value="Medium">Medium</option>
-          <option value="High">High</option>
-        </select>
+        <div className="dropdown">
+          <button
+            type="button"
+            className="dropdown-btn"
+            onClick={() => toggleDropdown("prioritas")}
+          >
+            {assetData.prioritas || "Pilih Prioritas"} <span>▾</span>
+          </button>
+          <div
+            className={`dropdown-content ${
+              openDropdown === "prioritas" ? "show" : ""
+            }`}
+          >
+            {["Low", "Medium", "High"].map((option) => (
+              <div key={option} onClick={() => handleSelect("prioritas", option)}>
+                {option}
+              </div>
+            ))}
+          </div>
+        </div>
 
-        <label>Status</label>
+        <label>Status (otomatis)</label>
         <input
           type="text"
-          name="status"
           value={assetData.status || ""}
-          onChange={handleChange}
+          readOnly
         />
 
         <div className="button-group">

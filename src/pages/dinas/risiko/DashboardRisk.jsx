@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../../api";
+import { useAssetContext } from "../../../contexts/AssetContext";
 import "./DashboardRisk.css";
 
 export default function DashboardRisk() {
   const navigate = useNavigate();
+  const { updateAssetData } = useAssetContext();
   const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -80,7 +82,12 @@ export default function DashboardRisk() {
                   <span className="risk-name">{asset.nama}</span>
                   <button
                     className="risk-button"
-                    onClick={() => navigate("/InputRisiko1")}
+                    onClick={() => {
+                      updateAssetData({
+                        asset_id: asset.id || asset.asset_id || "",
+                      });
+                      navigate("/InputRisiko1");
+                    }}
                   >
                     Risiko
                   </button>

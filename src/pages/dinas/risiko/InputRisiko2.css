@@ -169,6 +169,8 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   z-index: 10;
+  max-height: 200px; /* show ~4 items, rest scrollable */
+  overflow-y: scroll;
 }
 
 .dropdown-content div {

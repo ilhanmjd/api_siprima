@@ -67,21 +67,35 @@ function InputRisiko2() {
 
       {/* === FORM === */}
       <form className="asset-form">
-        <label>Probabilitas (hanya angka)</label>
-        <input
-          type="number"
+        <label>Probabilitas</label>
+        <select
           name="probabilitas"
           value={assetData.probabilitas || ""}
           onChange={handleChange}
-        />
+          className="dropdown-input"
+        >
+          <option value="">Pilih probabilitas</option>
+          {[1, 2, 3, 4, 5].map((val) => (
+            <option key={val} value={val}>
+              {val}
+            </option>
+          ))}
+        </select>
 
-        <label>Nilai Dampak (hanya angka)</label>
-        <input
-          type="number"
+        <label>Nilai Dampak</label>
+        <select
           name="dampak_nilai"
           value={assetData.dampak_nilai || ""}
           onChange={handleChange}
-        />
+          className="dropdown-input"
+        >
+          <option value="">Pilih nilai dampak</option>
+          {[1, 2, 3, 4, 5].map((val) => (
+            <option key={val} value={val}>
+              {val}
+            </option>
+          ))}
+        </select>
 
         <label>Level Risiko</label>
         <input
@@ -100,12 +114,17 @@ function InputRisiko2() {
         />
 
         <label>Prioritas</label>
-        <input
-          type="text"
+        <select
           name="prioritas"
           value={assetData.prioritas || ""}
           onChange={handleChange}
-        />
+          className="dropdown-input"
+        >
+          <option value="">Pilih prioritas</option>
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+        </select>
 
         <label>Status</label>
         <input

@@ -1,14 +1,45 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../../../api";
 import { useAssetContext } from "../../../contexts/AssetContext";
 import "./InputRisiko1.css";
 
 function InputRisiko1() {
   const navigate = useNavigate();
   const { assetData, updateAssetData } = useAssetContext();
+  const [assets, setAssets] = useState([]);
+  const [loadingAssets, setLoadingAssets] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchAssets = async () => {
+      try {
+        const response = await api.getAssets();
+        const data = Array.isArray(response?.data?.data)
+          ? response.data.data
+          : [];
+        const filteredAssets = data.filter((asset) => {
+          const status = (asset.status || "").toLowerCase();
+          return status !== "pending" && status !== "ditolak";
+        });
+        setAssets(filteredAssets);
+      } catch (err) {
+        setError("Gagal memuat data aset");
+      } finally {
+        setLoadingAssets(false);
+      }
+    };
+
+    fetchAssets();
+  }, []);
 
   const handleChange = (e) => {
-    updateAssetData({ [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (name === "asset_id") {
+      updateAssetData({ asset_id: value });
+      return;
+    }
+    updateAssetData({ [name]: value });
   };
 
   const handleNext = () => {
@@ -65,13 +96,27 @@ function InputRisiko1() {
 
       {/* === FORM === */}
       <form className="asset-form">
-        <label>ID Aset (hanya angka)</label>
-        <input
-          type="number"
+        <label>ID Aset</label>
+        <select
           name="asset_id"
-          value={assetData.asset_id || ""}
+          value={assetData.asset_id?.toString() || ""}
           onChange={handleChange}
-        />
+          disabled={loadingAssets || assets.length === 0}
+        >
+          <option value="">
+            {loadingAssets ? "Memuat aset..." : "Pilih ID aset"}
+          </option>
+          {assets.map((asset) => {
+            const id = (asset.id || asset.asset_id)?.toString() || "";
+            const name = asset.nama || asset.nama_aset || "Aset";
+            return (
+              <option key={id} value={id}>
+                {`${id} (${name})`}
+              </option>
+            );
+          })}
+        </select>
+        {error && <p className="asset-error">{error}</p>}
 
         <label>Judul Risiko</label>
         <input

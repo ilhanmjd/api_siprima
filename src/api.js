@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const API_BASE_URL = "https://api.siprima.digitaltech.my.id";
+// const API_BASE_URL = "https://api.siprima.digitaltech.my.id";
+const API_BASE_URL = "https://46d083476aee.ngrok-free.app";
+
 // AbortController presence to enable cancellation support
 const noopAbortController = new AbortController();
 const isDebugLoggingEnabled =
@@ -15,6 +17,11 @@ const getToken = () => localStorage.getItem("token");
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 15000,
+  
+  // hapus kalau server udah kembali
+  headers: {
+     "ngrok-skip-browser-warning": "true",
+  },
 });
 
 // Inject Authorization token

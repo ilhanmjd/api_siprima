@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://api.siprima.digitaltech.my.id', 'http://localhost:8000'],
+    'allowed_origins' => ['https://api.siprima.digitaltech.my.id', 'http://localhost:8000', 'http://localhost:5173', 'https://46d083476aee.ngrok-free.app'],
 
     'allowed_origins_patterns' => [],
 

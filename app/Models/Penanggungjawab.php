@@ -19,4 +19,12 @@ class Penanggungjawab extends Model
     {
         return $this->hasMany(Asset::class);
     }
+
+    /**
+     * Get the risk treatments for the penanggungjawab.
+     */
+    public function riskTreatments(): HasMany
+    {
+        return $this->hasMany(RiskTreatment::class, 'penanggung_jawab_id');
+    }
 }

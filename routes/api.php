@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\DataMasterController;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\DinasController;
 use App\Http\Controllers\UnitKerjaController;
@@ -9,6 +8,8 @@ use App\Http\Controllers\SubKategoriController;
 use App\Http\Controllers\PenanggungjawabController;
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\SsoController;
+use App\Http\Controllers\RiskController;
+use App\Http\Controllers\RiskTreatmentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,19 +27,12 @@ use Illuminate\Support\Facades\Route;
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-
+Route::get('/sso/callback', [SsoController::class, 'handleCallback']);
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
-    
-    route::prefix('data-master')->group(function () {        
-        Route::get('/kategori', [DataMasterController::class, 'kategori']);
-        Route::get('/sub-kategori', [DataMasterController::class, 'subKategori']);
-        Route::get('/lokasi', [DataMasterController::class, 'lokasi']);
-        Route::get('/penanggung-jawab', [DataMasterController::class, 'penanggungJawab']);
-    });
 
     Route::prefix('assets')->group(function () {
         Route::get('/', [AssetController::class, 'index']);
@@ -86,5 +80,21 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{id}', [UnitKerjaController::class, 'show']);
         Route::put('/{id}', [UnitKerjaController::class, 'update']);
         Route::delete('/{id}', [UnitKerjaController::class, 'destroy']);
+    });
+
+    Route::prefix('risks')->group(function () {
+        Route::get('/', [RiskController::class, 'index']);
+        Route::post('/', [RiskController::class, 'store']);
+        Route::get('/{id}', [RiskController::class, 'show']);
+        Route::post('/{id}/reject', [RiskController::class, 'reject']);
+        Route::post('/{id}/approve', [RiskController::class, 'approve']);
+    });
+
+    Route::prefix('risk-treatments')->group(function () {
+        Route::get('/', [RiskTreatmentController::class, 'index']);
+        Route::post('/', [RiskTreatmentController::class, 'store']);
+        Route::get('/{id}', [RiskTreatmentController::class, 'show']);
+        Route::post('/{id}/reject', [RiskTreatmentController::class, 'reject']);
+        Route::post('/{id}/approve', [RiskTreatmentController::class, 'approve']);
     });
 });

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('assets', function (Blueprint $table) {
             $table->id();
+            $table->string('kode_bmd')->unique()->nullable();
             $table->foreignId('kategori_id')->constrained('kategoris')->onDelete('cascade');
             $table->foreignId('subkategori_id')->constrained('sub_kategoris')->onDelete('cascade');
             $table->foreignId('lokasi_id')->constrained('lokasis')->onDelete('cascade');

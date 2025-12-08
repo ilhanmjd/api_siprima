@@ -178,9 +178,9 @@ export default function Laporan() {
   };
 
   const isAssetReport = reportType === "asset";
-  const rows = isAssetReport ? filteredAssets : filteredRisks;
-  const loading = isAssetReport ? loadingAssets : false;
-  const error = isAssetReport ? assetsError : null;
+  const rows = isAssetReport ? [] : filteredRisks;
+  const loading = false;
+  const error = null;
   const headers = isAssetReport
     ? ["Nama Aset", "Dinas", "Tanggal", "Status", "QR Code", "Download"]
     : ["Nama Risiko", "Nama Aset", "Dinas", "Kriteria", "Status", "Tanggal", "Download"];

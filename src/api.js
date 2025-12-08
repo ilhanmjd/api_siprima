@@ -80,6 +80,7 @@ export default {
   // ========== DINAS ==========
   getDinas: () => api.get("/api/dinas"),
   createDinas: (data) => api.post("/api/dinas", data),
+  getDinasById: (id, config = {}) => api.get(`/api/dinas/${id}`, config),
   updateDinas: (id, data) => api.put(`/api/dinas/${id}`, data),
   deleteDinas: (id) => api.delete(`/api/dinas/${id}`),
 

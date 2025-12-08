@@ -2,6 +2,7 @@ import React, { useMemo, useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import QRPopup from "./QRPopup";
 import { useAssetContext } from "../../../../contexts/AssetContext";
+import api from "../../../../api";
 import "./Laporan.css";
 
 const REPORT_OPTIONS = [
@@ -25,6 +26,10 @@ export default function Laporan() {
 
   const [showQR, setShowQR] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState(null);
+  const [reportType, setReportType] = useState("asset");
+  const [risks, setRisks] = useState([]);
+  const [loadingRisks, setLoadingRisks] = useState(false);
+  const [risksError, setRisksError] = useState(null);
 
   // keep latest fetch fn without adding function to dependency arrays
   fetchAssetsOnceRef.current = fetchAssetsOnce;
@@ -32,54 +37,39 @@ export default function Laporan() {
   useEffect(() => {
     fetchAssetsOnceRef.current();
   }, []);
-  const [risks] = useState([
-    {
-      id: 1,
-      judul: 'Risiko Keamanan Data',
-      asset: { nama: 'Server Utama' },
-      dinas: { nama: 'Dinas Komunikasi dan Informatika' },
-      kriteria: 'Tinggi',
-      status: 'active',
-      created_at: '2023-02-10'
-    },
-    {
-      id: 2,
-      judul: 'Risiko Kerusakan Perangkat',
-      asset: { nama: 'Komputer Kantor' },
-      dinas: { nama: 'Dinas Komunikasi dan Informatika' },
-      kriteria: 'Sedang',
-      status: 'maintenance',
-      created_at: '2023-04-15'
-    },
-    {
-      id: 3,
-      judul: 'Risiko Kebocoran Informasi',
-      asset: { nama: 'Mobil Dinas' },
-      dinas: { nama: 'Dinas Perhubungan' },
-      kriteria: 'Tinggi',
-      status: 'active',
-      created_at: '2023-01-20'
-    },
-    {
-      id: 4,
-      judul: 'Risiko Kegagalan Sistem',
-      asset: { nama: 'Printer Multifungsi' },
-      dinas: { nama: 'Dinas Pendidikan' },
-      kriteria: 'Rendah',
-      status: 'inactive',
-      created_at: '2023-05-30'
-    },
-    {
-      id: 5,
-      judul: 'Risiko Pencurian Aset',
-      asset: { nama: 'Proyektor' },
-      dinas: { nama: 'Dinas Kesehatan' },
-      kriteria: 'Sedang',
-      status: 'retired',
-      created_at: '2022-11-25'
-    }
-  ]);
-  const [reportType, setReportType] = useState("asset");
+  useEffect(() => {
+    if (reportType !== "risk") return;
+
+    const controller = new AbortController();
+    let isActive = true;
+
+    const fetchRisks = async () => {
+      try {
+        setLoadingRisks(true);
+        setRisksError(null);
+        const response = await api.getRisks({ signal: controller.signal });
+        if (!isActive) return;
+        const list = Array.isArray(response?.data?.data)
+          ? response.data.data
+          : [];
+        setRisks(list);
+      } catch (err) {
+        if (!isActive || controller.signal.aborted) return;
+        setRisksError(err?.message || "Gagal memuat risiko");
+      } finally {
+        if (isActive) {
+          setLoadingRisks(false);
+        }
+      }
+    };
+
+    fetchRisks();
+
+    return () => {
+      isActive = false;
+      controller.abort();
+    };
+  }, [reportType]);
   const [statusFilter, setStatusFilter] = useState("");
   const [search, setSearch] = useState("");
   const [kriteriaFilter, setKriteriaFilter] = useState("");
@@ -121,39 +111,44 @@ export default function Laporan() {
   }, [assets, search, statusFilter, dateFrom, dateTo]);
 
   const filteredRisks = useMemo(() => {
-    return (Array.isArray(risks) ? risks : []).filter((risk) => {
-      if (search) {
-        const term = search.toLowerCase();
-        const title = (risk?.judul || "").toLowerCase();
-        const assetName = (risk?.asset?.nama || risk?.asset_nama || "").toLowerCase();
-        const dinas = (risk?.dinas?.nama || risk?.dinas || "").toLowerCase();
-        if (
-          !title.includes(term) &&
-          !assetName.includes(term) &&
-          !dinas.includes(term) &&
-          !`${risk?.id ?? risk?.risk_id ?? ""}`.includes(term)
-        ) {
-          return false;
+    return (Array.isArray(risks) ? risks : [])
+      .filter((risk) => {
+        const status = String(risk?.status || "").toLowerCase();
+        return status !== "pending" && status !== "rejected";
+      })
+      .filter((risk) => {
+        if (search) {
+          const term = search.toLowerCase();
+          const title = (risk?.judul || "").toLowerCase();
+          const assetName = (risk?.asset?.nama || risk?.asset_nama || "").toLowerCase();
+          const dinas = (risk?.dinas?.nama || risk?.dinas || "").toLowerCase();
+          if (
+            !title.includes(term) &&
+            !assetName.includes(term) &&
+            !dinas.includes(term) &&
+            !`${risk?.id ?? risk?.risk_id ?? ""}`.includes(term)
+          ) {
+            return false;
+          }
         }
-      }
-      if (kriteriaFilter) {
-        const kriteria = String(risk?.kriteria || "").toLowerCase();
-        if (!kriteria.includes(kriteriaFilter.toLowerCase())) {
-          return false;
+        if (kriteriaFilter) {
+          const kriteria = String(risk?.kriteria || "").toLowerCase();
+          if (!kriteria.includes(kriteriaFilter.toLowerCase())) {
+            return false;
+          }
         }
-      }
-      const created = risk?.created_at;
-      if ((dateFrom || dateTo) && created) {
-        const createdDate = new Date(created);
-        if (dateFrom && createdDate < new Date(dateFrom)) {
-          return false;
+        const created = risk?.created_at;
+        if ((dateFrom || dateTo) && created) {
+          const createdDate = new Date(created);
+          if (dateFrom && createdDate < new Date(dateFrom)) {
+            return false;
+          }
+          if (dateTo && createdDate > new Date(dateTo)) {
+            return false;
+          }
         }
-        if (dateTo && createdDate > new Date(dateTo)) {
-          return false;
-        }
-      }
-      return true;
-    });
+        return true;
+      });
   }, [risks, search, kriteriaFilter, dateFrom, dateTo]);
 
   const handleDownloadAsset = (asset) => {
@@ -178,9 +173,9 @@ export default function Laporan() {
   };
 
   const isAssetReport = reportType === "asset";
-  const rows = isAssetReport ? [] : filteredRisks;
-  const loading = false;
-  const error = null;
+  const rows = isAssetReport ? filteredAssets : filteredRisks;
+  const loading = isAssetReport ? loadingAssets : loadingRisks;
+  const error = isAssetReport ? assetsError : risksError;
   const headers = isAssetReport
     ? ["Nama Aset", "Dinas", "Tanggal", "Status", "QR Code", "Download"]
     : ["Nama Risiko", "Nama Aset", "Dinas", "Kriteria", "Status", "Tanggal", "Download"];
@@ -310,7 +305,7 @@ export default function Laporan() {
                     return (
                       <tr key={item?.asset_id ?? item?.id}>
                         <td>{item?.nama || item?.nama_aset || "-"}</td>
-                        <td>{item?.lokasi?.nama || item?.lokasi || "-"}</td>
+                        <td>{""}</td>
                         <td>
                           {item?.tgl_perolehan
                             ? new Date(item.tgl_perolehan).toLocaleDateString("id-ID")

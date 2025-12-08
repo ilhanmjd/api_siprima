@@ -135,7 +135,7 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
 
         <div className="navbar-right">
           <div className="icon" onClick={() => navigate("/notifikasi-user-dinas")}>
-            dY""
+            🔔
           </div>
         </div>
       </nav>

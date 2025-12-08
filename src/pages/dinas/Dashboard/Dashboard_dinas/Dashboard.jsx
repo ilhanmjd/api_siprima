@@ -88,7 +88,7 @@ export default function Dashboard() {
           {[
             { title: "ASSET", buttons: ["Input", "Hapus"] },
             { title: "RISK", buttons: ["Input"] },
-            { title: "STATUS", buttons: ["Check"] },
+            // { title: "STATUS", buttons: ["Check"] },
           ].map((item, i) => (
             <div className="main-card" key={i}>
               <h2>{item.title}</h2>

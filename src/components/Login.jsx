@@ -1,5 +1,5 @@
 // src/components/Login.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 // AbortController presence to signal cancellable requests
@@ -175,6 +175,25 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  const redirectByRole = (roleName) => {
+    switch (roleName) {
+      case "kepala_seksi":
+        navigate("/Dashboard-verifikator");
+        break;
+      case "admin_kota":
+        navigate("/dashboard-diskominfo");
+        break;
+      case "auditor":
+        navigate("/dashboard-auditor");
+        break;
+      case "staff":
+        navigate("/Dashboard");
+        break;
+      default:
+        navigate("/");
+    }
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -187,13 +206,42 @@ const Login = () => {
       const roleName = userRole.name;
       localStorage.setItem('token', access_token);
       localStorage.setItem('role', roleName);
-      navigate("/Dashboard");
+      redirectByRole(roleName);
     } catch (err) {
       setError('Login gagal. Periksa email dan password Anda.');
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    const controller = new AbortController();
+    setLoading(true);
+    api
+      .getUser({ signal: controller.signal })
+      .then((res) => {
+        const roleName =
+          res?.data?.data?.role?.name ||
+          res?.data?.role?.name ||
+          localStorage.getItem("role");
+        if (roleName) {
+          localStorage.setItem("role", roleName);
+          redirectByRole(roleName);
+        } else {
+          throw new Error("Role missing");
+        }
+      })
+      .catch(() => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+      })
+      .finally(() => setLoading(false));
+
+    return () => controller.abort();
+  }, []);
 
   return (
     <LoginContainer>

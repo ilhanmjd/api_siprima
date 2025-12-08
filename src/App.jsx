@@ -91,7 +91,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
       navigateRef.current("/");
       setIsLoading(false);
       return;
-    }
+    } 
 
     setIsAuthenticated(true);
 

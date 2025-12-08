@@ -1,7 +1,8 @@
 import axios from "axios";
 
 // const API_BASE_URL = "https://api.siprima.digitaltech.my.id";
-const API_BASE_URL = "https://46d083476aee.ngrok-free.app";
+const API_BASE_URL = "http://127.0.0.1:8000";
+// const API_BASE_URL = "https://46d083476aee.ngrok-free.app";
 
 // AbortController presence to enable cancellation support
 const noopAbortController = new AbortController();
@@ -52,7 +53,7 @@ export default {
 
   logout: (config = {}) => api.post("/api/logout", null, config),
 
-  getUser: () => api.get("/api/user"),
+  getUser: (config = {}) => api.get("/api/user", config),
 
 
   // ========== DATA MASTER ==========
@@ -81,4 +82,28 @@ export default {
   createDinas: (data) => api.post("/api/dinas", data),
   updateDinas: (id, data) => api.put(`/api/dinas/${id}`, data),
   deleteDinas: (id) => api.delete(`/api/dinas/${id}`),
+
+  
+  // ========== RISK ==========
+  getRisks: (params = {}) => {
+    const { signal, ...rest } = params || {};
+    return api.get("/api/risks", { params: rest, signal });
+  },
+  createRisk: (data) => api.post("/api/risks", data),
+  getRiskById: (id, config = {}) => api.get(`/api/risks/${id}`, config),
+  approveRisk: (id, data = {}) => api.post(`/api/risks/${id}/approve`, data),
+  rejectRisk: (id, data = {}) => api.post(`/api/risks/${id}/reject`, data),
+
+  // ========== RISK TREATMENTS ==========
+  getRiskTreatments: (params = {}) => {
+    const { signal, ...rest } = params || {};
+    return api.get("/api/risk-treatments", { params: rest, signal });
+  },
+  createRiskTreatment: (data) => api.post("/api/risk-treatments", data),
+  getRiskTreatmentById: (id, config = {}) =>
+    api.get(`/api/risk-treatments/${id}`, config),
+  rejectRiskTreatment: (id, data = {}) =>
+    api.post(`/api/risk-treatments/${id}/reject`, data),
+  approveRiskTreatment: (id, data = {}) =>
+    api.post(`/api/risk-treatments/${id}/approve`, data),
 };

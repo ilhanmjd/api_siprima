@@ -1,16 +1,18 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./notifikasi-user-dinas.css";
 import { useAssetContext } from "../../../contexts/AssetContext";
+import api from "../../../api";
 
-const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
+const NotifikasiUserDinasRisikoDariVerifikator = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { assets: cachedAssets, fetchAssetsOnce, loadingAssets } = useAssetContext();
+  const { fetchAssetsOnce, loadingAssets } = useAssetContext();
   const fetchAssetsOnceRef = useRef(fetchAssetsOnce);
   const defaultCategory = location.state?.defaultCategory;
+
   const [selectedCategory, setSelectedCategory] = useState(
-    location.state?.defaultCategory || "Asset"
+    defaultCategory || "Asset"
   );
   const [assetList, setAssetList] = useState([]);
   const [riskList, setRiskList] = useState([]);
@@ -19,46 +21,102 @@ const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
   const [penghapusanasetList, setPenghapusanasetList] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const requestIdRef = useRef(0);
+  const cancelledRef = useRef(false);
+  const riskLoadedRef = useRef(false);
+  const riskTreatmentLoadedRef = useRef(false);
+
   // Keep latest fetch function without putting it as a dependency to avoid analyzer loop warnings
   fetchAssetsOnceRef.current = fetchAssetsOnce;
 
-  useEffect(() => {
-    if (defaultCategory) {
-      setSelectedCategory(defaultCategory);
-    }
-  }, [defaultCategory]);
+  const riskConsume = useCallback(async (requestId) => {
+    const res = await api.getRisks();
+    const list = res?.data?.data ?? res?.data ?? [];
+    if (cancelledRef.current || requestId !== requestIdRef.current) return;
+    setRiskList(Array.isArray(list) ? list : []);
+    riskLoadedRef.current = true;
+  }, []);
 
-  useEffect(() => {
-    let cancelled = false;
-    const loadData = async () => {
+  const riskTreatmentConsume = useCallback(async (requestId) => {
+    const res = await api.getRiskTreatments();
+    const list = res?.data?.data ?? res?.data ?? [];
+    if (cancelledRef.current || requestId !== requestIdRef.current) return;
+    setRiskTreatmentList(Array.isArray(list) ? list : []);
+    riskTreatmentLoadedRef.current = true;
+  }, []);
+
+  const loadDataForCategory = useCallback(
+    async (category) => {
+      const requestId = ++requestIdRef.current;
       setLoading(true);
       try {
-        if (selectedCategory === "Asset") {
+        if (category === "Asset") {
           const data = await fetchAssetsOnceRef.current?.();
-          if (!cancelled) {
-            setAssetList(Array.isArray(data) ? data : []);
+          if (cancelledRef.current || requestId !== requestIdRef.current) return;
+          const assets = Array.isArray(data) ? data : [];
+          setAssetList(
+            [...assets].sort(
+              (a, b) =>
+                new Date(b?.updated_at || b?.updatedAt || 0) -
+                new Date(a?.updated_at || a?.updatedAt || 0)
+            )
+          );
+        } else if (category === "Risk") {
+          if (riskLoadedRef.current) {
+            setLoading(false);
+            return;
           }
-        } else if (selectedCategory === "Risk") {
-          if (!cancelled) setRiskList([]);
-        } else if (selectedCategory === "Maintenance") {
-          if (!cancelled) setMaintenanceList([]);
+          await riskConsume(requestId);
+        } else if (category === "Risk Treatment") {
+          if (riskTreatmentLoadedRef.current) {
+            setLoading(false);
+            return;
+          }
+          await riskTreatmentConsume(requestId);
+        } else if (category === "Maintenance") {
+          if (cancelledRef.current || requestId !== requestIdRef.current) return;
+          setMaintenanceList([]);
+        } else if (category === "Penghapusan Aset") {
+          if (cancelledRef.current || requestId !== requestIdRef.current) return;
+          setPenghapusanasetList([]);
         }
       } catch (error) {
-        if (!cancelled) {
-          if (selectedCategory === "Asset") setAssetList([]);
-          if (selectedCategory === "Risk") setRiskList([]);
-          if (selectedCategory === "Maintenance") setMaintenanceList([]);
-        }
+        if (cancelledRef.current || requestId !== requestIdRef.current) return;
+        if (category === "Asset") setAssetList([]);
+        if (category === "Risk") setRiskList([]);
+        if (category === "Risk Treatment") setRiskTreatmentList([]);
+        if (category === "Maintenance") setMaintenanceList([]);
+        if (category === "Penghapusan Aset") setPenghapusanasetList([]);
       } finally {
-        if (!cancelled) setLoading(false);
+        if (cancelledRef.current || requestId !== requestIdRef.current) return;
+        setLoading(false);
       }
-    };
+    },
+    [riskConsume, riskTreatmentConsume]
+  );
 
-    loadData();
+  useEffect(() => {
+    loadDataForCategory(selectedCategory);
     return () => {
-      cancelled = true;
+      cancelledRef.current = true;
     };
-  }, [selectedCategory]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (defaultCategory && defaultCategory !== selectedCategory) {
+      setSelectedCategory(defaultCategory);
+      loadDataForCategory(defaultCategory);
+    }
+  }, [defaultCategory, loadDataForCategory, selectedCategory]);
+
+  const handleCategoryChange = useCallback(
+    (value) => {
+      setSelectedCategory(value);
+      loadDataForCategory(value);
+    },
+    [loadDataForCategory]
+  );
 
   return (
     <div className="page-wrapper">
@@ -77,7 +135,7 @@ const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
 
         <div className="navbar-right">
           <div className="icon" onClick={() => navigate("/notifikasi-user-dinas")}>
-            🔔
+            dY""
           </div>
         </div>
       </nav>
@@ -103,7 +161,7 @@ const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
             <select
               id="category-select"
               value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
+              onChange={(e) => handleCategoryChange(e.target.value)}
               className="dropdown-select"
             >
               <option value="Asset">Asset</option>
@@ -138,9 +196,9 @@ const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
               {loading ? <p>Loading...</p> :
                 riskList.map((risk) => (
                   <div key={risk.id} className="aset-item">
-                    <span className="aset-name">{risk.nama}</span>
+                    <span className="aset-name">{risk.judul}</span>
                     {risk.status === "pending" && <button className="verification-button under-review">UnderReview</button>}
-                    {risk.status !== "ditolak" && risk.status !== "pending" && <button className="verification-button accepted" onClick={() => navigate('/notif-accept-risk', { state: { id: risk.id, nama: risk.nama } })}>Accepted</button>}
+                    {risk.status !== "ditolak" && risk.status !== "pending" && <button className="verification-button accepted" onClick={() => navigate('/notif-accept-risk', { state: { id: risk.id, nama: risk.judul } })}>Accepted</button>}
                     {risk.status === "ditolak" && <button className="verification-button rejected">Rejected</button>}
                   </div>
                 ))
@@ -154,9 +212,9 @@ const NotifikasiUserDinasRisikoDariVerifikator = ({ assets = [] }) => {
               {loading ? <p>Loading...</p> :
                 riskTreatmentList.map((risk_treatment) => (
                   <div key={risk_treatment.id} className="aset-item">
-                    <span className="aset-name">{risk_treatment.nama}</span>
+                    <span className="aset-name">{risk_treatment.risk.judul}</span>
                     {risk_treatment.status === "pending" && <button className="verification-button under-review">UnderReview</button>}
-                    {risk_treatment.status !== "ditolak" && risk_treatment.status !== "pending" && <button className="verification-button accepted" onClick={() => navigate('/notif-accept-risk-treatment', { state: { id: risk_treatment.id, nama: risk_treatment.nama } })}>Accepted</button>}
+                    {risk_treatment.status !== "ditolak" && risk_treatment.status !== "pending" && <button className="verification-button accepted" onClick={() => navigate('/notif-accept-risk-treatment', { state: { id: risk_treatment.id, risk_judul: risk_treatment.risk.judul } })}>Accepted</button>}
                     {risk_treatment.status === "ditolak" && <button className="verification-button rejected">Rejected</button>}
                   </div>
                 ))

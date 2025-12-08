@@ -79,6 +79,18 @@ export default function NotifAcceptAset() {
       asset.status !== "pending" && asset.status !== "ditolak"
   );
 
+  const handleCategoryChange = useCallback(
+    (value) => {
+      setSelectedCategory(value);
+      if (value === "Risk") {
+        navigate("/notif-accept-risk");
+      } else if (value === "Risk Treatment") {
+        navigate("/notif-accept-risk-treatment");
+      }
+    },
+    [navigate]
+  );
+
   const handleRiskNavigation = () => {
     const targetAsset = selectedAsset || activeAssets[0];
     if (targetAsset) {
@@ -126,14 +138,12 @@ export default function NotifAcceptAset() {
             <select
               id="category-select"
               value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
+              onChange={(e) => handleCategoryChange(e.target.value)}
               className="dropdown-select"
             >
               <option value="Asset">Asset</option>
               <option value="Risk">Risk</option>
               <option value="Risk Treatment">Risk Treatment</option>
-              <option value="Maintenance">Maintenance</option>
-              <option value="Penghapusan Aset">Penghapusan Aset</option>
             </select>
           </div>
 
@@ -176,7 +186,7 @@ export default function NotifAcceptAset() {
                       key={index}
                       className="aset-item-page-reject"
                       style={{
-                        backgroundColor: asset.status !== "ditolak" && asset.status !== "pending" ? "#a9c9f8" : undefined,
+                        backgroundColor: risk.status !== "ditolak" && risk.status !== "pending" ? "#a9c9f8" : undefined,
                         border: isSelected ? "2px solid #000" : "none",
                         cursor: "pointer"
                       }}
@@ -201,7 +211,7 @@ export default function NotifAcceptAset() {
                       key={index}
                       className="aset-item-page-reject"
                       style={{
-                        backgroundColor: asset.status !== "ditolak" && asset.status !== "pending" ? "#a9c9f8" : undefined,
+                        backgroundColor: riskTreatment.status !== "ditolak" && riskTreatment.status !== "pending" ? "#a9c9f8" : undefined,
                         border: isSelected ? "2px solid #000" : "none",
                         cursor: "pointer"
                       }}

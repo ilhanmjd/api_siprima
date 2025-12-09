@@ -1,9 +1,9 @@
+terapkan logika berikut:
+notif-reject-aset.jsx
+call API getAssetById ketika user menekan "aset-item-page-reject". lalu tampilkan response getAssetById ke asset-card.
+
 notif-reject-risk.jsx
-getRisks -> filter hanya data rejected, dan sort row berdasarkan updated_at yang masuk ke aset-list,
-aturan: sort row terbaru (paling atas) sampai terlaman (paling bawah).
+call API getRiskById ketika user menekan "aset-item-page-reject". lalu tampilkan response getRiskById ke asset-card.
 
 notif-reject-risk-treatment.jsx
-getRiskTreatments -> filter hanya data rejected, dan sort row berdasarkan updated_at yang masuk ke aset-list,
-aturan: sort row terbaru (paling atas) sampai terlaman (paling bawah).
-
-DONE
+call API getRiskTreatmentById ketika user menekan "aset-item-page-reject". lalu tampilkan response getRiskTreatmentById ke asset-card.

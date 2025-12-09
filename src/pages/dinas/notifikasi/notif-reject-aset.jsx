@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./notif-reject-aset.css";
 import { useAssetContext } from "../../../contexts/AssetContext";
+import api from "../../../api";
 
 export default function NotifAcceptAset() {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ export default function NotifAcceptAset() {
 
   const [selectedCategory, setSelectedCategory] = useState("Asset");
   const [selectedAsset, setSelectedAsset] = useState(null);
+  const [assetDetail, setAssetDetail] = useState(null);
   const [assetList, setAssetList] = useState([]);
   const [riskList, setRiskList] = useState([]);
   const [maintenanceList, setMaintenanceList] = useState([]);
@@ -70,6 +72,17 @@ export default function NotifAcceptAset() {
       cancelled = true;
     };
   }, [locationStateId]);
+
+  const handleAssetClick = async (asset) => {
+    setSelectedAsset(asset);
+    try {
+      const res = await api.getAssetById(asset.id);
+      const detail = res?.data?.data ?? res?.data ?? null;
+      setAssetDetail(detail);
+    } catch (error) {
+      setAssetDetail(asset);
+    }
+  };
 
   return (
     <div className="page-wrapper">
@@ -135,7 +148,7 @@ export default function NotifAcceptAset() {
                         border: isSelected ? "2px solid #000" : "none",
                         cursor: "pointer"
                       }}
-                      onClick={() => setSelectedAsset(asset)}
+                      onClick={() => handleAssetClick(asset)}
                     >
                       <span className="aset-name">{asset.nama}</span>
                     </div>
@@ -250,27 +263,31 @@ export default function NotifAcceptAset() {
         <section className="asset-detail">
           <div className="asset-card">
             <div className="asset-header">
-              <h3>Aset Laptop</h3>
-              <span className="asset-date">10/10/2025 - 17:23:34 PM</span>
+              <h3>{assetDetail?.nama || selectedAsset?.nama || "Detail Aset"}</h3>
+              <span className="asset-date">
+                {assetDetail?.tgl_perolehan
+                  ? new Date(assetDetail.tgl_perolehan).toLocaleString()
+                  : ""}
+              </span>
             </div>
             <div className="asset-body">
               <p>
-                <b>Kategori</b> :{" "}
+                <b>Kategori</b> : {assetDetail?.kategori?.nama || ""}
               </p>
               <p>
-                <b>Nama Asset</b> :{" "}
+                <b>Nama Asset</b> : {assetDetail?.nama || ""}
               </p>
               <p>
-                <b>Kode Asset</b> :{" "}
+                <b>Kode Asset</b> : {assetDetail?.kode_bmd || assetDetail?.kode_asset || ""}
               </p>
               <p>
-                <b>Person in Change</b> :{" "}
+                <b>Person in Change</b> : {assetDetail?.penanggungjawab?.nama || ""}
               </p>
               <p>
                 <b className="status-rejected">Status Pengajuan : DITOLAK</b>
               </p>
               <p>
-                <b>Alasan</b> :{" "}
+                <b>Alasan</b> : {assetDetail?.alasan || ""}
               </p>
             </div>
           </div>

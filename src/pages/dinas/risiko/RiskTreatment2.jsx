@@ -66,7 +66,7 @@ function RiskTreatment2() {
       <form className="asset-form">
         <label>Probabilitas Akhir</label>
         <input
-          type="text"
+          type="number"
           name="probabilitasAkhir"
           value={assetData.probabilitasAkhir || ""}
           onChange={handleChange}
@@ -74,7 +74,7 @@ function RiskTreatment2() {
 
         <label>Dampak Akhir</label>
         <input
-          type="text"
+          type="number"
           name="dampakAkhir"
           value={assetData.dampakAkhir || ""}
           onChange={handleChange}
@@ -82,7 +82,7 @@ function RiskTreatment2() {
 
         <label>Level Residual</label>
         <input
-          type="text"
+          type="number"
           name="levelResidual"
           value={assetData.levelResidual || ""}
           onChange={handleChange}

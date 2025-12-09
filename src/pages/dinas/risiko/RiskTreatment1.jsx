@@ -1,17 +1,121 @@
-import React from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
+import api from "../../../api";
 import "./RiskTreatment1.css";
 
 function RiskTreatment1() {
   const navigate = useNavigate();
   const { assetData, updateAssetData } = useAssetContext();
+  const [riskOptions, setRiskOptions] = useState([]);
+  const [loadingRisks, setLoadingRisks] = useState(false);
+  const [loadingPenanggungJawab, setLoadingPenanggungJawab] = useState(false);
+  const [isRiskDropdownOpen, setIsRiskDropdownOpen] = useState(false);
+  const [riskFilter, setRiskFilter] = useState("");
+  const [selectedRiskDisplay, setSelectedRiskDisplay] = useState("");
+  const riskRef = useRef(null);
+
+
 
   const handleChange = (e) => {
     updateAssetData({ [e.target.name]: e.target.value });
   };
 
-  const handleNext = () => {
+  const handleBiayaChange = (e) => {
+    const value = e.target.value.replace(/[^0-9]/g, '');
+    updateAssetData({ biaya: value });
+  };
+
+  useEffect(() => {
+    const fetchRisks = async () => {
+      setLoadingRisks(true);
+      try {
+        const res = await api.getRisks();
+        const list = res?.data?.data ?? res?.data ?? [];
+        console.log("Risks API response:", res); // Debug log
+        console.log("Risks list:", list); // Debug log
+        if (list.length > 0) {
+          console.log("First risk object structure:", list[0]); // Debug log
+        }
+        setRiskOptions(Array.isArray(list) ? list : []);
+      } catch (error) {
+        setRiskOptions([]);
+      } finally {
+        setLoadingRisks(false);
+      }
+    };
+    fetchRisks();
+  }, []);
+
+
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (riskRef.current && !riskRef.current.contains(event.target)) {
+        setIsRiskDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+
+
+  const filteredRisks = useMemo(() => {
+    const term = (riskFilter || "").toLowerCase();
+    return (Array.isArray(riskOptions) ? riskOptions : []).filter((risk) => {
+      const text =
+        risk?.judul?.toLowerCase() ||
+        risk?.nama?.toLowerCase() ||
+        String(risk?.id ?? "").toLowerCase();
+      return text.includes(term) && risk.status === "accepted";
+    });
+  }, [riskFilter, riskOptions]);
+
+
+
+
+
+  const handleRiskInputChange = (e) => {
+    const value = e.target.value;
+    setRiskFilter(value);
+    setSelectedRiskDisplay("");
+    setIsRiskDropdownOpen(true);
+  };
+
+  const handleRiskSelect = async (risk) => {
+    console.log("Selected risk:", risk); // Debug log
+    updateAssetData({ idRisiko: risk?.id || "" });
+    setSelectedRiskDisplay(`(${risk?.id}) - ${risk?.judul}`);
+    setIsRiskDropdownOpen(false);
+
+    // Fetch penanggung jawab if available
+    const penanggungJawabId = risk?.penanggungjawab_id || risk?.asset?.penanggungjawab_id;
+    if (penanggungJawabId) {
+      console.log("Fetching penanggung jawab for ID:", penanggungJawabId); // Debug log
+      setLoadingPenanggungJawab(true);
+      try {
+        const res = await api.getPenanggungjawabById(penanggungJawabId);
+        console.log("Penanggung jawab API response:", res); // Debug log
+        const penanggungJawabData = res?.data?.data ?? res?.data;
+        if (penanggungJawabData?.nama) {
+          updateAssetData({ penanggungJawab: penanggungJawabData.nama, penanggungJawabId: penanggungJawabId });
+        }
+      } catch (error) {
+        console.error("Error fetching penanggung jawab:", error);
+      } finally {
+        setLoadingPenanggungJawab(false);
+      }
+    } else {
+      console.log("No penanggungjawab_id found in risk or asset object"); // Debug log
+    }
+  };
+
+
+
+const handleNext = () => {
     navigate("/RiskTreatment2");
   };
 
@@ -66,13 +170,27 @@ function RiskTreatment1() {
 
       {/* === FORM === */}
       <form className="asset-form">
+        
         <label>ID Risiko</label>
-        <input
-          type="text"
-          name="idRisiko"
-          value={assetData.idRisiko || ""}
-          onChange={handleChange}
-        />
+        <div className="dropdown">
+          <div className="text-dropdown-container">
+            <input
+              type="text"
+              className="dropdown-input"
+              value={selectedRiskDisplay || riskFilter}
+              onChange={handleRiskInputChange}
+              onClick={() => setIsRiskDropdownOpen(!isRiskDropdownOpen)}
+              ref={riskRef}
+              placeholder={loadingRisks ? "Memuat..." : "Pilih atau ketik ID Risiko"}
+            />
+            <span className="dropdown-arrow" onClick={() => setIsRiskDropdownOpen(!isRiskDropdownOpen)}>▾</span>
+          </div>
+          <div className={`dropdown-content risk-dropdown ${isRiskDropdownOpen ? 'show' : ''}`}>
+            {filteredRisks.map((risk) => (
+              <div key={risk.id} onClick={() => handleRiskSelect(risk)}>({risk.id}) - {risk.judul}</div>
+            ))}
+          </div>
+        </div>
 
         <label>Strategi</label>
         <input
@@ -96,6 +214,7 @@ function RiskTreatment1() {
           name="penanggungJawab"
           value={assetData.penanggungJawab || ""}
           onChange={handleChange}
+          placeholder={loadingPenanggungJawab ? "Memuat..." : ""}
         />
 
         <label>Target Tanggal</label>
@@ -111,7 +230,7 @@ function RiskTreatment1() {
           type="text"
           name="biaya"
           value={assetData.biaya || ""}
-          onChange={handleChange}
+          onChange={handleBiayaChange}
         />
 
         <button

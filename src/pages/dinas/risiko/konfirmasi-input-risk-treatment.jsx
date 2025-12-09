@@ -1,35 +1,55 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
+import api from "../../../api.js";
 import "./konfirmasi-input-risk-treatment.css";
 
 export default function KonfirmasiInputRiskTreatment() {
   const navigate = useNavigate();
   const { assetData, addRisk, resetAssetData } = useAssetContext();
 
-  const handleConfirm = () => {
+  const isFormComplete = assetData.idRisiko && assetData.strategi && assetData.pengendalian && assetData.penanggungJawab && assetData.penanggungJawabId && assetData.targetTanggal && assetData.biaya && assetData.probabilitasAkhir && assetData.dampakAkhir && assetData.levelResidual &&
+    assetData.idRisiko !== '' && assetData.strategi !== '' && assetData.pengendalian !== '' && assetData.penanggungJawab !== '' && assetData.penanggungJawabId !== '' && assetData.targetTanggal !== '' && assetData.biaya !== '' && assetData.probabilitasAkhir !== '' && assetData.dampakAkhir !== '' && assetData.levelResidual !== '';
+
+  const handleConfirm = async () => {
+    // Validate and parse numeric fields
+    const biaya = parseInt(assetData.biaya, 10);
+    const probabilitasAkhir = parseInt(assetData.probabilitasAkhir, 10);
+    const dampakAkhir = parseInt(assetData.dampakAkhir, 10);
+    const levelResidual = parseInt(assetData.levelResidual, 10);
+
+    if (isNaN(biaya) || isNaN(probabilitasAkhir) || isNaN(dampakAkhir) || isNaN(levelResidual)) {
+      alert("Please ensure all numeric fields are valid numbers.");
+      return;
+    }
+
     // Membuat objek risk treatment baru berdasarkan data yang ada
     const newRiskTreatment = {
-      id: Date.now(), // Menggunakan timestamp sebagai ID unik
-      idRisiko: assetData.idRisiko,
+      risiko_id: assetData.idRisiko,
       strategi: assetData.strategi,
       pengendalian: assetData.pengendalian,
-      penanggungJawab: assetData.penanggungJawab,
-      targetTanggal: assetData.targetTanggal,
-      biaya: assetData.biaya,
-      probabilitasAkhir: assetData.probabilitasAkhir,
-      dampakAkhir: assetData.dampakAkhir,
-      levelResidual: assetData.levelResidual,
+      penanggung_jawab_id: assetData.penanggungJawabId,
+      target_tanggal: assetData.targetTanggal,
+      biaya: biaya,
+      probabilitas_akhir: probabilitasAkhir,
+      dampak_akhir: dampakAkhir,
+      level_residual: levelResidual,
     };
 
-    // Menambahkan risk treatment ke array riskTreatments
-    // addRiskTreatment(newRiskTreatment); // TODO: Implement addRiskTreatment in context
+    try {
+      // Call API to create risk treatment
+      await api.createRiskTreatment(newRiskTreatment);
 
-    // Reset data setelah konfirmasi
-    resetAssetData();
+      // Reset data setelah konfirmasi
+      resetAssetData();
 
-    // Navigate ke halaman notifikasi
-    navigate("/notifikasi-user-dinas");
+      // Navigate ke halaman notifikasi
+      navigate("/notifikasi-user-dinas");
+    } catch (error) {
+      console.error("Error creating risk treatment:", error);
+      // Handle error, e.g., show alert or notification
+      alert("Failed to create risk treatment. Please try again.");
+    }
   };
 
   return (
@@ -129,7 +149,7 @@ export default function KonfirmasiInputRiskTreatment() {
           >
             Batal
           </button>
-          <button type="submit" className="btn-confirm" onClick={handleConfirm}>
+          <button type="submit" className="btn-confirm" onClick={handleConfirm} disabled={!isFormComplete}>
             Konfirmasi
           </button>
         </div>

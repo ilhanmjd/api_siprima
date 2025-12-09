@@ -91,10 +91,19 @@ export const AssetProvider = ({ children }) => {
     kondisiAset: "",
     doc: null,
     penanggungJawab: "",
+    penanggungJawabId: "",
     lokasi: "",
     idAsset: "",
     tipeAsset: "",
     statusAsset: "Aktif",
+    idRisiko: "",
+    strategi: "",
+    pengendalian: "",
+    targetTanggal: "",
+    biaya: "",
+    probabilitasAkhir: "",
+    dampakAkhir: "",
+    levelResidual: "",
   });
 
   const updateAssetData = useCallback((newData) => {
@@ -112,10 +121,19 @@ export const AssetProvider = ({ children }) => {
       kondisiAset: "",
       doc: null,
       penanggungJawab: "",
+      penanggungJawabId: "",
       lokasi: "",
       idAsset: "",
       tipeAsset: "",
       statusAsset: "Aktif",
+      idRisiko: "",
+      strategi: "",
+      pengendalian: "",
+      targetTanggal: "",
+      biaya: "",
+      probabilitasAkhir: "",
+      dampakAkhir: "",
+      levelResidual: "",
     });
   }, []);
 

@@ -1,43 +1,48 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { formatDistanceToNow } from "date-fns";
+import api from "../../../api.js";
 import "./notifikasi-verifikator-aset.css";
 
 export default function NotifikasiVerifikatorAset() {
   const navigate = useNavigate();
 
-  // 5 item sesuai contoh gambar
-  const items = [
-    {
-      id: 1579,
-      waktu: "10 mins ago",
-      teks: "Printer Epson L3250 perangkat multifungsi (print, scan, copy) yang digunakan untuk mendukung kegiatan administrasi dan dokumentasi di Dinas Kesehatan.",
-    },
-    {
-      id: 1580,
-      waktu: "25 mins ago",
-      teks: "Laptop Lenovo ThinkPad untuk mendukung staf dalam kegiatan operasional sehari-hari.",
-    },
-    {
-      id: 1581,
-      waktu: "40 mins ago",
-      teks: "Meja kerja kayu ukuran besar digunakan untuk ruang Kepala Bidang.",
-    },
-    {
-      id: 1582,
-      waktu: "1 hour ago",
-      teks: "Kursi ergonomis baru untuk meningkatkan kenyamanan pegawai.",
-    },
-    {
-      id: 1583,
-      waktu: "2 hours ago",
-      teks: "Proyektor Epson digunakan untuk presentasi di ruang rapat.",
-    },
-    {
-      id: 1579,
-      waktu: "10 mins ago",
-      teks: "Printer Epson L3250 perangkat multifungsi (print, scan, copy) yang digunakan untuk mendukung kegiatan administrasi dan dokumentasi di Dinas Kesehatan.",
-    },
-  ];
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchAssets = async () => {
+      try {
+        const response = await api.getAssets();
+        const mappedItems = (response.data.data || response.data)
+          .filter((asset) => asset.status === "pending")
+          .map((asset) => ({
+            id: asset.id,
+            waktu: formatDistanceToNow(new Date(asset.updated_at), {
+              addSuffix: true,
+            }),
+            teks: asset.deskripsi,
+          }));
+
+        setItems(mappedItems);
+      } catch (err) {
+        setError(err.message);
+        console.error("Error fetching assets:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAssets();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="notifikasi-verifikator-aset-page">
@@ -78,7 +83,11 @@ export default function NotifikasiVerifikatorAset() {
         <span
           className="breadcrumb-link"
           onClick={() => navigate("/Dashboard-verifikator")}
-          style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}
+          style={{
+            color: "blue",
+            textDecoration: "underline",
+            cursor: "pointer",
+          }}
         >
           Dashboard
         </span>{" "}

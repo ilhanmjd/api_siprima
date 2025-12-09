@@ -27,8 +27,17 @@ function InputRisiko2() {
 
   const handleSelect = (name, value) => {
     const updates = { [name]: value };
-    if (name === "level_risiko") {
-      updates.kriteria = deriveKriteria(value);
+    // Hitung otomatis level risiko = probabilitas x nilai_dampak
+    if (name === "probabilitas" || name === "nilai_dampak") {
+      const probabilitas =
+        name === "probabilitas" ? Number(value) : Number(assetData.probabilitas);
+      const nilaiDampak =
+        name === "nilai_dampak" ? Number(value) : Number(assetData.nilai_dampak);
+      if (!Number.isNaN(probabilitas) && !Number.isNaN(nilaiDampak)) {
+        const level = probabilitas * nilaiDampak;
+        updates.level_risiko = level.toString();
+        updates.kriteria = deriveKriteria(level);
+      }
     }
     updateAssetData(updates);
     setOpenDropdown("");
@@ -148,30 +157,12 @@ function InputRisiko2() {
           </div>
         </div>
 
-        <label>Level Risiko</label>
-        <div className="dropdown">
-          <button
-            type="button"
-            className="dropdown-btn"
-            onClick={() => toggleDropdown("level_risiko")}
-          >
-            {assetData.level_risiko || "Pilih Level Risiko"} <span>▾</span>
-          </button>
-          <div
-            className={`dropdown-content ${
-              openDropdown === "level_risiko" ? "show" : ""
-            }`}
-          >
-            {Array.from({ length: 25 }, (_, i) => i + 1).map((option) => (
-              <div
-                key={option}
-                onClick={() => handleSelect("level_risiko", option.toString())}
-              >
-                {option}
-              </div>
-            ))}
-          </div>
-        </div>
+        <label>Level Risiko (otomatis)</label>
+        <input
+          type="text"
+          value={assetData.level_risiko || ""}
+          readOnly
+        />
 
         <label>Kriteria (otomatis)</label>
         <input

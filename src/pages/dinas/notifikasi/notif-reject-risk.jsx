@@ -1,35 +1,57 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import "./notif-reject-risk.css";
+import api from "../../../api";
 
 export default function NotifikasiRejectRisk() {
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState("Asset");
+  const [selectedCategory, setSelectedCategory] = useState("Risk");
   const [assetList, setAssetList] = useState([]);
   const [riskList, setRiskList] = useState([]);
   const [maintenanceList, setMaintenanceList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const sortByUpdatedAtDesc = useCallback(
+    (items = []) =>
+      [...items].sort(
+        (a, b) =>
+          new Date(b?.updated_at || b?.updatedAt || 0) -
+          new Date(a?.updated_at || a?.updatedAt || 0)
+      ),
+    []
+  );
+
+  const handleCategoryChange = useCallback(
+    (value) => {
+      setSelectedCategory(value);
+      if (value === "Asset") navigate("/notif-reject-aset");
+      else if (value === "Risk") navigate("/notif-reject-risk");
+      else if (value === "Risk Treatment") navigate("/notif-reject-risk-treatment");
+      else if (value === "Maintenance") navigate("/notif-reject-maintenance");
+      else if (value === "Penghapusan Aset") navigate("/notif-reject-penghapusan-aset");
+    },
+    [navigate]
+  );
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [assetsRes, risksRes, maintenancesRes] = await Promise.all([
-          getAssets(),
-          getRisks(),
-          getMaintenances(),
-        ]);
-        setAssetList(assetsRes.data || []);
-        setRiskList(risksRes.data || []);
-        setMaintenanceList(maintenancesRes.data || []);
+        // Fetch risks, filter rejected, sort by updated_at desc
+        const risksRes = await api.getRisks();
+        const risksRaw = risksRes?.data?.data ?? risksRes?.data ?? [];
+        const rejectedRisks = (Array.isArray(risksRaw) ? risksRaw : []).filter(
+          (r) => r?.status === "rejected" || r?.status === "ditolak"
+        );
+        setRiskList(sortByUpdatedAtDesc(rejectedRisks));
       } catch (error) {
+        setRiskList([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [sortByUpdatedAtDesc]);
 
   return (
     <div className="page-wrapper">
@@ -89,7 +111,7 @@ export default function NotifikasiRejectRisk() {
             <select
               id="category-select"
               value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
+              onChange={(e) => handleCategoryChange(e.target.value)}
               style={{
                 padding: "9px 12px",
                 borderRadius: "6px",
@@ -118,7 +140,6 @@ export default function NotifikasiRejectRisk() {
               <option value="Risk">Risk</option>
               <option value="Risk Treatment">Risk Treatment</option>
               <option value="Maintenance">Maintenance</option>
-              <option value="Penghapusan Aset">Penghapusan Aset</option>
             </select>
           </div>
           {selectedCategory === "Asset" && (

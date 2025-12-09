@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./notif-reject-aset.css";
 import { useAssetContext } from "../../../contexts/AssetContext";
@@ -22,6 +22,19 @@ export default function NotifAcceptAset() {
 
   // keep the latest fetch without adding function to dependency arrays
   fetchAssetsOnceRef.current = fetchAssetsOnce;
+
+  const handleCategoryChange = useCallback(
+    (value) => {
+      setSelectedCategory(value);
+      if (value === "Asset") navigate("/notif-reject-aset");
+      else if (value === "Risk") navigate("/notif-reject-risk");
+      else if (value === "Risk Treatment") navigate("/notif-reject-risk-treatment");
+      else if (value === "Maintenance") navigate("/notif-reject-maintenance");
+      else if (value === "Penghapusan Aset")
+        navigate("/notif-reject-penghapusan-aset");
+    },
+    [navigate]
+  );
 
   useEffect(() => {
     if (didSyncRef.current) return;
@@ -97,14 +110,13 @@ export default function NotifAcceptAset() {
             <select
               id="category-select"
               value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
+              onChange={(e) => handleCategoryChange(e.target.value)}
               className="dropdown-select"
             >
               <option value="Asset">Asset</option>
               <option value="Risk">Risk</option>
               <option value="Risk Treatment">Risk Treatment</option>
               <option value="Maintenance">Maintenance</option>
-              <option value="Penghapusan Aset">Penghapusan Aset</option>
             </select>
           </div>
 

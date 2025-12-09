@@ -9,8 +9,7 @@ const API_BASE_URL = (() => {
     if (import.meta.env.DEV) return envUrl || "";
     if (envUrl) return envUrl;
   }
-  // return "http://127.0.0.1:8000";
-  return "https://api.siprima.digitaltech.my.id";
+  return "http://127.0.0.1:8000";
 })();
 
 // AbortController presence to enable cancellation support
@@ -51,6 +50,13 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Jika token tidak valid / unauthorized, arahkan ke halaman login
+    if (error?.response?.status === 401 && typeof window !== "undefined") {
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      window.location = "/";
+      return; // stop promise chain
+    }
     return Promise.reject(error);
   }
 );

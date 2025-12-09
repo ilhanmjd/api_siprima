@@ -25,25 +25,34 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
   const cancelledRef = useRef(false);
   const riskLoadedRef = useRef(false);
   const riskTreatmentLoadedRef = useRef(false);
+  const defaultCategoryAppliedRef = useRef(false);
+
+  const sortByUpdatedAt = useCallback((items = []) => {
+    return [...items].sort(
+      (a, b) =>
+        new Date(b?.updated_at || b?.updatedAt || 0) -
+        new Date(a?.updated_at || a?.updatedAt || 0)
+    );
+  }, []);
 
   // Keep latest fetch function without putting it as a dependency to avoid analyzer loop warnings
   fetchAssetsOnceRef.current = fetchAssetsOnce;
 
   const riskConsume = useCallback(async (requestId) => {
     const res = await api.getRisks();
-    const list = res?.data?.data ?? res?.data ?? [];
+    const list = sortByUpdatedAt(res?.data?.data ?? res?.data ?? []);
     if (cancelledRef.current || requestId !== requestIdRef.current) return;
     setRiskList(Array.isArray(list) ? list : []);
     riskLoadedRef.current = true;
-  }, []);
+  }, [sortByUpdatedAt]);
 
   const riskTreatmentConsume = useCallback(async (requestId) => {
     const res = await api.getRiskTreatments();
-    const list = res?.data?.data ?? res?.data ?? [];
+    const list = sortByUpdatedAt(res?.data?.data ?? res?.data ?? []);
     if (cancelledRef.current || requestId !== requestIdRef.current) return;
     setRiskTreatmentList(Array.isArray(list) ? list : []);
     riskTreatmentLoadedRef.current = true;
-  }, []);
+  }, [sortByUpdatedAt]);
 
   const loadDataForCategory = useCallback(
     async (category) => {
@@ -54,31 +63,31 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
           const data = await fetchAssetsOnceRef.current?.();
           if (cancelledRef.current || requestId !== requestIdRef.current) return;
           const assets = Array.isArray(data) ? data : [];
-          setAssetList(
-            [...assets].sort(
-              (a, b) =>
-                new Date(b?.updated_at || b?.updatedAt || 0) -
-                new Date(a?.updated_at || a?.updatedAt || 0)
-            )
-          );
+          setAssetList(sortByUpdatedAt(assets));
         } else if (category === "Risk") {
           if (riskLoadedRef.current) {
-            setLoading(false);
+            if (!cancelledRef.current && requestId === requestIdRef.current) {
+              setRiskList((prev) => sortByUpdatedAt(prev));
+              setLoading(false);
+            }
             return;
           }
           await riskConsume(requestId);
         } else if (category === "Risk Treatment") {
           if (riskTreatmentLoadedRef.current) {
-            setLoading(false);
+            if (!cancelledRef.current && requestId === requestIdRef.current) {
+              setRiskTreatmentList((prev) => sortByUpdatedAt(prev));
+              setLoading(false);
+            }
             return;
           }
           await riskTreatmentConsume(requestId);
         } else if (category === "Maintenance") {
           if (cancelledRef.current || requestId !== requestIdRef.current) return;
-          setMaintenanceList([]);
+          setMaintenanceList((prev) => sortByUpdatedAt(prev));
         } else if (category === "Penghapusan Aset") {
           if (cancelledRef.current || requestId !== requestIdRef.current) return;
-          setPenghapusanasetList([]);
+          setPenghapusanasetList((prev) => sortByUpdatedAt(prev));
         }
       } catch (error) {
         if (cancelledRef.current || requestId !== requestIdRef.current) return;
@@ -104,11 +113,11 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
   }, []);
 
   useEffect(() => {
-    if (defaultCategory && defaultCategory !== selectedCategory) {
-      setSelectedCategory(defaultCategory);
-      loadDataForCategory(defaultCategory);
-    }
-  }, [defaultCategory, loadDataForCategory, selectedCategory]);
+    if (!defaultCategory || defaultCategoryAppliedRef.current) return;
+    defaultCategoryAppliedRef.current = true;
+    setSelectedCategory(defaultCategory);
+    loadDataForCategory(defaultCategory);
+  }, [defaultCategory, loadDataForCategory]);
 
   const handleCategoryChange = useCallback(
     (value) => {
@@ -182,7 +191,14 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
                       <span className="aset-name">{asset.nama}</span>
                       {asset.status === "pending" && <button className="verification-button under-review">UnderReview</button>}
                       {asset.status !== "ditolak" && asset.status !== "pending" && <button className="verification-button accepted" onClick={() => navigate('/notif-accept-aset', { state: { id: asset.id, nama: asset.nama } })}>Accepted</button>}
-                      {asset.status === "ditolak" && <button className="verification-button rejected">Rejected</button>}
+                      {asset.status === "ditolak" && (
+                        <button
+                          className="verification-button rejected"
+                          onClick={() => navigate("/notif-reject-aset", { state: { id: asset.id } })}
+                        >
+                          Rejected
+                        </button>
+                      )}
                     </div>
                   );
                 })
@@ -198,7 +214,7 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
                   <div key={risk.id} className="aset-item">
                     <span className="aset-name">{risk.judul}</span>
                     {risk.status === "pending" && <button className="verification-button under-review">UnderReview</button>}
-                    {risk.status !== "ditolak" && risk.status !== "pending" && (
+                    {risk.status !== "rejected" && risk.status !== "pending" && (
                       <button
                         className="verification-button accepted"
                         onClick={() =>
@@ -210,7 +226,16 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
                         Accepted
                       </button>
                     )}
-                    {risk.status === "ditolak" && <button className="verification-button rejected">Rejected</button>}
+                    {risk.status === "rejected" && (
+                      <button
+                        className="verification-button rejected"
+                        onClick={() =>
+                          navigate("/notif-reject-risk", { state: { id: risk.id } })
+                        }
+                      >
+                        Rejected
+                      </button>
+                    )}
                   </div>
                 ))
               }
@@ -225,7 +250,7 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
                   <div key={risk_treatment.id} className="aset-item">
                     <span className="aset-name">{risk_treatment.risk.judul}</span>
                     {risk_treatment.status === "pending" && <button className="verification-button under-review">UnderReview</button>}
-                    {risk_treatment.status !== "ditolak" && risk_treatment.status !== "pending" && (
+                    {risk_treatment.status !== "rejected" && risk_treatment.status !== "pending" && (
                       <button
                         className="verification-button accepted"
                         onClick={() =>
@@ -237,7 +262,18 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
                         Accepted
                       </button>
                     )}
-                    {risk_treatment.status === "ditolak" && <button className="verification-button rejected">Rejected</button>}
+                    {risk_treatment.status === "rejected" && (
+                      <button
+                        className="verification-button rejected"
+                        onClick={() =>
+                          navigate("/notif-reject-risk-treatment", {
+                            state: { id: risk_treatment.id },
+                          })
+                        }
+                      >
+                        Rejected
+                      </button>
+                    )}
                   </div>
                 ))
               }
@@ -252,8 +288,19 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
                   <div key={maintenance.id} className="aset-item">
                     <span className="aset-name">{maintenance.nama}</span>
                     {maintenance.status === "pending" && <button className="verification-button under-review">UnderReview</button>}
-                    {maintenance.status !== "ditolak" && maintenance.status !== "pending" && <button className="verification-button accepted" onClick={() => navigate('/notif-accept-maintenance', { state: { id: maintenance.id, nama: maintenance.nama } })}>Accepted</button>}
-                    {maintenance.status === "ditolak" && <button className="verification-button rejected">Rejected</button>}
+                    {maintenance.status !== "rejected" && maintenance.status !== "pending" && <button className="verification-button accepted" onClick={() => navigate('/notif-accept-maintenance', { state: { id: maintenance.id, nama: maintenance.nama } })}>Accepted</button>}
+                    {maintenance.status === "rejected" && (
+                      <button
+                        className="verification-button rejected"
+                        onClick={() =>
+                          navigate("/notif-reject-maintenance", {
+                            state: { id: maintenance.id },
+                          })
+                        }
+                      >
+                        Rejected
+                      </button>
+                    )}
                   </div>
                 ))
               }
@@ -268,8 +315,8 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
                   <div key={penghapusan_aset.id} className="aset-item">
                     <span className="aset-name">{penghapusan_aset.nama}</span>
                     {penghapusan_aset.status === "pending" && <button className="verification-button under-review">UnderReview</button>}
-                    {penghapusan_aset.status !== "ditolak" && penghapusan_aset.status !== "pending" && <button className="verification-button accepted" onClick={() => navigate('/notif-accept-penghapusan-aset', { state: { id: penghapusan_aset.id, nama: penghapusan_aset.nama } })}>Accepted</button>}
-                    {penghapusan_aset.status === "ditolak" && <button className="verification-button rejected">Rejected</button>}
+                    {penghapusan_aset.status !== "rejected" && penghapusan_aset.status !== "pending" && <button className="verification-button accepted" onClick={() => navigate('/notif-accept-penghapusan-aset', { state: { id: penghapusan_aset.id, nama: penghapusan_aset.nama } })}>Accepted</button>}
+                    {penghapusan_aset.status === "rejected" && <button className="verification-button rejected">Rejected</button>}
                   </div>
                 ))
               }

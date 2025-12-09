@@ -91,6 +91,7 @@ body {
   min-height: 200px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 24px;
 }
 
@@ -104,7 +105,10 @@ body {
   flex-direction: column;
   gap: 10px;
   transition: box-shadow 0.2s;
+  width: 550px;
+  height: 90px;
 }
+
 .notif-card:hover {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }

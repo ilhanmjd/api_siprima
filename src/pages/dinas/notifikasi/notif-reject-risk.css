@@ -84,6 +84,29 @@ body {
   background-color: #cfe0ff;
 }
 
+.aset-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-x: hidden;
+  align-items: center;
+}
+
+.aset-item-page-reject {
+  width: 210px;
+  height: 20px;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: 0.2s ease;
+}
+
+.aset-item-page-reject:hover {
+  transform: scale(1.02);
+  opacity: 0.9;
+}
+
 /* Asset detail */
 .asset-detail {
   flex: 1;

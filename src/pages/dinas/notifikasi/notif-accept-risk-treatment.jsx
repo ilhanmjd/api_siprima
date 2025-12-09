@@ -135,7 +135,7 @@ export default function NotifAcceptAset() {
 
   const activeRisks = riskTreatmentList.filter(
     (risk) =>
-      risk.status !== "pending" && risk.status !== "ditolak"
+      risk.status !== "pending" && risk.status !== "rejected"
   );
 
   console.log("Risk Treatment List:", riskTreatmentList);
@@ -211,65 +211,12 @@ export default function NotifAcceptAset() {
             </select>
           </div>
 
-          {/* ===================== ASSET ===================== */}
-          {selectedCategory === "Asset" && (
-            <div className="aset-list">
-              {loading || loadingAssets ? <p>Loading...</p> :
-                activeAssets.map((asset) => {
-                  const isSelected =
-                    selectedAsset &&
-                    (selectedAsset.id ?? selectedAsset.asset_id) ===
-                      (asset.id ?? asset.asset_id);
-                  return (
-                    <div
-                      key={asset.id ?? asset.nama}
-                      className="aset-item-page-accept"
-                      style={{
-                        backgroundColor: "#a9c9f8",
-                        border: isSelected ? "2px solid #000" : "none",
-                        cursor: "pointer"
-                      }}
-                      onClick={() => handleSelectAsset(asset)}
-                    >
-                      <span className="aset-name">{asset.nama}</span>
-                    </div>
-                  );
-                })
-              }
-            </div>
-          )}
-
-          {/* ===================== RISK ===================== */}
-          {selectedCategory === "Risk" && (
-            <div className="aset-list">
-              {loading ? <p>Loading...</p> :
-                riskList.filter(risk => risk.status === "ditolak").map((risk, index) => {
-                  const isSelected = selectedRisk && selectedRisk.id === risk.id;
-                  return (
-                  <div
-                    key={index}
-                    className="aset-item-page-reject"
-                    style={{
-                      backgroundColor: risk.status !== "ditolak" && risk.status !== "pending" ? "#a9c9f8" : undefined,
-                      border: isSelected ? "2px solid #000" : "none",
-                      cursor: "pointer"
-                    }}
-                    onClick={() => setSelectedRisk(risk)}
-                  >
-                      <span className="aset-name">{risk.nama}</span>
-                    </div>
-                  );
-                })
-              }
-            </div>
-          )}
-
           {/* ===================== RISK TREATMENT ===================== */}
           {selectedCategory === "Risk Treatment" && (
             <div className="aset-list">
               {loading ? <p>Loading...</p> :
                 riskTreatmentList
-                  .filter((risk) => risk.status !== "pending" && risk.status !== "ditolak")
+                  .filter((risk) => risk.status !== "pending" && risk.status !== "rejected")
                   .map((risk, index) => {
                   const isSelected = selectedRiskTreatment && selectedRiskTreatment.id === risk.id;
                   return (
@@ -277,7 +224,7 @@ export default function NotifAcceptAset() {
                     key={risk.id ?? index}
                     className="aset-item-page-reject"
                     style={{
-                      backgroundColor: risk.status !== "ditolak" && risk.status !== "pending" ? "#a9c9f8" : undefined,
+                      backgroundColor: risk.status !== "rejected" && risk.status !== "pending" ? "#a9c9f8" : undefined,
                       border: isSelected ? "2px solid #000" : "none",
                       cursor: "pointer"
                     }}
@@ -316,7 +263,7 @@ export default function NotifAcceptAset() {
                 <b>Biaya</b> :{riskDetail?.biaya || ""}
               </p>
               <p>
-                <b>PxD</b> :{riskDetail?.risk?.probabilitas || ""} X {riskDetail?.risk?.nilai_dampak || ""} = {riskDetail?.risk?.level_risiko || ""}
+                <b>PxD</b> :{riskDetail?.risk?.level_risiko || ""}
               </p>
               <p className="asset-id">
                 <b>ID RISK : {riskDetail?.risk?.id}</b>

@@ -296,7 +296,7 @@ export default function NotifAcceptAset() {
          <section className="asset-detail">
           <div className="asset-card">
             <div className="asset-header">
-              <h3>{riskDetail?.risk?.judul || ""}</h3>
+              <h3>{riskDetail?.risk?.judul ||" Detail Risk Treatment"}</h3>
               <span className="asset-date">{formatDateTime(riskDetail?.updated_at)}</span>
             </div>
             <div className="asset-body">

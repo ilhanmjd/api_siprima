@@ -17,8 +17,8 @@ function InputRisiko2() {
     return "";
   };
 
-  const { level_awal: levelAwal } = assetData;
-  const derivedKriteria = deriveKriteria(levelAwal);
+  const { level_risiko: levelRisiko } = assetData;
+  const derivedKriteria = deriveKriteria(levelRisiko);
   const statusValue = assetData.status || "Baru";
 
   const handleChange = (e) => {
@@ -27,7 +27,7 @@ function InputRisiko2() {
 
   const handleSelect = (name, value) => {
     const updates = { [name]: value };
-    if (name === "level_awal") {
+    if (name === "level_risiko") {
       updates.kriteria = deriveKriteria(value);
     }
     updateAssetData(updates);
@@ -56,8 +56,8 @@ function InputRisiko2() {
 
   const allFilled =
     assetData.probabilitas &&
-    assetData.dampak_nilai &&
-    assetData.level_awal &&
+    assetData.nilai_dampak &&
+    assetData.level_risiko &&
     assetData.prioritas &&
     derivedKriteria &&
     statusValue;
@@ -128,19 +128,19 @@ function InputRisiko2() {
           <button
             type="button"
             className="dropdown-btn"
-            onClick={() => toggleDropdown("dampak_nilai")}
+            onClick={() => toggleDropdown("nilai_dampak")}
           >
-            {assetData.dampak_nilai || "Pilih Nilai Dampak"} <span>▾</span>
+            {assetData.nilai_dampak || "Pilih Nilai Dampak"} <span>▾</span>
           </button>
           <div
             className={`dropdown-content ${
-              openDropdown === "dampak_nilai" ? "show" : ""
+              openDropdown === "nilai_dampak" ? "show" : ""
             }`}
           >
             {[1, 2, 3, 4, 5].map((option) => (
               <div
                 key={option}
-                onClick={() => handleSelect("dampak_nilai", option.toString())}
+                onClick={() => handleSelect("nilai_dampak", option.toString())}
               >
                 {option}
               </div>
@@ -153,19 +153,19 @@ function InputRisiko2() {
           <button
             type="button"
             className="dropdown-btn"
-            onClick={() => toggleDropdown("level_awal")}
+            onClick={() => toggleDropdown("level_risiko")}
           >
-            {assetData.level_awal || "Pilih Level Risiko"} <span>▾</span>
+            {assetData.level_risiko || "Pilih Level Risiko"} <span>▾</span>
           </button>
           <div
             className={`dropdown-content ${
-              openDropdown === "level_awal" ? "show" : ""
+              openDropdown === "level_risiko" ? "show" : ""
             }`}
           >
             {Array.from({ length: 25 }, (_, i) => i + 1).map((option) => (
               <div
                 key={option}
-                onClick={() => handleSelect("level_awal", option.toString())}
+                onClick={() => handleSelect("level_risiko", option.toString())}
               >
                 {option}
               </div>
@@ -176,7 +176,7 @@ function InputRisiko2() {
         <label>Kriteria (otomatis)</label>
         <input
           type="text"
-          value={deriveKriteria(assetData.level_awal) || ""}
+          value={deriveKriteria(assetData.level_risiko) || ""}
           readOnly
         />
 
@@ -205,7 +205,7 @@ function InputRisiko2() {
         <label>Status (otomatis)</label>
         <input
           type="text"
-          value={assetData.status || ""}
+          value={assetData.status || "Baru"}
           readOnly
         />
 

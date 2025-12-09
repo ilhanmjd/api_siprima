@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
+import api from "../../../api";
 
 import "./konfirmasi-input-risiko.css";
 
@@ -18,8 +19,8 @@ export default function KonfirmasiInputRisiko() {
       !data.penyebab ||
       !data.dampak ||
       data.probabilitas === undefined ||
-      data.dampak_nilai === undefined ||
-      !data.level_awal ||
+      data.nilai_dampak === undefined ||
+      !data.level_risiko ||
       !data.kriteria ||
       !data.prioritas ||
       !data.status
@@ -30,7 +31,7 @@ export default function KonfirmasiInputRisiko() {
     if (
       isNaN(data.asset_id) ||
       isNaN(data.probabilitas) ||
-      isNaN(data.dampak_nilai)
+      isNaN(data.nilai_dampak)
     ) {
       return false;
     }
@@ -48,8 +49,8 @@ export default function KonfirmasiInputRisiko() {
         penyebab: assetData.penyebab,
         dampak: assetData.dampak,
         probabilitas: Number(assetData.probabilitas),
-        dampak_nilai: Number(assetData.dampak_nilai),
-        level_awal: assetData.level_awal,
+        nilai_dampak: Number(assetData.nilai_dampak),
+        level_risiko: assetData.level_risiko,
         kriteria: assetData.kriteria,
         prioritas: assetData.prioritas,
         status: assetData.status,
@@ -64,7 +65,8 @@ export default function KonfirmasiInputRisiko() {
         return;
       }
 
-      // API call removed as per plan
+      // Create risk via API
+      await api.createRisk(newRisk);
 
       // Reset data setelah konfirmasi
       resetAssetData();
@@ -155,11 +157,11 @@ export default function KonfirmasiInputRisiko() {
 
           <div>
             <label>Nilai Dampak</label>
-            <input type="text" value={assetData.dampak_nilai ?? ""} readOnly />
+            <input type="text" value={assetData.nilai_dampak ?? ""} readOnly />
           </div>
           <div>
             <label>Level Risiko</label>
-            <input type="text" value={assetData.level_awal ?? ""} readOnly />
+            <input type="text" value={assetData.level_risiko ?? ""} readOnly />
           </div>
 
           <div>

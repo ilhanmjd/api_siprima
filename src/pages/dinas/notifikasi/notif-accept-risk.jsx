@@ -327,7 +327,7 @@ export default function NotifAcceptAset() {
         <section className="asset-detail">
           <div className="asset-card">
             <div className="asset-header">
-              <h3>{selectedRisk?.judul || "Detail Risiko"}</h3>
+              <h3>{selectedRisk?.judul || "Detail Risk"}</h3>
               <span className="asset-date">
                 {selectedRisk?.updated_at
                   ? new Date(selectedRisk.updated_at).toLocaleString()

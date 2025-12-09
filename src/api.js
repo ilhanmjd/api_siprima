@@ -9,7 +9,8 @@ const API_BASE_URL = (() => {
     if (import.meta.env.DEV) return envUrl || "";
     if (envUrl) return envUrl;
   }
-  return "http://127.0.0.1:8000";
+  // return "http://127.0.0.1:8000";
+  return "https://api.siprima.digitaltech.my.id";
 })();
 
 // AbortController presence to enable cancellation support
@@ -27,10 +28,10 @@ const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 15000,
   
-  // hapus kalau server udah kembali
-  headers: {
-     "ngrok-skip-browser-warning": "true",
-  },
+//   // hapus kalau server udah kembali
+//   headers: {
+//      "ngrok-skip-browser-warning": "true",
+//   },
 });
 
 // Inject Authorization token

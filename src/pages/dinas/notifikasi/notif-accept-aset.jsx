@@ -288,7 +288,7 @@ export default function NotifAcceptAset() {
         <section className="asset-detail">
           <div className="asset-card">
             <div className="asset-header">
-              <h3>{selectedAsset ? selectedAsset.nama : "Aset Laptop"}</h3>
+              <h3>{selectedAsset ? selectedAsset.nama : "Detail Asset"}</h3>
               <span className="asset-date">{selectedAsset && selectedAsset.tgl_perolehan ? new Date(selectedAsset.tgl_perolehan).toLocaleString() : "10/10/2025 - 17:23:34 PM"}</span>
             </div>
 

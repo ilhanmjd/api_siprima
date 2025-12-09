@@ -21,6 +21,14 @@ export default function NotifAcceptAset() {
   const fetchAssetsOnceRef = useRef(fetchAssetsOnce);
   const handleSelectAssetRef = useRef(null);
 
+  const sortByUpdatedAtDesc = useCallback((items = []) => {
+    return [...items].sort(
+      (a, b) =>
+        new Date(b?.updated_at || b?.updatedAt || 0) -
+        new Date(a?.updated_at || a?.updatedAt || 0)
+    );
+  }, []);
+
   const handleSelectAsset = useCallback(
     (asset) => {
       setSelectedAsset(asset);
@@ -44,7 +52,7 @@ export default function NotifAcceptAset() {
     fetchAssetsOnceRef.current()
       .then((data) => {
         if (cancelled) return;
-        const list = Array.isArray(data) ? data : [];
+        const list = sortByUpdatedAtDesc(Array.isArray(data) ? data : []);
         setAssetList(list);
 
         if (locationStateId) {
@@ -287,7 +295,7 @@ export default function NotifAcceptAset() {
             <div className="asset-body">
               <p><b>Kategori</b> : {selectedAsset && selectedAsset.kategori ? String(selectedAsset.kategori.nama || "") : ""}</p>
               <p><b>Nama Asset</b> : {selectedAsset ? String(selectedAsset.nama || "") : ""}</p>
-              <p><b>Kode Asset</b> : {selectedAsset ? String(selectedAsset.kode_asset || "") : ""}</p>
+              <p><b>Kode Asset</b> : {selectedAsset ? String(selectedAsset.kode_bmd || "") : ""}</p>
               <p><b>Person in Change</b> : {selectedAsset && selectedAsset.penanggungjawab ? String(selectedAsset.penanggungjawab.nama || "") : ""}</p>
               <p className="asset-id"><b>ID ASSET :</b> {selectedAsset ? String(selectedAsset.id || "") : ""}</p>
               <p><b>Kondisi Asset</b> : {selectedAsset ? String(selectedAsset.kondisi || "") : ""}</p>

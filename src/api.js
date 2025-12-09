@@ -1,8 +1,16 @@
 import axios from "axios";
 
-// const API_BASE_URL = "https://api.siprima.digitaltech.my.id";
-const API_BASE_URL = "http://127.0.0.1:8000";
-// const API_BASE_URL = "https://46d083476aee.ngrok-free.app";
+// Prefer env override so local/remote API targets can be switched without code edits
+// Use Vite dev proxy (/api) during development to avoid CORS.
+const API_BASE_URL = (() => {
+  if (typeof import.meta !== "undefined" && import.meta.env) {
+    const envUrl = import.meta.env.VITE_URL_API;
+    // In dev, prefer explicit URL if provided; otherwise same-origin (proxied) without duplicating /api
+    if (import.meta.env.DEV) return envUrl || "";
+    if (envUrl) return envUrl;
+  }
+  return "http://127.0.0.1:8000";
+})();
 
 // AbortController presence to enable cancellation support
 const noopAbortController = new AbortController();
@@ -55,15 +63,13 @@ export default {
 
   getUser: (config = {}) => api.get("/api/user", config),
 
-
-  // ========== DATA MASTER ==========
-  getKategori: () => api.get("/api/data-master/kategori"),
-  getSubKategori: (kategori_id = null) =>
-    api.get("/api/data-master/sub-kategori", {
-      params: kategori_id ? { kategori_id } : {},
-    }),
-  getLokasi: () => api.get("/api/data-master/lokasi"),
-  getPenanggungJawab: () => api.get("/api/data-master/penanggung-jawab"),
+  // ========== SUB KATEGORIS ==========
+  getSubKategoris: (params = {}) => api.get("/api/sub-kategoris", { params }),
+  createSubKategori: (data) => api.post("/api/sub-kategoris", data),
+  getSubKategoriById: (id, config = {}) =>
+    api.get(`/api/sub-kategoris/${id}`, config),
+  updateSubKategori: (id, data) => api.put(`/api/sub-kategoris/${id}`, data),
+  deleteSubKategori: (id) => api.delete(`/api/sub-kategoris/${id}`),
 
 
   // ========== ASSETS ==========
@@ -83,6 +89,23 @@ export default {
   getDinasById: (id, config = {}) => api.get(`/api/dinas/${id}`, config),
   updateDinas: (id, data) => api.put(`/api/dinas/${id}`, data),
   deleteDinas: (id) => api.delete(`/api/dinas/${id}`),
+
+  // ========== LOKASI ==========
+  getLokasis: (params = {}) => api.get("/api/lokasis", { params }),
+  createLokasi: (data) => api.post("/api/lokasis", data),
+  getLokasiById: (id, config = {}) => api.get(`/api/lokasis/${id}`, config),
+  updateLokasi: (id, data) => api.put(`/api/lokasis/${id}`, data),
+  deleteLokasi: (id) => api.delete(`/api/lokasis/${id}`),
+
+  // ========== PENANGGUNG JAWAB ==========
+  getPenanggungjawabs: (params = {}) =>
+    api.get("/api/penanggungjawabs", { params }),
+  createPenanggungjawab: (data) => api.post("/api/penanggungjawabs", data),
+  getPenanggungjawabById: (id, config = {}) =>
+    api.get(`/api/penanggungjawabs/${id}`, config),
+  updatePenanggungjawab: (id, data) =>
+    api.put(`/api/penanggungjawabs/${id}`, data),
+  deletePenanggungjawab: (id) => api.delete(`/api/penanggungjawabs/${id}`),
 
   
   // ========== RISK ==========

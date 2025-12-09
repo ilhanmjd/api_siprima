@@ -198,7 +198,18 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
                   <div key={risk.id} className="aset-item">
                     <span className="aset-name">{risk.judul}</span>
                     {risk.status === "pending" && <button className="verification-button under-review">UnderReview</button>}
-                    {risk.status !== "ditolak" && risk.status !== "pending" && <button className="verification-button accepted" onClick={() => navigate('/notif-accept-risk', { state: { id: risk.id, nama: risk.judul } })}>Accepted</button>}
+                    {risk.status !== "ditolak" && risk.status !== "pending" && (
+                      <button
+                        className="verification-button accepted"
+                        onClick={() =>
+                          navigate(`/notif-accept-risk?id=${risk.id}`, {
+                            state: { id: risk.id },
+                          })
+                        }
+                      >
+                        Accepted
+                      </button>
+                    )}
                     {risk.status === "ditolak" && <button className="verification-button rejected">Rejected</button>}
                   </div>
                 ))
@@ -214,7 +225,18 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
                   <div key={risk_treatment.id} className="aset-item">
                     <span className="aset-name">{risk_treatment.risk.judul}</span>
                     {risk_treatment.status === "pending" && <button className="verification-button under-review">UnderReview</button>}
-                    {risk_treatment.status !== "ditolak" && risk_treatment.status !== "pending" && <button className="verification-button accepted" onClick={() => navigate('/notif-accept-risk-treatment', { state: { id: risk_treatment.id, risk_judul: risk_treatment.risk.judul } })}>Accepted</button>}
+                    {risk_treatment.status !== "ditolak" && risk_treatment.status !== "pending" && (
+                      <button
+                        className="verification-button accepted"
+                        onClick={() =>
+                          navigate(`/notif-accept-risk-treatment?id=${risk_treatment.id}`, {
+                            state: { id: risk_treatment.id },
+                          })
+                        }
+                      >
+                        Accepted
+                      </button>
+                    )}
                     {risk_treatment.status === "ditolak" && <button className="verification-button rejected">Rejected</button>}
                   </div>
                 ))

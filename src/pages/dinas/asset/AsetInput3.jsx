@@ -24,32 +24,33 @@ function AssetForm() {
   const statusRef = useRef(null);
 
   useEffect(() => {
+    let isMounted = true;
     const fetchLokasi = async () => {
       try {
-        const response = await api.getLokasi();
-        if (response.data && response.data.data && Array.isArray(response.data.data)) {
-          setLokasiOptions(response.data.data);
-        } else {
-          setLokasiOptions([]);
-        }
+        const response = await api.getLokasis();
+        if (!isMounted) return;
+        const data = response?.data?.data;
+        setLokasiOptions(Array.isArray(data) ? data : []);
       } catch (error) {
-        setLokasiOptions([]);
+        if (isMounted) setLokasiOptions([]);
       }
     };
     const fetchPenanggungJawab = async () => {
       try {
-        const response = await api.getPenanggungJawab();
-        if (response.data && response.data.data && Array.isArray(response.data.data)) {
-          setPenanggungJawabOptions(response.data.data);
-        } else {
-          setPenanggungJawabOptions([]);
-        }
+        const response = await api.getPenanggungjawabs();
+        if (!isMounted) return;
+        const data = response?.data?.data;
+        setPenanggungJawabOptions(Array.isArray(data) ? data : []);
       } catch (error) {
-        setPenanggungJawabOptions([]);
+        if (isMounted) setPenanggungJawabOptions([]);
       }
     };
     fetchLokasi();
     fetchPenanggungJawab();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleChange = (e) => {

@@ -8,7 +8,8 @@ export default function NotifAcceptAset() {
   const navigate = useNavigate();
   const location = useLocation();
   const { updateAssetData, fetchAssetsOnce, loadingAssets } = useAssetContext();
-  const locationStateId = location.state?.id;
+  const locationStateId =
+    location.state?.id || new URLSearchParams(location.search).get("id");
 
   const [selectedCategory, setSelectedCategory] = useState("Risk Treatment");
   const [selectedAsset, setSelectedAsset] = useState(null);
@@ -26,6 +27,14 @@ export default function NotifAcceptAset() {
   const didSyncRef = useRef(false);
   const fetchAssetsOnceRef = useRef(fetchAssetsOnce);
   const handleSelectAssetRef = useRef(null);
+
+  const sortByUpdatedAtDesc = useCallback((items = []) => {
+    return [...items].sort(
+      (a, b) =>
+        new Date(b?.updated_at || b?.updatedAt || 0) -
+        new Date(a?.updated_at || a?.updatedAt || 0)
+    );
+  }, []);
 
   const formatDateTime = useCallback((value) => {
     if (!value) return "-";
@@ -60,7 +69,7 @@ export default function NotifAcceptAset() {
     fetchAssetsOnceRef.current()
       .then((data) => {
         if (cancelled) return;
-        const list = Array.isArray(data) ? data : [];
+        const list = sortByUpdatedAtDesc(Array.isArray(data) ? data : []);
         setAssetList(list);
 
         if (locationStateId) {
@@ -99,7 +108,7 @@ export default function NotifAcceptAset() {
       .then((res) => {
         if (cancelled) return;
         const list = res?.data?.data ?? res?.data ?? [];
-        setRiskTreatmentList(Array.isArray(list) ? list : []);
+        setRiskTreatmentList(sortByUpdatedAtDesc(Array.isArray(list) ? list : []));
       })
       .catch(() => {
         if (!cancelled) setRiskTreatmentList([]);
@@ -111,6 +120,18 @@ export default function NotifAcceptAset() {
       cancelled = true;
     };
   }, [selectedCategory]);
+
+  // Auto-select risk treatment when coming from notifications (state/query id)
+  useEffect(() => {
+    if (!locationStateId || riskDetail) return;
+    const match = riskTreatmentList.find(
+      (rt) => String(rt?.id ?? "") === String(locationStateId ?? "")
+    );
+    if (match) {
+      setSelectedRiskTreatment(match);
+      setRiskDetail(match);
+    }
+  }, [locationStateId, riskDetail, riskTreatmentList]);
 
   const activeRisks = riskTreatmentList.filter(
     (risk) =>
@@ -275,7 +296,7 @@ export default function NotifAcceptAset() {
          <section className="asset-detail">
           <div className="asset-card">
             <div className="asset-header">
-              <h3>{riskDetail?.risk?.asset.nama || ""}</h3>
+              <h3>{riskDetail?.risk?.judul || ""}</h3>
               <span className="asset-date">{formatDateTime(riskDetail?.updated_at)}</span>
             </div>
             <div className="asset-body">

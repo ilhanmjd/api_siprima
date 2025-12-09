@@ -15,7 +15,7 @@ function AssetForm() {
   const [subKategoriFilter, setSubKategoriFilter] = useState("");
 
   const [kategoriOptions, setKategoriOptions] = useState([]);
-  const [subKategoriOptions, setSubKategoriOptions] = useState([]);
+  const [allSubKategoriOptions, setAllSubKategoriOptions] = useState([]);
   const [selectedKategoriId, setSelectedKategoriId] = useState(null);
 
   const kategoriRef = useRef(null);
@@ -24,69 +24,78 @@ function AssetForm() {
   const deskripsiRef = useRef(null);
 
   useEffect(() => {
-    const fetchKategori = async () => {
+    const fetchAllSubKategoris = async () => {
       try {
-        const response = await api.getKategori();
-        if (response.data && response.data.data && Array.isArray(response.data.data)) {
-          setKategoriOptions(response.data.data);
+        const response = await api.getSubKategoris();
+        const subs = response?.data?.data;
+        if (subs && Array.isArray(subs)) {
+          setAllSubKategoriOptions(subs);
+          const uniqueKategori = new Map();
+          subs.forEach((sub) => {
+            const id = sub?.kategori_id;
+            if (!id || uniqueKategori.has(id)) return;
+            const nama =
+              sub?.kategori?.nama ||
+              sub?.kategori_nama ||
+              sub?.nama_kategori ||
+              sub?.kategori_name ||
+              sub?.kategori ||
+              `Kategori ${id}`;
+            uniqueKategori.set(id, { id, nama });
+          });
+          setKategoriOptions(Array.from(uniqueKategori.values()));
         } else {
+          setAllSubKategoriOptions([]);
           setKategoriOptions([]);
         }
       } catch (error) {
+        setAllSubKategoriOptions([]);
         setKategoriOptions([]);
       }
     };
-    fetchKategori();
+    fetchAllSubKategoris();
   }, []);
 
-
-
-  useEffect(() => {
-    if (selectedKategoriId) {
-      const fetchSubKategori = async () => {
-        try {
-          const response = await api.getSubKategori(selectedKategoriId);
-          if (response.data && response.data.data && Array.isArray(response.data.data)) {
-            // Filter sub-kategori based on kategori_id to ensure only relevant ones are shown
-            const filteredSubKategori = response.data.data.filter(option => option.kategori_id === selectedKategoriId);
-            setSubKategoriOptions(filteredSubKategori);
-        } else {
-          setSubKategoriOptions([]);
-        }
-      } catch (error) {
-        setSubKategoriOptions([]);
-      }
-      };
-      fetchSubKategori();
-    } else {
-      setSubKategoriOptions([]);
-    }
-  }, [selectedKategoriId]);
 
   const handleChange = (e) => {
     updateAssetData({ [e.target.name]: e.target.value });
   };
 
   const handleSelectChange = (option) => {
-    updateAssetData({ kategori: option.nama, sub_kategori: "" });
+    updateAssetData({
+      kategori: option.nama,
+      kategori_id: option.id,
+      sub_kategori: "",
+      subkategori_id: null,
+    });
     setSelectedKategoriId(option.id);
     setIsDropdownOpen(false);
   };
 
-  const handleSubSelectChange = (value) => {
-    updateAssetData({ sub_kategori: value });
+  const handleSubSelectChange = (option) => {
+    updateAssetData({
+      sub_kategori: option?.nama || option,
+      subkategori_id: option?.id || null,
+      kategori_id: option?.kategori_id || selectedKategoriId || null,
+    });
     setIsSubDropdownOpen(false);
   };
 
   const handleSubKategoriInputChange = (e) => {
     const value = e.target.value;
-    updateAssetData({ sub_kategori: value });
+    updateAssetData({ sub_kategori: value, subkategori_id: null });
     setSubKategoriFilter(value);
     setIsSubDropdownOpen(true);
   };
 
-  const filteredOptions = subKategoriOptions.filter(option =>
-    option && option.nama && option.nama.toLowerCase().includes(subKategoriFilter.toLowerCase())
+  const filteredOptions = (selectedKategoriId
+    ? allSubKategoriOptions.filter((option) => option.kategori_id === selectedKategoriId)
+    : allSubKategoriOptions
+  ).filter(
+    (option) =>
+      option &&
+      option.nama &&
+      option.nama.toLowerCase().includes(subKategoriFilter.toLowerCase())
   );
 
   const handleNext = () => {
@@ -172,7 +181,7 @@ function AssetForm() {
           </div>
           <div className={`dropdown-content subkategori-dropdown ${isSubDropdownOpen ? 'show' : ''}`}>
             {filteredOptions.map((option) => (
-              <div key={option.id} onClick={() => handleSubSelectChange(option.nama)}>{option.nama}</div>
+              <div key={option.id} onClick={() => handleSubSelectChange(option)}>{option.nama}</div>
             ))}
           </div>
         </div>

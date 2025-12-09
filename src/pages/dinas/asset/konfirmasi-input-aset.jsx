@@ -32,22 +32,29 @@ export default function KonfirmasiInputAset() {
     }
     setIsLoading(true);
     try {
-      // Fetch kategori to get kategori_id
-      const kategoriRes = await api.getKategori();
-      const kategori = kategoriRes.data.data.find(k => k.nama === assetData.kategori);
-      if (!kategori) throw new Error("Kategori tidak ditemukan.");
-      const kategori_id = kategori.id;
+      let kategori_id = assetData.kategori_id;
+      let subkategori_id = assetData.subkategori_id;
 
-      // Fetch sub_kategori using kategori_id to get subkategori_id
-      const subKategoriRes = await api.getSubKategori(kategori_id);
-      const subKategori = subKategoriRes.data.data.find(s => s.nama === assetData.sub_kategori);
-      if (!subKategori) throw new Error("Sub Kategori tidak ditemukan.");
-      const subkategori_id = subKategori.id;
+      // Resolve sub kategori (and kategori) IDs from latest data
+      if (!kategori_id || !subkategori_id) {
+        const subKategoriRes = await api.getSubKategoris();
+        const subList = subKategoriRes?.data?.data;
+        if (!Array.isArray(subList)) throw new Error("Sub Kategori tidak ditemukan.");
+        const matchedSub = subList.find(
+          (s) =>
+            s?.id === subkategori_id ||
+            (s?.nama === assetData.sub_kategori &&
+              (!kategori_id || s?.kategori_id === kategori_id))
+        );
+        if (!matchedSub) throw new Error("Sub Kategori tidak ditemukan.");
+        subkategori_id = matchedSub.id;
+        kategori_id = matchedSub.kategori_id;
+      }
 
       // Parallel fetch lokasi and penanggung_jawab
       const [lokasiRes, penanggungJawabRes] = await Promise.all([
-        api.getLokasi(),
-        api.getPenanggungJawab()
+        api.getLokasis(),
+        api.getPenanggungjawabs()
       ]);
 
       const lokasi = lokasiRes.data.data.find(l => l.nama === assetData.lokasi);

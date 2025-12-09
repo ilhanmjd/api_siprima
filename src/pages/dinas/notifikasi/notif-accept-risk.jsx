@@ -8,7 +8,8 @@ export default function NotifAcceptAset() {
   const navigate = useNavigate();
   const location = useLocation();
   const { updateAssetData, fetchAssetsOnce, loadingAssets } = useAssetContext();
-  const locationStateId = location.state?.id;
+  const locationStateId =
+    location.state?.id || new URLSearchParams(location.search).get("id");
 
   const [selectedCategory, setSelectedCategory] = useState("Risk");
   const [selectedAsset, setSelectedAsset] = useState(null);
@@ -25,6 +26,14 @@ export default function NotifAcceptAset() {
   const didSyncRef = useRef(false);
   const fetchAssetsOnceRef = useRef(fetchAssetsOnce);
   const handleSelectAssetRef = useRef(null);
+
+  const sortByUpdatedAtDesc = useCallback((items = []) => {
+    return [...items].sort(
+      (a, b) =>
+        new Date(b?.updated_at || b?.updatedAt || 0) -
+        new Date(a?.updated_at || a?.updatedAt || 0)
+    );
+  }, []);
 
   const handleSelectAsset = useCallback(
     (asset) => {
@@ -49,7 +58,7 @@ export default function NotifAcceptAset() {
     fetchAssetsOnceRef.current()
       .then((data) => {
         if (cancelled) return;
-        const list = Array.isArray(data) ? data : [];
+        const list = sortByUpdatedAtDesc(Array.isArray(data) ? data : []);
         setAssetList(list);
 
         if (locationStateId) {
@@ -88,7 +97,7 @@ export default function NotifAcceptAset() {
       .then((res) => {
         if (cancelled) return;
         const list = res?.data?.data ?? res?.data ?? [];
-        setRiskList(Array.isArray(list) ? list : []);
+        setRiskList(sortByUpdatedAtDesc(Array.isArray(list) ? list : []));
       })
       .catch(() => {
         if (!cancelled) setRiskList([]);
@@ -100,6 +109,15 @@ export default function NotifAcceptAset() {
       cancelled = true;
     };
   }, [selectedCategory]);
+
+  // Auto-select risk when coming from notifications (state/query id)
+  useEffect(() => {
+    if (!locationStateId || selectedRisk) return;
+    const match = riskList.find(
+      (risk) => String(risk?.id ?? "") === String(locationStateId ?? "")
+    );
+    if (match) setSelectedRisk(match);
+  }, [locationStateId, riskList, selectedRisk]);
 
   const activeAssets = assetList.filter(
     (asset) =>

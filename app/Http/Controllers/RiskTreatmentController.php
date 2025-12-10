@@ -435,4 +435,74 @@ class RiskTreatmentController extends Controller
             'data' => $riskTreatment,
         ]);
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/risk-treatments/statistics/by-residual-level",
+     *     tags={"Risk Treatments"},
+     *     summary="Get risk treatment statistics by residual level",
+     *     description="Mendapatkan total risk treatment berdasarkan pengelompokan level residual (Low: 1-6, Medium: 7-14, High: 15-25)",
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Berhasil mendapatkan statistik risk treatment",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="low",
+     *                     type="object",
+     *                     @OA\Property(property="range", type="string", example="1-6"),
+     *                     @OA\Property(property="total", type="integer", example=10)
+     *                 ),
+     *                 @OA\Property(
+     *                     property="medium",
+     *                     type="object",
+     *                     @OA\Property(property="range", type="string", example="7-14"),
+     *                     @OA\Property(property="total", type="integer", example=15)
+     *                 ),
+     *                 @OA\Property(
+     *                     property="high",
+     *                     type="object",
+     *                     @OA\Property(property="range", type="string", example="15-25"),
+     *                     @OA\Property(property="total", type="integer", example=5)
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     )
+     * )
+     */
+    public function statisticsByResidualLevel()
+    {
+        $lowCount = RiskTreatment::whereBetween('level_residual', [1, 6])->count();
+        $mediumCount = RiskTreatment::whereBetween('level_residual', [7, 14])->count();
+        $highCount = RiskTreatment::whereBetween('level_residual', [15, 25])->count();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'low' => [
+                    'range' => '1-6',
+                    'total' => $lowCount,
+                ],
+                'medium' => [
+                    'range' => '7-14',
+                    'total' => $mediumCount,
+                ],
+                'high' => [
+                    'range' => '15-25',
+                    'total' => $highCount,
+                ],
+            ],
+        ]);
+    }
 }

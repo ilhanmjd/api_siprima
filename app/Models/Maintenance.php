@@ -13,8 +13,10 @@ class Maintenance extends Model
         'asset_id',
         'risk_id',
         'alasan_pemeliharaan',
-        'status',
+        'status_pemeliharaan',
+        'status_review',
         'bukti_lampiran',
+        'alasan_ditolak',
     ];
 
     /**

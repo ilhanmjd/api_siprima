@@ -11,6 +11,7 @@ use App\Http\Controllers\SsoController;
 use App\Http\Controllers\RiskController;
 use App\Http\Controllers\RiskTreatmentController;
 use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\AssetDeletionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -94,6 +95,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('risk-treatments')->group(function () {
         Route::get('/', [RiskTreatmentController::class, 'index']);
         Route::post('/', [RiskTreatmentController::class, 'store']);
+        Route::get('/statistics/by-residual-level', [RiskTreatmentController::class, 'statisticsByResidualLevel']);
         Route::get('/{id}', [RiskTreatmentController::class, 'show']);
         Route::post('/{id}/reject', [RiskTreatmentController::class, 'reject']);
         Route::post('/{id}/approve', [RiskTreatmentController::class, 'approve']);
@@ -104,5 +106,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [MaintenanceController::class, 'store']);
         Route::get('/{id}', [MaintenanceController::class, 'show']);
         Route::put('/{id}', [MaintenanceController::class, 'update']);
+    });
+
+    Route::prefix('asset-deletions')->group(function () {
+        Route::get('/', [AssetDeletionController::class, 'index']);
+        Route::post('/', [AssetDeletionController::class, 'store']);
+        Route::get('/{id}', [AssetDeletionController::class, 'show']);
+        Route::put('/{id}/review', [AssetDeletionController::class, 'review']);
+        Route::delete('/{id}', [AssetDeletionController::class, 'destroy']);
     });
 });

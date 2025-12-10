@@ -197,8 +197,10 @@ class MaintenanceController extends Controller
             'asset_id' => 'required|exists:assets,id',
             'risk_id' => 'nullable|exists:risks,id',
             'alasan_pemeliharaan' => 'required|string',
-            'status' => 'required|in:pending,penanganan,selesai',
+            'status_pemeliharaan' => 'nullable|in:pending,penanganan,selesai',
+            'status_review' => 'required|in:pending,accepted,rejected',
             'bukti_lampiran' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'alasan_ditolak' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -210,6 +212,9 @@ class MaintenanceController extends Controller
         }
 
         $data = $validator->validated();
+
+        $data['status_review'] = 'pending';
+
 
         // Upload bukti lampiran jika ada
         if ($request->hasFile('bukti_lampiran')) {

@@ -289,6 +289,15 @@
                 "operationId": "7ec31142a2a1e2a05ac095eec4473640",
                 "parameters": [
                     {
+                        "name": "dinas_id",
+                        "in": "query",
+                        "description": "Filter berdasarkan dinas ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
                         "name": "kategori_id",
                         "in": "query",
                         "description": "Filter berdasarkan kategori ID",
@@ -323,6 +332,10 @@
                                             "items": {
                                                 "properties": {
                                                     "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "dinas_id": {
                                                         "type": "integer",
                                                         "example": 1
                                                     },
@@ -428,6 +441,7 @@
                         "application/json": {
                             "schema": {
                                 "required": [
+                                    "dinas_id",
                                     "kategori_id",
                                     "subkategori_id",
                                     "lokasi_id",
@@ -435,6 +449,10 @@
                                     "nama"
                                 ],
                                 "properties": {
+                                    "dinas_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
                                     "kategori_id": {
                                         "type": "integer",
                                         "example": 1
@@ -682,6 +700,10 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
+                                    "dinas_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
                                     "kategori_id": {
                                         "type": "integer",
                                         "example": 1
@@ -910,6 +932,431 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/asset-deletions": {
+            "get": {
+                "tags": [
+                    "Asset Deletions"
+                ],
+                "summary": "Get all asset deletion requests",
+                "description": "Mendapatkan daftar semua pengajuan penghapusan aset",
+                "operationId": "0154bb65a5e13e4c488858678344e7ea",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter berdasarkan status (pending, accepted, rejected)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "pending",
+                                "accepted",
+                                "rejected"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan data pengajuan penghapusan aset",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/AssetDeletion"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Asset Deletions"
+                ],
+                "summary": "Create new asset deletion request",
+                "description": "User dinas mengajukan penghapusan aset (status otomatis pending)",
+                "operationId": "e128e039ac5609d1c5c2ca0ab993b763",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "asset_id",
+                                    "alasan_penghapusan"
+                                ],
+                                "properties": {
+                                    "asset_id": {
+                                        "description": "ID aset yang akan dihapus",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "alasan_penghapusan": {
+                                        "type": "string",
+                                        "example": "Aset rusak berat dan tidak dapat diperbaiki"
+                                    },
+                                    "lampiran": {
+                                        "description": "File lampiran bukti (opsional)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Pengajuan penghapusan berhasil dibuat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Pengajuan penghapusan aset berhasil dibuat"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/AssetDeletion"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation error"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/asset-deletions/{id}": {
+            "get": {
+                "tags": [
+                    "Asset Deletions"
+                ],
+                "summary": "Get asset deletion request by ID",
+                "description": "Mendapatkan detail pengajuan penghapusan aset berdasarkan ID",
+                "operationId": "dfbf7d3dac2a6d564a4391b229f9850d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID asset deletion",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan detail pengajuan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/AssetDeletion"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pengajuan tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Pengajuan penghapusan aset tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Asset Deletions"
+                ],
+                "summary": "Delete asset deletion request",
+                "description": "Menghapus pengajuan penghapusan aset (hanya untuk pengajuan yang masih pending)",
+                "operationId": "d2ef4878000c527ed6469c92e1484bd5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID asset deletion",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pengajuan berhasil dihapus",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Pengajuan penghapusan aset berhasil dihapus"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pengajuan tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Pengajuan tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Pengajuan sudah direview",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Tidak dapat menghapus pengajuan yang sudah direview"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/asset-deletions/{id}/review": {
+            "put": {
+                "tags": [
+                    "Asset Deletions"
+                ],
+                "summary": "Review asset deletion request (accept/reject)",
+                "description": "Verifikator menerima atau menolak pengajuan penghapusan aset. Jika diterima, status aset akan diubah menjadi 'dihapus'",
+                "operationId": "6a1c5c5300bd92430a05ca924c3ff7d5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID asset deletion",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "status"
+                                ],
+                                "properties": {
+                                    "status": {
+                                        "description": "Status review: accepted atau rejected",
+                                        "type": "string",
+                                        "enum": [
+                                            "accepted",
+                                            "rejected"
+                                        ],
+                                        "example": "accepted"
+                                    },
+                                    "alasan_ditolak": {
+                                        "description": "Alasan penolakan (required jika status=rejected)",
+                                        "type": "string",
+                                        "example": "Dokumentasi tidak lengkap"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Review berhasil diproses",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Pengajuan penghapusan aset telah diterima"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/AssetDeletion"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pengajuan tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Pengajuan tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation error"
+                                        },
+                                        "errors": {
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -4328,6 +4775,99 @@
                 ]
             }
         },
+        "/api/risk-treatments/statistics/by-residual-level": {
+            "get": {
+                "tags": [
+                    "Risk Treatments"
+                ],
+                "summary": "Get risk treatment statistics by residual level",
+                "description": "Mendapatkan total risk treatment berdasarkan pengelompokan level residual (Low: 1-6, Medium: 7-14, High: 15-25)",
+                "operationId": "8d8bba38b46a135a4a66b6e23ba27f0e",
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan statistik risk treatment",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "low": {
+                                                    "properties": {
+                                                        "range": {
+                                                            "type": "string",
+                                                            "example": "1-6"
+                                                        },
+                                                        "total": {
+                                                            "type": "integer",
+                                                            "example": 10
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "medium": {
+                                                    "properties": {
+                                                        "range": {
+                                                            "type": "string",
+                                                            "example": "7-14"
+                                                        },
+                                                        "total": {
+                                                            "type": "integer",
+                                                            "example": 15
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "high": {
+                                                    "properties": {
+                                                        "range": {
+                                                            "type": "string",
+                                                            "example": "15-25"
+                                                        },
+                                                        "total": {
+                                                            "type": "integer",
+                                                            "example": 5
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/sso/callback": {
             "get": {
                 "tags": [
@@ -5653,6 +6193,53 @@
     },
     "components": {
         "schemas": {
+            "AssetDeletion": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "asset_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "alasan_penghapusan": {
+                        "type": "string",
+                        "example": "Aset rusak berat dan tidak dapat diperbaiki"
+                    },
+                    "lampiran": {
+                        "type": "string",
+                        "example": "asset_deletions/1234567890_bukti.pdf",
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "accepted",
+                            "rejected"
+                        ],
+                        "example": "pending"
+                    },
+                    "alasan_ditolak": {
+                        "type": "string",
+                        "example": "Dokumentasi tidak lengkap",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "asset": {
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
             "Maintenance": {
                 "properties": {
                     "id": {
@@ -5745,6 +6332,10 @@
         {
             "name": "Penanggungjawab",
             "description": "Endpoint untuk manajemen penanggung jawab"
+        },
+        {
+            "name": "Asset Deletions",
+            "description": "Asset Deletions"
         },
         {
             "name": "Maintenances",

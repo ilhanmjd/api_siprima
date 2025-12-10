@@ -16,6 +16,13 @@ class AssetController extends Controller
      *     description="Mendapatkan daftar semua asset dengan relasi kategori, subkategori, lokasi, dan penanggung jawab",
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(
+     *         name="dinas_id",
+     *         in="query",
+     *         description="Filter berdasarkan dinas ID",
+     *         required=false,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
      *         name="kategori_id",
      *         in="query",
      *         description="Filter berdasarkan kategori ID",
@@ -40,6 +47,7 @@ class AssetController extends Controller
      *                 @OA\Items(
      *                     type="object",
      *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="dinas_id", type="integer", example=1),
      *                     @OA\Property(property="kategori_id", type="integer", example=1),
      *                     @OA\Property(property="subkategori_id", type="integer", example=1),
      *                     @OA\Property(property="lokasi_id", type="integer", example=1),
@@ -69,7 +77,12 @@ class AssetController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Asset::with(['kategori', 'subkategori', 'lokasi', 'penanggungjawab']);
+        $query = Asset::with(['dinas', 'kategori', 'subkategori', 'lokasi', 'penanggungjawab']);
+
+        // Filter berdasarkan dinas
+        if ($request->has('dinas_id')) {
+            $query->where('dinas_id', $request->dinas_id);
+        }
 
         // Filter berdasarkan kategori
         if ($request->has('kategori_id')) {
@@ -99,7 +112,8 @@ class AssetController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"kategori_id", "subkategori_id", "lokasi_id", "penanggungjawab_id", "nama"},
+     *             required={"dinas_id", "kategori_id", "subkategori_id", "lokasi_id", "penanggungjawab_id", "nama"},
+     *             @OA\Property(property="dinas_id", type="integer", example=1),
      *             @OA\Property(property="kategori_id", type="integer", example=1),
      *             @OA\Property(property="subkategori_id", type="integer", example=1),
      *             @OA\Property(property="lokasi_id", type="integer", example=1),
@@ -144,6 +158,7 @@ class AssetController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'dinas_id' => 'required|exists:dinas,id',
             'kategori_id' => 'required|exists:kategoris,id',
             'subkategori_id' => 'required|exists:sub_kategoris,id',
             'lokasi_id' => 'required|exists:lokasis,id',
@@ -171,7 +186,7 @@ class AssetController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Asset berhasil dibuat',
-            'data' => $asset->load(['kategori', 'subkategori', 'lokasi', 'penanggungjawab']),
+            'data' => $asset->load(['dinas', 'kategori', 'subkategori', 'lokasi', 'penanggungjawab']),
         ], 201);
     }
 
@@ -216,7 +231,7 @@ class AssetController extends Controller
      */
     public function show($id)
     {
-        $asset = Asset::with(['kategori', 'subkategori', 'lokasi', 'penanggungjawab'])->find($id);
+        $asset = Asset::with(['dinas', 'kategori', 'subkategori', 'lokasi', 'penanggungjawab'])->find($id);
 
         if (!$asset) {
             return response()->json([
@@ -248,6 +263,7 @@ class AssetController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
+     *             @OA\Property(property="dinas_id", type="integer", example=1),
      *             @OA\Property(property="kategori_id", type="integer", example=1),
      *             @OA\Property(property="subkategori_id", type="integer", example=1),
      *             @OA\Property(property="lokasi_id", type="integer", example=1),
@@ -309,6 +325,7 @@ class AssetController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
+            'dinas_id' => 'sometimes|required|exists:dinas,id',
             'kategori_id' => 'sometimes|required|exists:kategoris,id',
             'subkategori_id' => 'sometimes|required|exists:sub_kategoris,id',
             'lokasi_id' => 'sometimes|required|exists:lokasis,id',
@@ -336,7 +353,7 @@ class AssetController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Asset berhasil diupdate',
-            'data' => $asset->load(['kategori', 'subkategori', 'lokasi', 'penanggungjawab']),
+            'data' => $asset->load(['dinas', 'kategori', 'subkategori', 'lokasi', 'penanggungjawab']),
         ]);
     }
 

@@ -14,6 +14,7 @@ class AssetSeeder extends Seeder
     {
         $assets = [
             [
+                'dinas_id' => 1,
                 'kategori_id' => 1,
                 'subkategori_id' => 1,
                 'lokasi_id' => 1,
@@ -28,6 +29,7 @@ class AssetSeeder extends Seeder
                 'status' => 'diterima',
             ],
             [
+                'dinas_id' => 1,
                 'kategori_id' => 1,
                 'subkategori_id' => 2,
                 'lokasi_id' => 2,
@@ -42,6 +44,7 @@ class AssetSeeder extends Seeder
                 'status' => 'diterima',
             ],
             [
+                'dinas_id' => 2,
                 'kategori_id' => 2,
                 'subkategori_id' => 3,
                 'lokasi_id' => 3,
@@ -56,6 +59,7 @@ class AssetSeeder extends Seeder
                 'status' => 'diterima',
             ],
             [
+                'dinas_id' => 2,
                 'kategori_id' => 1,
                 'subkategori_id' => 1,
                 'lokasi_id' => 4,
@@ -70,6 +74,7 @@ class AssetSeeder extends Seeder
                 'status' => 'pemeliharaan',
             ],
             [
+                'dinas_id' => 3,
                 'kategori_id' => 2,
                 'subkategori_id' => 4,
                 'lokasi_id' => 5,

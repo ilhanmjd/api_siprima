@@ -11,6 +11,7 @@ class Asset extends Model
 {
     protected $fillable = [
         'kode_bmd',
+        'dinas_id',
         'kategori_id',
         'subkategori_id',
         'lokasi_id',
@@ -97,6 +98,14 @@ class Asset extends Model
     ];
 
     /**
+     * Get the dinas that owns the asset.
+     */
+    public function dinas(): BelongsTo
+    {
+        return $this->belongsTo(Dinas::class);
+    }
+
+    /**
      * Get the kategori that owns the asset.
      */
     public function kategori(): BelongsTo
@@ -134,5 +143,13 @@ class Asset extends Model
     public function risks(): HasMany
     {
         return $this->hasMany(Risk::class);
+    }
+
+    /**
+     * Get the asset deletions for the asset.
+     */
+    public function assetDeletions(): HasMany
+    {
+        return $this->hasMany(AssetDeletion::class);
     }
 }

@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('maintenances', function (Blueprint $table) {
+        Schema::create('asset_deletions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('asset_id')->constrained('assets')->onDelete('cascade');
-            $table->foreignId('risk_id')->nullable()->constrained('risks')->onDelete('set null');
-            $table->text('alasan_pemeliharaan');
-            $table->enum('status_pemeliharaan', ['pending', 'penanganan', 'selesai'])->nullable();
-            $table->enum('status_review', ['pending', 'accepted', 'rejected'])->default('pending');
-            $table->string('bukti_lampiran')->nullable();
+            $table->text('alasan_penghapusan');
+            $table->string('lampiran')->nullable();
+            $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
             $table->text('alasan_ditolak')->nullable();
             $table->timestamps();
         });
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('maintenances');
+        Schema::dropIfExists('asset_deletions');
     }
 };

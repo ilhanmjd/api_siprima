@@ -47,9 +47,18 @@ function VerifikasiRisiko2() {
     navigate("/VerifikasiRejectRisiko");
   };
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     if (allFilled) {
-      navigate("/VerifikasiAcceptRisiko");
+      try {
+        await api.approveRisk(assetData.idRisiko);
+        updateAssetData({ status: "diterima" });
+        navigate("/VerifikasiAcceptRisiko");
+      } catch (error) {
+        console.error("Error approving risk:", error);
+        alert(
+          "Terjadi kesalahan saat memverifikasi risiko. Silakan coba lagi."
+        );
+      }
     } else {
       alert("Harap isi semua field");
     }

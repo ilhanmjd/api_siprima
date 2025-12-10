@@ -46,20 +46,6 @@ export default function VerifikasiAcceptRisiko() {
 
       {/* Main content */}
       <div className="main-content">
-        {/* Sidebar */}
-        <aside className="sidebar">
-          <div className="sidebar-scroll">
-            <button className="sidebar-btn">Risiko Laptop</button>
-            <button className="sidebar-btn">Risiko Komputer</button>
-            <button className="sidebar-btn">Data Cloud</button>
-            <button className="sidebar-btn">Server</button>
-            <button className="sidebar-btn">Microsoft Office</button>
-            <button className="sidebar-btn">Router</button>
-            <button className="sidebar-btn">Printer</button>
-            <button className="sidebar-btn">Firewall</button>
-          </div>
-        </aside>
-
         {/* Risiko detail panel */}
         <section className="risiko-detail">
           <div className="risiko-card">

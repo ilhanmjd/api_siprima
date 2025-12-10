@@ -2058,6 +2058,428 @@
                 ]
             }
         },
+        "/api/maintenances": {
+            "get": {
+                "tags": [
+                    "Maintenances"
+                ],
+                "summary": "Get all maintenances",
+                "description": "Mendapatkan daftar semua pemeliharaan dengan relasi asset dan risk",
+                "operationId": "636914631e6c71a4bef6d96809b9f71b",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter berdasarkan status (pending, penanganan, selesai)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan data maintenances",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "asset_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "risk_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "alasan_pemeliharaan": {
+                                                        "type": "string",
+                                                        "example": "Perbaikan rutin"
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "example": "pending"
+                                                    },
+                                                    "bukti_lampiran": {
+                                                        "type": "string",
+                                                        "example": "maintenances/1234567890_bukti.pdf"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Maintenances"
+                ],
+                "summary": "Create new maintenance",
+                "description": "Membuat pemeliharaan baru. Jika status 'penanganan', akan update status asset menjadi 'pemeliharaan'",
+                "operationId": "abfcf81e0d6218c3367bb5c1d6c036f6",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "asset_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "risk_id": {
+                                        "type": "integer",
+                                        "example": 1,
+                                        "nullable": true
+                                    },
+                                    "alasan_pemeliharaan": {
+                                        "type": "string",
+                                        "example": "Perbaikan rutin"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "pending",
+                                            "penanganan",
+                                            "selesai"
+                                        ],
+                                        "example": "pending"
+                                    },
+                                    "bukti_lampiran": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Maintenance berhasil dibuat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Maintenance berhasil dibuat"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "asset_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "risk_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "alasan_pemeliharaan": {
+                                                    "type": "string",
+                                                    "example": "Perbaikan rutin"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "pending"
+                                                },
+                                                "bukti_lampiran": {
+                                                    "type": "string",
+                                                    "example": "maintenances/1234567890_bukti.pdf"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/maintenances/{id}": {
+            "get": {
+                "tags": [
+                    "Maintenances"
+                ],
+                "summary": "Get maintenance by ID",
+                "description": "Mendapatkan detail pemeliharaan berdasarkan ID",
+                "operationId": "a0fe53e05a803a904b81a68ea8f0fb8b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID maintenance",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan data maintenance",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "asset_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "risk_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "alasan_pemeliharaan": {
+                                                    "type": "string",
+                                                    "example": "Perbaikan rutin"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "pending"
+                                                },
+                                                "bukti_lampiran": {
+                                                    "type": "string",
+                                                    "example": "maintenances/1234567890_bukti.pdf"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Maintenance tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Maintenance tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Maintenances"
+                ],
+                "summary": "Update maintenance",
+                "description": "Mengupdate data pemeliharaan. Jika status diubah menjadi 'penanganan', akan update status asset menjadi 'pemeliharaan'",
+                "operationId": "d9510fe3e5962a6310d1f60d5e36abda",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID maintenance",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "asset_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "risk_id": {
+                                        "type": "integer",
+                                        "example": 1,
+                                        "nullable": true
+                                    },
+                                    "alasan_pemeliharaan": {
+                                        "type": "string",
+                                        "example": "Perbaikan rutin"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "pending",
+                                            "penanganan",
+                                            "selesai"
+                                        ],
+                                        "example": "penanganan"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Maintenance berhasil diupdate",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Maintenance berhasil diupdate"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "asset_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "risk_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "alasan_pemeliharaan": {
+                                                    "type": "string",
+                                                    "example": "Perbaikan rutin"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "penanganan"
+                                                },
+                                                "bukti_lampiran": {
+                                                    "type": "string",
+                                                    "example": "maintenances/1234567890_bukti.pdf"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Maintenance tidak ditemukan"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/penanggungjawabs": {
             "get": {
                 "tags": [
@@ -5230,6 +5652,58 @@
         }
     },
     "components": {
+        "schemas": {
+            "Maintenance": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "asset_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "risk_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "alasan_pemeliharaan": {
+                        "type": "string",
+                        "example": "Perbaikan rutin"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "penanganan",
+                            "selesai"
+                        ],
+                        "example": "pending"
+                    },
+                    "bukti_lampiran": {
+                        "type": "string",
+                        "example": "maintenances/1234567890_bukti.pdf",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "asset": {
+                        "type": "object"
+                    },
+                    "risk": {
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            }
+        },
         "securitySchemes": {
             "sanctum": {
                 "type": "http",
@@ -5271,6 +5745,10 @@
         {
             "name": "Penanggungjawab",
             "description": "Endpoint untuk manajemen penanggung jawab"
+        },
+        {
+            "name": "Maintenances",
+            "description": "Maintenances"
         },
         {
             "name": "Risks",

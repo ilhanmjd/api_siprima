@@ -10,6 +10,7 @@ use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\SsoController;
 use App\Http\Controllers\RiskController;
 use App\Http\Controllers\RiskTreatmentController;
+use App\Http\Controllers\MaintenanceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -96,5 +97,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{id}', [RiskTreatmentController::class, 'show']);
         Route::post('/{id}/reject', [RiskTreatmentController::class, 'reject']);
         Route::post('/{id}/approve', [RiskTreatmentController::class, 'approve']);
+    });
+
+    Route::prefix('maintenances')->group(function () {
+        Route::get('/', [MaintenanceController::class, 'index']);
+        Route::post('/', [MaintenanceController::class, 'store']);
+        Route::get('/{id}', [MaintenanceController::class, 'show']);
+        Route::put('/{id}', [MaintenanceController::class, 'update']);
     });
 });

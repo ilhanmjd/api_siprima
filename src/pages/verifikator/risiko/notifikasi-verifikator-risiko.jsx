@@ -1,43 +1,34 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { formatDistanceToNow } from "date-fns";
+import api from "../../../api.js";
 import "./notifikasi-verifikator-risiko.css";
 
 export default function NotifikasiVerifikatorRisiko() {
   const navigate = useNavigate();
+  const [items, setItems] = useState([]);
 
-  // 5 item sesuai contoh gambar
-  const items = [
-    {
-      id: 1579,
-      waktu: "10 mins ago",
-      teks: "Printer Epson L3250 perangkat multifungsi (print, scan, copy) yang digunakan untuk mendukung kegiatan administrasi dan dokumentasi di Dinas Kesehatan.",
-    },
-    {
-      id: 1580,
-      waktu: "25 mins ago",
-      teks: "Laptop Lenovo ThinkPad untuk mendukung staf dalam kegiatan operasional sehari-hari.",
-    },
-    {
-      id: 1581,
-      waktu: "40 mins ago",
-      teks: "Meja kerja kayu ukuran besar digunakan untuk ruang Kepala Bidang.",
-    },
-    {
-      id: 1582,
-      waktu: "1 hour ago",
-      teks: "Kursi ergonomis baru untuk meningkatkan kenyamanan pegawai.",
-    },
-    {
-      id: 1583,
-      waktu: "2 hours ago",
-      teks: "Proyektor Epson digunakan untuk presentasi di ruang rapat.",
-    },
-    {
-      id: 1579,
-      waktu: "10 mins ago",
-      teks: "Printer Epson L3250 perangkat multifungsi (print, scan, copy) yang digunakan untuk mendukung kegiatan administrasi dan dokumentasi di Dinas Kesehatan.",
-    },
-  ];
+  useEffect(() => {
+    const fetchRisks = async () => {
+      try {
+        const res = await api.getRisks();
+        const risks = res?.data?.data ?? res?.data ?? [];
+        const filteredRisks = risks.filter((risk) => risk.status === "pending");
+        const mappedItems = filteredRisks.map((risk) => ({
+          id: risk.id,
+          waktu: formatDistanceToNow(new Date(risk.updated_at), {
+            addSuffix: true,
+          }),
+          teks: risk.deskripsi,
+        }));
+        setItems(mappedItems);
+      } catch (error) {
+        console.error("Error fetching risks:", error);
+      }
+    };
+
+    fetchRisks();
+  }, []);
 
   return (
     <div className="notifikasi-verifikator-risiko-page">
@@ -90,7 +81,9 @@ export default function NotifikasiVerifikatorRisiko() {
           <div
             key={item.id}
             className="notif-card"
-            onClick={() => navigate("/VerifikasiRisiko1")}
+            onClick={() =>
+              navigate("/VerifikasiRisiko1", { state: { id: item.id } })
+            }
             style={{ cursor: "pointer" }}
           >
             <div className="notif-header-row">

@@ -1,11 +1,38 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
+import api from "../../../api.js";
 import "./VerifikasiRisiko1.css";
 
 function VerifikasiRisiko1() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { assetData, updateAssetData } = useAssetContext();
+
+  useEffect(() => {
+    const fetchRiskData = async () => {
+      const id = location.state?.id;
+      if (id) {
+        try {
+          const res = await api.getRiskById(id);
+          const risk = res?.data?.data ?? res?.data;
+          if (risk) {
+            updateAssetData({
+              idAset: risk.asset_id || "",
+              judulRisiko: risk.judul || "",
+              deskripsiRisiko: risk.deskripsi || "",
+              penyebab: risk.penyebab || "",
+              dampak: risk.dampak || "",
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching risk data:", error);
+        }
+      }
+    };
+
+    fetchRiskData();
+  }, [location.state, updateAssetData]);
 
   const handleChange = (e) => {
     updateAssetData({ [e.target.name]: e.target.value });

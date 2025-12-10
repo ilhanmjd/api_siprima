@@ -13,9 +13,7 @@ const REPORT_OPTIONS = [
 const STATUS_OPTIONS = [
   { label: "Semua Status", value: "" },
   { label: "Active", value: "active" },
-  { label: "Inactive", value: "inactive" },
-  { label: "Maintenance", value: "maintenance" },
-  { label: "Retired", value: "retired" },
+  { label: "Inactive", value: "inactive" }
 ];
 
 export default function Laporan() {
@@ -87,7 +85,7 @@ export default function Laporan() {
       if (search) {
         const term = search.toLowerCase();
         const name = (asset?.nama || asset?.nama_aset || "").toLowerCase();
-        const dinas = (asset?.lokasi?.nama || asset?.lokasi || "").toLowerCase();
+        const dinas = (asset?.dinas || asset?.dinas || "").toLowerCase();
         if (
           !name.includes(term) &&
           !dinas.includes(term) &&

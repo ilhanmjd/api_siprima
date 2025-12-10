@@ -14,6 +14,7 @@ export default function NotifAcceptAset() {
   const [selectedCategory, setSelectedCategory] = useState("Risk");
   const [selectedAsset, setSelectedAsset] = useState(null);
   const [selectedRisk, setSelectedRisk] = useState(null);
+  const [penanggungjawabNama, setPenanggungjawabNama] = useState("");
   const [selectedRiskTreatment, setSelectedRiskTreatment] = useState(null);
   const [selectedMaintenance, setSelectedMaintenance] = useState(null);
   const [selectedPenghapusanAset, setSelectedPenghapusanAset] = useState(null);
@@ -92,8 +93,7 @@ export default function NotifAcceptAset() {
     if (selectedCategory !== "Risk") return;
     let cancelled = false;
     setLoading(true);
-    api
-      .getRisks()
+    api.getRisks() 
       .then((res) => {
         if (cancelled) return;
         const list = res?.data?.data ?? res?.data ?? [];
@@ -123,6 +123,38 @@ export default function NotifAcceptAset() {
     (asset) =>
       asset.status !== "pending" && asset.status !== "rejected"
   );
+
+// Ambil nama penanggung jawab berdasarkan penanggungjawab_id
+useEffect(() => {
+  const id = selectedRisk?.asset?.penanggungjawab_id;
+  if (!id) {
+    setPenanggungjawabNama("");
+    return;
+  }
+
+  let cancelled = false;
+
+  api.getPenanggungjawabById(id)
+    .then((res) => {
+      if (cancelled) return;
+      const data = res?.data?.data;
+
+      // handle jika data adalah array atau single object
+      if (Array.isArray(data)) {
+        setPenanggungjawabNama(data[0]?.nama || "");
+      } else {
+        setPenanggungjawabNama(data?.nama || "");
+      }
+    })
+    .catch(() => {
+      if (!cancelled) setPenanggungjawabNama("");
+    });
+
+  return () => {
+    cancelled = true;
+  };
+}, [selectedRisk]);
+
 
   const handleCategoryChange = useCallback(
     (value) => {
@@ -246,8 +278,9 @@ export default function NotifAcceptAset() {
                 <b>Level Risiko:</b> {selectedRisk?.level_risiko || ""}
               </p>
               <p>
-                <b>Person in Change:</b> {selectedRisk?.penanggungjawab?.nama || ""}
+                <b>Person in Change:</b> {penanggungjawabNama || "-"}
               </p>
+
               <p>
                 <b>Type Risiko:</b> {selectedRisk?.kriteria || ""}
               </p>

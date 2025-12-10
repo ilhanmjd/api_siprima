@@ -75,11 +75,12 @@ export default function KonfirmasiInputAset() {
         tgl_perolehan: assetData.tanggal_perolehan,
         nilai_perolehan: parseInt(assetData.nilai_perolehan),
         kondisi: assetData.kondisi === 'Baik' ? 'baik' :
-                 assetData.kondisi === 'Sedang' ? 'sedang' :
-                 assetData.kondisi === 'Buruk' ? 'buruk' : assetData.kondisi,
+                 assetData.kondisi === 'Sedang' ? 'rusak-ringan' :
+                 assetData.kondisi === 'Buruk' ? 'rusak-berat' : assetData.kondisi,
         is_usage: assetData.status === 'Active' ? 'active' : 'inactive',
         deskripsi: assetData.deskripsi_aset,
         lampiran_bukti: assetData.doc ? assetData.doc.name : null,
+        dinas_id: 1,
       };
 
       // Call POST /api/assets

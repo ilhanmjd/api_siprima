@@ -92,27 +92,40 @@ export default function VerifikasiAcceptRisiko() {
               </div>
               <div className="risiko-body">
                 <p>
-                  <b>Sub Kategori</b> : {riskData.sub_kategori?.nama || ""}
+                  <b>Judul</b> : {riskData.judul || ""}
                 </p>
                 <p>
-                  <b>Kategori Risiko</b> :{" "}
-                  {riskData.kategori_risiko?.nama || ""}
+                  <b>Deskripsi</b> : {riskData.deskripsi || ""}
                 </p>
                 <p>
-                  <b>Dampak Risiko</b> : {riskData.dampak_risiko || ""}
+                  <b>Penyebab</b> : {riskData.penyebab || ""}
                 </p>
                 <p>
-                  <b>Level Risiko</b> : {riskData.level_risiko || ""}
-                </p>
-                <p>
-                  <b>Penanggung Jawab</b> :{" "}
-                  {riskData.penanggung_jawab?.nama || ""}
+                  <b>Dampak</b> : {riskData.dampak || ""}
                 </p>
                 <p>
                   <b>Probabilitas</b> : {riskData.probabilitas || ""}
                 </p>
                 <p>
-                  <b>Deskripsi</b> : {riskData.deskripsi || ""}
+                  <b>Nilai Dampak</b> : {riskData.nilai_dampak || ""}
+                </p>
+                <p>
+                  <b>Level Risiko</b> : {riskData.level_risiko || ""}
+                </p>
+                <p>
+                  <b>Kriteria</b> : {riskData.kriteria || ""}
+                </p>
+                <p>
+                  <b>Prioritas</b> : {riskData.prioritas || ""}
+                </p>
+                <p>
+                  <b>Status</b> : {riskData.status || ""}
+                </p>
+                <p>
+                  <b>Aset</b> : {riskData.asset?.nama || ""}
+                </p>
+                <p>
+                  <b>Kode BMD</b> : {riskData.asset?.kode_bmd || ""}
                 </p>
                 <p className="risiko-id">
                   <b>ID Risiko</b> : {riskData.id || ""}

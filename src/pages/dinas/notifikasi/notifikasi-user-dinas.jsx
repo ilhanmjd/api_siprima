@@ -23,8 +23,6 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
 
   const requestIdRef = useRef(0);
   const cancelledRef = useRef(false);
-  const riskLoadedRef = useRef(false);
-  const riskTreatmentLoadedRef = useRef(false);
   const defaultCategoryAppliedRef = useRef(false);
 
   const sortByUpdatedAt = useCallback((items = []) => {
@@ -38,74 +36,50 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
   // Keep latest fetch function without putting it as a dependency to avoid analyzer loop warnings
   fetchAssetsOnceRef.current = fetchAssetsOnce;
 
-  const riskConsume = useCallback(async (requestId) => {
-    const res = await api.getRisks();
-    const list = sortByUpdatedAt(res?.data?.data ?? res?.data ?? []);
-    if (cancelledRef.current || requestId !== requestIdRef.current) return;
-    setRiskList(Array.isArray(list) ? list : []);
-    riskLoadedRef.current = true;
-  }, [sortByUpdatedAt]);
-
-  const riskTreatmentConsume = useCallback(async (requestId) => {
-    const res = await api.getRiskTreatments();
-    const list = sortByUpdatedAt(res?.data?.data ?? res?.data ?? []);
-    if (cancelledRef.current || requestId !== requestIdRef.current) return;
-    setRiskTreatmentList(Array.isArray(list) ? list : []);
-    riskTreatmentLoadedRef.current = true;
-  }, [sortByUpdatedAt]);
-
-  const loadDataForCategory = useCallback(
-    async (category) => {
+  useEffect(() => {
+    const loadAll = async () => {
       const requestId = ++requestIdRef.current;
       setLoading(true);
+
       try {
-        if (category === "Asset") {
-          const data = await fetchAssetsOnceRef.current?.();
-          if (cancelledRef.current || requestId !== requestIdRef.current) return;
-          const assets = Array.isArray(data) ? data : [];
-          setAssetList(sortByUpdatedAt(assets));
-        } else if (category === "Risk") {
-          if (riskLoadedRef.current) {
-            if (!cancelledRef.current && requestId === requestIdRef.current) {
-              setRiskList((prev) => sortByUpdatedAt(prev));
-              setLoading(false);
-            }
-            return;
-          }
-          await riskConsume(requestId);
-        } else if (category === "Risk Treatment") {
-          if (riskTreatmentLoadedRef.current) {
-            if (!cancelledRef.current && requestId === requestIdRef.current) {
-              setRiskTreatmentList((prev) => sortByUpdatedAt(prev));
-              setLoading(false);
-            }
-            return;
-          }
-          await riskTreatmentConsume(requestId);
-        } else if (category === "Maintenance") {
-          if (cancelledRef.current || requestId !== requestIdRef.current) return;
-          setMaintenanceList((prev) => sortByUpdatedAt(prev));
-        } else if (category === "Penghapusan Aset") {
-          if (cancelledRef.current || requestId !== requestIdRef.current) return;
-          setPenghapusanasetList((prev) => sortByUpdatedAt(prev));
-        }
+        const assetData = await fetchAssetsOnceRef.current?.();
+        if (cancelledRef.current || requestId !== requestIdRef.current) return;
+        const assets = Array.isArray(assetData) ? assetData : [];
+        setAssetList(sortByUpdatedAt(assets));
+
+        const riskRes = await api.getRisks();
+        if (cancelledRef.current || requestId !== requestIdRef.current) return;
+        const riskData = Array.isArray(riskRes?.data?.data)
+          ? riskRes.data.data
+          : Array.isArray(riskRes?.data)
+          ? riskRes.data
+          : [];
+        setRiskList(sortByUpdatedAt(riskData));
+
+        const treatmentRes = await api.getRiskTreatments();
+        if (cancelledRef.current || requestId !== requestIdRef.current) return;
+        const treatmentData = Array.isArray(treatmentRes?.data?.data)
+          ? treatmentRes.data.data
+          : Array.isArray(treatmentRes?.data)
+          ? treatmentRes.data
+          : [];
+        setRiskTreatmentList(sortByUpdatedAt(treatmentData));
+
+        // Jika nanti ada API Maintenance & Penghapusan Aset,
+        // panggil dan isi maintenanceList & penghapusanasetList di sini.
       } catch (error) {
         if (cancelledRef.current || requestId !== requestIdRef.current) return;
-        if (category === "Asset") setAssetList([]);
-        if (category === "Risk") setRiskList([]);
-        if (category === "Risk Treatment") setRiskTreatmentList([]);
-        if (category === "Maintenance") setMaintenanceList([]);
-        if (category === "Penghapusan Aset") setPenghapusanasetList([]);
+        setAssetList([]);
+        setRiskList([]);
+        setRiskTreatmentList([]);
       } finally {
         if (cancelledRef.current || requestId !== requestIdRef.current) return;
         setLoading(false);
       }
-    },
-    [riskConsume, riskTreatmentConsume]
-  );
+    };
 
-  useEffect(() => {
-    loadDataForCategory(selectedCategory);
+    loadAll();
+
     return () => {
       cancelledRef.current = true;
     };
@@ -116,16 +90,11 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
     if (!defaultCategory || defaultCategoryAppliedRef.current) return;
     defaultCategoryAppliedRef.current = true;
     setSelectedCategory(defaultCategory);
-    loadDataForCategory(defaultCategory);
-  }, [defaultCategory, loadDataForCategory]);
+  }, [defaultCategory]);
 
-  const handleCategoryChange = useCallback(
-    (value) => {
-      setSelectedCategory(value);
-      loadDataForCategory(value);
-    },
-    [loadDataForCategory]
-  );
+  const handleCategoryChange = useCallback((value) => {
+    setSelectedCategory(value);
+  }, []);
 
   return (
     <div className="page-wrapper">

@@ -98,7 +98,8 @@ function VerifikasiRisiko1() {
           type="text"
           name="idAset"
           value={assetData.idAset || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Judul Risiko</label>
@@ -106,7 +107,8 @@ function VerifikasiRisiko1() {
           type="text"
           name="judulRisiko"
           value={assetData.judulRisiko || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Deskripsi Risiko</label>
@@ -114,7 +116,8 @@ function VerifikasiRisiko1() {
           type="text"
           name="deskripsiRisiko"
           value={assetData.deskripsiRisiko || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Penyebab</label>
@@ -122,7 +125,8 @@ function VerifikasiRisiko1() {
           type="text"
           name="penyebab"
           value={assetData.penyebab || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Dampak</label>
@@ -130,15 +134,11 @@ function VerifikasiRisiko1() {
           type="text"
           name="dampak"
           value={assetData.dampak || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
-        <button
-          type="button"
-          className={`next-btn ${allFilled ? "active" : "disabled"}`}
-          disabled={!allFilled}
-          onClick={handleNext}
-        >
+        <button type="button" className="next-btn active" onClick={handleNext}>
           NEXT
         </button>
       </form>

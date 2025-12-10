@@ -59,7 +59,6 @@ function VerifikasiRisiko2() {
     setRejectReason("");
     navigate("/VerifikasiRejectRisiko");
   };
-  
 
   const handleVerify = async () => {
     if (allFilled) {
@@ -130,7 +129,8 @@ function VerifikasiRisiko2() {
           type="text"
           name="probabilitas"
           value={assetData.probabilitas || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Nilai Dampak</label>
@@ -138,7 +138,8 @@ function VerifikasiRisiko2() {
           type="text"
           name="nilaiDampak"
           value={assetData.nilaiDampak || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Level Risiko</label>
@@ -146,7 +147,8 @@ function VerifikasiRisiko2() {
           type="text"
           name="levelRisiko"
           value={assetData.levelRisiko || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Kriteria</label>
@@ -154,7 +156,8 @@ function VerifikasiRisiko2() {
           type="text"
           name="kriteria"
           value={assetData.kriteria || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Prioritas</label>
@@ -162,7 +165,8 @@ function VerifikasiRisiko2() {
           type="text"
           name="prioritas"
           value={assetData.prioritas || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Status</label>
@@ -170,7 +174,8 @@ function VerifikasiRisiko2() {
           type="text"
           name="status"
           value={assetData.status || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <div className="button-group">
@@ -181,16 +186,16 @@ function VerifikasiRisiko2() {
           >
             BACK
           </button>
+
           <button
             type="button"
             className="next-btn"
-            style={{
-              backgroundColor: "#FF0004",
-            }}
+            style={{ backgroundColor: "#FF0004" }}
             onClick={handleReject}
           >
             REJECT
           </button>
+
           <button
             type="button"
             className={`next-btn ${allFilled ? "active" : "disabled"}`}

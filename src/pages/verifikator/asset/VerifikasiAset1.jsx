@@ -7,25 +7,13 @@ function VerifikasiAset1() {
   const navigate = useNavigate();
   const location = useLocation();
   const [kategori, setKategori] = useState("");
-  const [subKategori, setSubKategori] = useState("");
-  const [namaAset, setNamaAset] = useState("");
-  const [deskripsiAset, setDeskripsiAset] = useState("");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isSubDropdownOpen, setIsSubDropdownOpen] = useState(false);
-  const [subKategoriFilter, setSubKategoriFilter] = useState("");
+
+  // Removed unused state variables for read-only form
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [asset, setAsset] = useState(null);
 
-  const subKategoriOptions = [
-    "Aset Laptop",
-    "Aset Komputer",
-    "Data Cloud",
-    "Server",
-  ];
-  const filteredOptions = subKategoriOptions.filter((option) =>
-    option.toLowerCase().includes(subKategoriFilter.toLowerCase())
-  );
+  // Removed unused variables for read-only form
 
   useEffect(() => {
     const fetchAsset = async () => {
@@ -39,18 +27,6 @@ function VerifikasiAset1() {
         const response = await api.getAssetById(id);
         const asset = response.data.data || response.data;
         setAsset(asset);
-        setKategori(
-          typeof asset.kategori?.nama === "string" ? asset.kategori.nama : ""
-        );
-        setSubKategori(
-          typeof asset.subkategori?.nama === "string"
-            ? asset.subkategori.nama
-            : ""
-        );
-        setNamaAset(typeof asset.nama === "string" ? asset.nama : "");
-        setDeskripsiAset(
-          typeof asset.deskripsi === "string" ? asset.deskripsi : ""
-        );
       } catch (err) {
         setError(err.message);
         console.error("Error fetching asset:", err);
@@ -127,31 +103,9 @@ function VerifikasiAset1() {
       <form className="asset-form">
         <label>Kategori Aset</label>
         <div className="dropdown">
-          <button
-            type="button"
-            className="dropdown-btn"
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          >
-            {kategori || "Pilih Kategori"} <span>▾</span>
+          <button type="button" className="dropdown-btn" disabled>
+            {asset?.kategori?.nama || "Pilih Kategori"} <span>▾</span>
           </button>
-          <div className={`dropdown-content ${isDropdownOpen ? "show" : ""}`}>
-            <div
-              onClick={() => {
-                setKategori("Aset TI");
-                setIsDropdownOpen(false);
-              }}
-            >
-              Aset TI
-            </div>
-            <div
-              onClick={() => {
-                setKategori("Non TI");
-                setIsDropdownOpen(false);
-              }}
-            >
-              Non TI
-            </div>
-          </div>
         </div>
         <label>Sub Kategori</label>
         <div className="dropdown">
@@ -159,53 +113,19 @@ function VerifikasiAset1() {
             <input
               type="text"
               className="dropdown-input"
-              value={subKategori}
-              onChange={(e) => {
-                setSubKategori(e.target.value);
-                setSubKategoriFilter(e.target.value);
-                setIsSubDropdownOpen(true);
-              }}
-              onClick={() => setIsSubDropdownOpen(!isSubDropdownOpen)}
-              placeholder="Pilih atau ketik Sub Kategori"
+              value={asset?.subkategori?.nama || ""}
+              readOnly
             />
-            <span
-              className="dropdown-arrow"
-              onClick={() => setIsSubDropdownOpen(!isSubDropdownOpen)}
-            >
-              ▾
-            </span>
-          </div>
-          <div
-            className={`dropdown-content subkategori-dropdown ${
-              isSubDropdownOpen ? "show" : ""
-            }`}
-          >
-            {filteredOptions.map((option, index) => (
-              <div
-                key={index}
-                onClick={() => {
-                  setSubKategori(option);
-                  setIsSubDropdownOpen(false);
-                }}
-              >
-                {option}
-              </div>
-            ))}
           </div>
         </div>
         <label>Nama Aset</label>
-        <input
-          type="text"
-          name="namaAset"
-          value={namaAset}
-          onChange={(e) => setNamaAset(e.target.value)}
-        />
+        <input type="text" name="namaAset" value={asset?.nama || ""} readOnly />
         <label>Deskripsi Aset</label>
         <input
           type="text"
           name="deskripsiAset"
-          value={deskripsiAset}
-          onChange={(e) => setDeskripsiAset(e.target.value)}
+          value={asset?.deskripsi || ""}
+          readOnly
         />
         <button type="button" className="next-btn active" onClick={handleNext}>
           NEXT

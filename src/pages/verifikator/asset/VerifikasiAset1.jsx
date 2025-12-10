@@ -107,6 +107,7 @@ function VerifikasiAset1() {
             {asset?.kategori?.nama || "Pilih Kategori"} <span>▾</span>
           </button>
         </div>
+
         <label>Sub Kategori</label>
         <div className="dropdown">
           <div className="text-dropdown-container">
@@ -115,18 +116,29 @@ function VerifikasiAset1() {
               className="dropdown-input"
               value={asset?.subkategori?.nama || ""}
               readOnly
+              disabled
             />
           </div>
         </div>
+
         <label>Nama Aset</label>
-        <input type="text" name="namaAset" value={asset?.nama || ""} readOnly />
+        <input
+          type="text"
+          name="namaAset"
+          value={asset?.nama || ""}
+          readOnly
+          disabled
+        />
+
         <label>Deskripsi Aset</label>
         <input
           type="text"
           name="deskripsiAset"
           value={asset?.deskripsi || ""}
           readOnly
+          disabled
         />
+
         <button type="button" className="next-btn active" onClick={handleNext}>
           NEXT
         </button>

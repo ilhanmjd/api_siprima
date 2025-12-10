@@ -55,25 +55,25 @@ export default function VerifikasiRejectAsset() {
             </div>
             <div className="asset-body">
               <p>
-                <b>Kategori</b> :{" "}
+                <b>Sub Kategori</b> :{" "}
               </p>
               <p>
-                <b>Nama Asset</b> :{" "}
+                <b>Kategori Aset</b> :{" "}
               </p>
               <p>
-                <b>Kode Asset</b> :{" "}
+                <b>Status Aset</b> :{" "}
               </p>
               <p>
-                <b>Person in Change</b> :{" "}
-              </p>
-              <p className="asset-id">
-                <b>ID ASSET :</b>
+                <b>Kondisi Aset</b> :{" "}
               </p>
               <p>
-                <b>Kondisi Asset</b> :{" "}
+                <b>Penanggung Jawab</b> :{" "}
               </p>
               <p>
-                <b>Deskripsi Asset</b> :{" "}
+                <b>Lokasi</b> :{" "}
+              </p>
+              <p>
+                <b>Alasan ditolak</b> :{" "}
               </p>
             </div>
           </div>

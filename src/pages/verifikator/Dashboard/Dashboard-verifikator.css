@@ -38,18 +38,18 @@ body {
 }
 
 .navbar-center span {
-color: rgb(255, 255, 255);
-text-decoration: none;
-margin: 0 15px;
-font-weight: 500;
-padding-bottom: 3px;
-transition: all 0.3s ease;
-cursor: pointer;
+  color: rgb(255, 255, 255);
+  text-decoration: none;
+  margin: 0 15px;
+  font-weight: 500;
+  padding-bottom: 3px;
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .navbar-center span.active,
 .navbar-center span:hover {
-border-bottom: 2px solid #f7c500;
+  border-bottom: 2px solid #f7c500;
 }
 
 .icon,
@@ -132,8 +132,8 @@ border-bottom: 2px solid #f7c500;
 
 /* Actions */
 .actions-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  justify-content: space-between;
   gap: 15px;
   margin-top: 10px;
 }

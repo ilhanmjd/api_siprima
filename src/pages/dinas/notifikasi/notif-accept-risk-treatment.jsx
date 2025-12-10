@@ -271,12 +271,18 @@ export default function NotifAcceptAset() {
             </div>
           </div>
 
-          <button
-            className="risk-btn"
-            onClick={() => navigate("/Maintenance1")}
-          >
-            Maintenance
-          </button>
+            <button
+              className="risk-btn"
+              onClick={() =>
+                navigate("/Maintenance1", {
+                  state: { id: riskDetail?.risk?.asset_id }
+                })
+              }
+            >
+              Maintenance
+            </button>
+
+
         </section>
       </div>
     </div>

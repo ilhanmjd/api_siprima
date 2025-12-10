@@ -162,7 +162,7 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
         <div className="content-box">
           <h2 className="content-title">Verification</h2>
 
-          <div className="dropdown-container">
+          <div className="dropdown-containerqq">
             <label htmlFor="category-select" className="dropdown-label">
               Pilih Kategori:
             </label>

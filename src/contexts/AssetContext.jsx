@@ -104,6 +104,7 @@ export const AssetProvider = ({ children }) => {
     probabilitasAkhir: "",
     dampakAkhir: "",
     levelResidual: "",
+    riskTreatmentId: "",
   });
 
   const updateAssetData = useCallback((newData) => {
@@ -134,6 +135,7 @@ export const AssetProvider = ({ children }) => {
       probabilitasAkhir: "",
       dampakAkhir: "",
       levelResidual: "",
+      riskTreatmentId: "",
     });
   }, []);
 

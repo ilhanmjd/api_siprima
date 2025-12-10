@@ -52,7 +52,9 @@ function VerifikasiRisiko2() {
       try {
         await api.approveRisk(assetData.idRisiko);
         updateAssetData({ status: "diterima" });
-        navigate("/VerifikasiAcceptRisiko");
+        navigate("/VerifikasiAcceptRisiko", {
+          state: { id: assetData.idRisiko },
+        });
       } catch (error) {
         console.error("Error approving risk:", error);
         alert(

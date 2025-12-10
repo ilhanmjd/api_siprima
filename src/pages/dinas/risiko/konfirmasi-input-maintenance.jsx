@@ -1,6 +1,6 @@
 //konfirmasi-input-maintenance
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
 import api from "../../../api";
 import "./konfirmasi-input-maintenance.css";
@@ -9,6 +9,10 @@ export default function KonfirmasiInputMaintenance() {
   const navigate = useNavigate();
   const { assetData, resetAssetData } = useAssetContext();
 
+  const location = useLocation();
+  const risiko_id = location.state?.risiko_id;
+  console.log("risiko_id:", risiko_id);
+
   const handleConfirm = async () => {
     try {
       const payload = {
@@ -16,7 +20,7 @@ export default function KonfirmasiInputMaintenance() {
         alasan_pemeliharaan: assetData.alasanPemeliharaan,
         buktiLampiran: assetData.buktiLampiran,
         status_review: "pending",
-        risk_id: assetData.idRisiko,
+        risk_id: risiko_id,
       };
 
       await api.createMaintenance(payload);
@@ -96,7 +100,7 @@ export default function KonfirmasiInputMaintenance() {
           <button
             type="button"
             className="btn-cancel"
-            onClick={() => navigate("/Maintenance1")}
+            onClick={() => navigate("/Maintenance1", {state:{risiko_id: risiko_id}})}
           >
             Batal
           </button>

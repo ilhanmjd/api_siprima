@@ -15,13 +15,15 @@ use Illuminate\Support\Facades\Storage;
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="asset_id", type="integer", example=1),
  *     @OA\Property(property="risk_id", type="integer", example=1, nullable=true),
+ *     @OA\Property(property="risk_treatment_id", type="integer", example=1, nullable=true),
  *     @OA\Property(property="alasan_pemeliharaan", type="string", example="Perbaikan rutin"),
  *     @OA\Property(property="status", type="string", enum={"pending", "penanganan", "selesai"}, example="pending"),
  *     @OA\Property(property="bukti_lampiran", type="string", example="maintenances/1234567890_bukti.pdf", nullable=true),
  *     @OA\Property(property="created_at", type="string", format="date-time"),
  *     @OA\Property(property="updated_at", type="string", format="date-time"),
  *     @OA\Property(property="asset", type="object"),
- *     @OA\Property(property="risk", type="object")
+ *     @OA\Property(property="risk", type="object"),
+ *     @OA\Property(property="risk_treatment", type="object")
  * )
  */
 class MaintenanceController extends Controller
@@ -70,7 +72,7 @@ class MaintenanceController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Maintenance::with(['asset', 'risk']);
+        $query = Maintenance::with(['asset', 'risk', 'riskTreatment']);
 
         // Filter berdasarkan status
         if ($request->has('status')) {
@@ -130,7 +132,7 @@ class MaintenanceController extends Controller
      */
     public function show($id)
     {
-        $maintenance = Maintenance::with(['asset', 'risk'])->find($id);
+        $maintenance = Maintenance::with(['asset', 'risk', 'riskTreatment'])->find($id);
 
         if (!$maintenance) {
             return response()->json([
@@ -159,6 +161,7 @@ class MaintenanceController extends Controller
      *             @OA\Schema(
      *                 @OA\Property(property="asset_id", type="integer", example=1),
      *                 @OA\Property(property="risk_id", type="integer", example=1, nullable=true),
+     *                 @OA\Property(property="risk_treatment_id", type="integer", example=1, nullable=true),
      *                 @OA\Property(property="alasan_pemeliharaan", type="string", example="Perbaikan rutin"),
      *                 @OA\Property(property="status", type="string", enum={"pending", "penanganan", "selesai"}, example="pending"),
      *                 @OA\Property(property="bukti_lampiran", type="string", format="binary", nullable=true)
@@ -196,6 +199,7 @@ class MaintenanceController extends Controller
         $validator = Validator::make($request->all(), [
             'asset_id' => 'required|exists:assets,id',
             'risk_id' => 'nullable|exists:risks,id',
+            'risk_treatment_id' => 'nullable|exists:risk_treatments,id',
             'alasan_pemeliharaan' => 'required|string',
             'status_pemeliharaan' => 'nullable|in:pending,penanganan,selesai',
             'status_review' => 'required|in:pending,accepted,rejected',
@@ -237,7 +241,7 @@ class MaintenanceController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Maintenance berhasil dibuat',
-            'data' => $maintenance->load(['asset', 'risk']),
+            'data' => $maintenance->load(['asset', 'risk', 'riskTreatment']),
         ], 201);
     }
 
@@ -262,6 +266,7 @@ class MaintenanceController extends Controller
      *             @OA\Schema(
      *                 @OA\Property(property="asset_id", type="integer", example=1),
      *                 @OA\Property(property="risk_id", type="integer", example=1, nullable=true),
+     *                 @OA\Property(property="risk_treatment_id", type="integer", example=1, nullable=true),
      *                 @OA\Property(property="alasan_pemeliharaan", type="string", example="Perbaikan rutin"),
      *                 @OA\Property(property="status", type="string", enum={"pending", "penanganan", "selesai"}, example="penanganan")
      *             )
@@ -307,6 +312,7 @@ class MaintenanceController extends Controller
         $validator = Validator::make($request->all(), [
             'asset_id' => 'sometimes|required|exists:assets,id',
             'risk_id' => 'nullable|exists:risks,id',
+            'risk_treatment_id' => 'nullable|exists:risk_treatments,id',
             'alasan_pemeliharaan' => 'sometimes|required|string',
             'status' => 'sometimes|required|in:pending,penanganan,selesai',
             'bukti_lampiran' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
@@ -349,7 +355,7 @@ class MaintenanceController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Maintenance berhasil diupdate',
-            'data' => $maintenance->load(['asset', 'risk']),
+            'data' => $maintenance->load(['asset', 'risk', 'riskTreatment']),
         ]);
     }
 }

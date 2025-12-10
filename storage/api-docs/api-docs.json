@@ -2617,6 +2617,11 @@
                                         "example": 1,
                                         "nullable": true
                                     },
+                                    "risk_treatment_id": {
+                                        "type": "integer",
+                                        "example": 1,
+                                        "nullable": true
+                                    },
                                     "alasan_pemeliharaan": {
                                         "type": "string",
                                         "example": "Perbaikan rutin"
@@ -2839,6 +2844,11 @@
                                         "example": 1
                                     },
                                     "risk_id": {
+                                        "type": "integer",
+                                        "example": 1,
+                                        "nullable": true
+                                    },
+                                    "risk_treatment_id": {
                                         "type": "integer",
                                         "example": 1,
                                         "nullable": true
@@ -4094,6 +4104,287 @@
                 ]
             }
         },
+        "/api/risk-rejecteds": {
+            "get": {
+                "tags": [
+                    "Risk Rejecteds"
+                ],
+                "summary": "Get all rejected risks",
+                "description": "Mendapatkan daftar semua risk yang ditolak beserta alasannya",
+                "operationId": "7b36904911361d8e90e8c2849d9482f8",
+                "parameters": [
+                    {
+                        "name": "risk_id",
+                        "in": "query",
+                        "description": "Filter berdasarkan risk ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan data rejected risks",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data rejected risks berhasil diambil"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "risk_id": {
+                                                        "type": "integer",
+                                                        "example": 5
+                                                    },
+                                                    "alasan": {
+                                                        "type": "string",
+                                                        "example": "Data tidak lengkap dan tidak sesuai dengan standar"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "risk": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 5
+                                                            },
+                                                            "nama_risiko": {
+                                                                "type": "string",
+                                                                "example": "Risiko Keamanan Data"
+                                                            },
+                                                            "deskripsi": {
+                                                                "type": "string",
+                                                                "example": "Potensi kebocoran data"
+                                                            },
+                                                            "status": {
+                                                                "type": "string",
+                                                                "example": "rejected"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Gagal mengambil data rejected risks"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/risk-rejecteds/{id}": {
+            "get": {
+                "tags": [
+                    "Risk Rejecteds"
+                ],
+                "summary": "Get rejected risk by ID",
+                "description": "Mendapatkan detail rejected risk berdasarkan ID",
+                "operationId": "8239cd7b34c358f9f4dfcd70971374dc",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Risk Rejected ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan detail rejected risk",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data rejected risk berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "risk_id": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "alasan": {
+                                                    "type": "string",
+                                                    "example": "Data tidak lengkap dan tidak sesuai dengan standar"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "risk": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 5
+                                                        },
+                                                        "nama_risiko": {
+                                                            "type": "string",
+                                                            "example": "Risiko Keamanan Data"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Rejected risk tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Rejected risk tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Gagal mengambil data rejected risk"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/risk-treatments": {
             "get": {
                 "tags": [
@@ -4857,6 +5148,287 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/risk-treatment-rejecteds": {
+            "get": {
+                "tags": [
+                    "Risk Treatment Rejecteds"
+                ],
+                "summary": "Get all rejected risk treatments",
+                "description": "Mendapatkan daftar semua risk treatment yang ditolak beserta alasannya",
+                "operationId": "e4a52e35953ef56da5dd3ace22831c85",
+                "parameters": [
+                    {
+                        "name": "risk_treatment_id",
+                        "in": "query",
+                        "description": "Filter berdasarkan risk treatment ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan data rejected risk treatments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data rejected risk treatments berhasil diambil"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "risk_treatment_id": {
+                                                        "type": "integer",
+                                                        "example": 3
+                                                    },
+                                                    "alasan": {
+                                                        "type": "string",
+                                                        "example": "Penanganan tidak efektif dan perlu revisi"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "risk_treatment": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 3
+                                                            },
+                                                            "jenis_penanganan": {
+                                                                "type": "string",
+                                                                "example": "mitigate"
+                                                            },
+                                                            "deskripsi_penanganan": {
+                                                                "type": "string",
+                                                                "example": "Implementasi firewall"
+                                                            },
+                                                            "status": {
+                                                                "type": "string",
+                                                                "example": "rejected"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Gagal mengambil data rejected risk treatments"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/risk-treatment-rejecteds/{id}": {
+            "get": {
+                "tags": [
+                    "Risk Treatment Rejecteds"
+                ],
+                "summary": "Get rejected risk treatment by ID",
+                "description": "Mendapatkan detail rejected risk treatment berdasarkan ID",
+                "operationId": "b15fa3d946739dc3346020c1b93e3037",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Risk Treatment Rejected ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan detail rejected risk treatment",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data rejected risk treatment berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "risk_treatment_id": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "alasan": {
+                                                    "type": "string",
+                                                    "example": "Penanganan tidak efektif dan perlu revisi"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "risk_treatment": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 3
+                                                        },
+                                                        "jenis_penanganan": {
+                                                            "type": "string",
+                                                            "example": "mitigate"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Rejected risk treatment tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Rejected risk treatment tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Gagal mengambil data rejected risk treatment"
+                                        },
+                                        "error": {
+                                            "type": "string"
                                         }
                                     },
                                     "type": "object"
@@ -6434,6 +7006,11 @@
                         "example": 1,
                         "nullable": true
                     },
+                    "risk_treatment_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
                     "alasan_pemeliharaan": {
                         "type": "string",
                         "example": "Perbaikan rutin"
@@ -6464,6 +7041,9 @@
                         "type": "object"
                     },
                     "risk": {
+                        "type": "object"
+                    },
+                    "risk_treatment": {
                         "type": "object"
                     }
                 },
@@ -6525,8 +7105,16 @@
             "description": "Risks"
         },
         {
+            "name": "Risk Rejecteds",
+            "description": "Risk Rejecteds"
+        },
+        {
             "name": "Risk Treatments",
             "description": "Risk Treatments"
+        },
+        {
+            "name": "Risk Treatment Rejecteds",
+            "description": "Risk Treatment Rejecteds"
         },
         {
             "name": "Users",

@@ -10,6 +10,8 @@ use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\SsoController;
 use App\Http\Controllers\RiskController;
 use App\Http\Controllers\RiskTreatmentController;
+use App\Http\Controllers\RiskRejectedController;
+use App\Http\Controllers\RiskTreatmentRejectedController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\AssetDeletionController;
 use App\Http\Controllers\UserController;
@@ -119,5 +121,15 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('users')->group(function () {
         Route::get('/by-dinas/{dinas_id}', [UserController::class, 'getByDinas']);
+    });
+
+    Route::prefix('risk-rejecteds')->group(function () {
+        Route::get('/', [RiskRejectedController::class, 'index']);
+        Route::get('/{id}', [RiskRejectedController::class, 'show']);
+    });
+
+    Route::prefix('risk-treatment-rejecteds')->group(function () {
+        Route::get('/', [RiskTreatmentRejectedController::class, 'index']);
+        Route::get('/{id}', [RiskTreatmentRejectedController::class, 'show']);
     });
 });

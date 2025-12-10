@@ -12,6 +12,7 @@ class Maintenance extends Model
     protected $fillable = [
         'asset_id',
         'risk_id',
+        'risk_treatment_id',
         'alasan_pemeliharaan',
         'status_pemeliharaan',
         'status_review',
@@ -33,5 +34,13 @@ class Maintenance extends Model
     public function risk()
     {
         return $this->belongsTo(Risk::class);
+    }
+
+    /**
+     * Get the risk treatment associated with this maintenance.
+     */
+    public function riskTreatment()
+    {
+        return $this->belongsTo(RiskTreatment::class);
     }
 }

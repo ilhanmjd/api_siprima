@@ -24,6 +24,7 @@ class Asset extends Model
         'lampiran_bukti',
         'is_usage',
         'status',
+        'alasan_ditolak',
         'created_by',
     ];
 

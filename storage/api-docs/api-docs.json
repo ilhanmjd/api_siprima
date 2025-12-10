@@ -767,6 +767,10 @@
                                             "pemeliharaan"
                                         ],
                                         "example": "diterima"
+                                    },
+                                    "alasan_ditolak": {
+                                        "type": "string",
+                                        "example": "Dokumen tidak lengkap"
                                     }
                                 },
                                 "type": "object"

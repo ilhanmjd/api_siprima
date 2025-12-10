@@ -278,7 +278,8 @@ class AssetController extends Controller
      *             @OA\Property(property="kondisi", type="string", enum={"baik", "rusak-ringan", "rusak-berat"}, example="baik"),
      *             @OA\Property(property="lampiran_bukti", type="string", example="bukti.pdf"),
      *             @OA\Property(property="is_usage", type="string", enum={"active", "inactive"}, example="active"),
-     *             @OA\Property(property="status", type="string", enum={"pending", "diterima", "ditolak", "pemeliharaan"}, example="diterima")
+     *             @OA\Property(property="status", type="string", enum={"pending", "diterima", "ditolak", "pemeliharaan"}, example="diterima"),
+     *             @OA\Property(property="alasan_ditolak", type="string", example="Dokumen tidak lengkap")
      *         )
      *     ),
      *     @OA\Response(
@@ -341,6 +342,7 @@ class AssetController extends Controller
             'lampiran_bukti' => 'nullable|string',
             'is_usage' => 'nullable|in:active,inactive',
             'status' => 'nullable|in:pending,diterima,ditolak,pemeliharaan',
+            'alasan_ditolak' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {

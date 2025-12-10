@@ -8,7 +8,23 @@ function RiskTreatment2() {
   const { assetData, updateAssetData } = useAssetContext();
 
   const handleChange = (e) => {
-    updateAssetData({ [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    // Update field dan otomatis hitung Level Residual
+    let updatedData = { [name]: value };
+
+    if (name === "probabilitasAkhir" || name === "dampakAkhir") {
+      const probabilitas =
+        name === "probabilitasAkhir" ? value : assetData.probabilitasAkhir;
+      const dampak = name === "dampakAkhir" ? value : assetData.dampakAkhir;
+
+      const levelResidual =
+        probabilitas && dampak ? Number(probabilitas) * Number(dampak) : "";
+
+      updatedData = { ...updatedData, levelResidual };
+    }
+
+    updateAssetData(updatedData);
   };
 
   const handleBack = () => {
@@ -80,12 +96,12 @@ function RiskTreatment2() {
           onChange={handleChange}
         />
 
-        <label>Level Residual</label>
+        <label>Level Residual (otomatis)</label>
         <input
           type="number"
           name="levelResidual"
           value={assetData.levelResidual || ""}
-          onChange={handleChange}
+          readOnly
         />
 
         <div className="button-group">

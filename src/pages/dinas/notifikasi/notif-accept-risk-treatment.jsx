@@ -276,7 +276,7 @@ export default function NotifAcceptAset() {
               onClick={() =>
                 console.log("Navigating to Maintenance with:", riskDetail) ||
                 navigate("/Maintenance1", {
-                  state: { asset_id: riskDetail?.risk?.asset_id, risiko_id: riskDetail?.risk?.id }
+                  state: { asset_id: riskDetail?.risk?.asset_id, risiko_id: riskDetail?.risk?.id, risk_treatment_id: riskDetail?.id },
                 })
               }
             >

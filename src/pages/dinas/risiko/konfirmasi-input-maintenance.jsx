@@ -11,7 +11,9 @@ export default function KonfirmasiInputMaintenance() {
 
   const location = useLocation();
   const risiko_id = location.state?.risiko_id;
+  const risk_treatment_id = location.state?.risk_treatment_id;
   console.log("risiko_id:", risiko_id);
+  console.log("risk_treatment_id:", risk_treatment_id);
 
   const handleConfirm = async () => {
     try {
@@ -21,6 +23,7 @@ export default function KonfirmasiInputMaintenance() {
         buktiLampiran: assetData.buktiLampiran,
         status_review: "pending",
         risk_id: risiko_id,
+        risktreatment_id: risk_treatment_id,
       };
 
       await api.createMaintenance(payload);
@@ -100,7 +103,7 @@ export default function KonfirmasiInputMaintenance() {
           <button
             type="button"
             className="btn-cancel"
-            onClick={() => navigate("/Maintenance1", {state:{risiko_id: risiko_id}})}
+            onClick={() => navigate("/Maintenance1", {state:{risiko_id: risiko_id, risk_treatment_id: risk_treatment_id}})}
           >
             Batal
           </button>

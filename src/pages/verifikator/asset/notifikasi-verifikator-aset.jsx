@@ -100,7 +100,9 @@ export default function NotifikasiVerifikatorAset() {
           <div
             key={item.id}
             className="notif-card"
-            onClick={() => navigate("/VerifikasiAset1")}
+            onClick={() =>
+              navigate("/VerifikasiAset1", { state: { id: item.id } })
+            }
             style={{ cursor: "pointer" }}
           >
             <div className="notif-header-row">

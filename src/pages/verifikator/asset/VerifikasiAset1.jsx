@@ -1,9 +1,11 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import api from "../../../api.js";
 import "./VerifikasiAset1.css";
 
 function VerifikasiAset1() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [kategori, setKategori] = useState("");
   const [subKategori, setSubKategori] = useState("");
   const [namaAset, setNamaAset] = useState("");
@@ -11,6 +13,9 @@ function VerifikasiAset1() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSubDropdownOpen, setIsSubDropdownOpen] = useState(false);
   const [subKategoriFilter, setSubKategoriFilter] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [asset, setAsset] = useState(null);
 
   const subKategoriOptions = [
     "Aset Laptop",
@@ -22,20 +27,64 @@ function VerifikasiAset1() {
     option.toLowerCase().includes(subKategoriFilter.toLowerCase())
   );
 
+  useEffect(() => {
+    const fetchAsset = async () => {
+      const id = location.state?.id;
+      if (!id) {
+        setError("ID asset tidak ditemukan");
+        setLoading(false);
+        return;
+      }
+      try {
+        const response = await api.getAssetById(id);
+        const asset = response.data.data || response.data;
+        setAsset(asset);
+        setKategori(
+          typeof asset.kategori?.nama === "string" ? asset.kategori.nama : ""
+        );
+        setSubKategori(
+          typeof asset.subkategori?.nama === "string"
+            ? asset.subkategori.nama
+            : ""
+        );
+        setNamaAset(typeof asset.nama === "string" ? asset.nama : "");
+        setDeskripsiAset(
+          typeof asset.deskripsi === "string" ? asset.deskripsi : ""
+        );
+      } catch (err) {
+        setError(err.message);
+        console.error("Error fetching asset:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAsset();
+  }, [location.state]);
+
   const handleNext = () => {
-    // Navigasi ke halaman berikutnya jika diperlukan
-    navigate("/VerifikasiAset2");
+    // Navigasi ke halaman berikutnya dengan id dan asset
+    const id = location.state?.id;
+    navigate("/VerifikasiAset2", { state: { id, asset } });
   };
 
   const handleBack = () => {
     navigate("/notifikasi-verifikator-aset");
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <div className="asset-container">
       <button className="back-btn" onClick={handleBack}>
         <img src="/kembali.png" alt="Kembali" width="16" height="29" />
       </button>
+
       {/* === PROGRESS BAR === */}
       <div className="progress-wrapper">
         <div className="step-wrapper">
@@ -158,11 +207,7 @@ function VerifikasiAset1() {
           value={deskripsiAset}
           onChange={(e) => setDeskripsiAset(e.target.value)}
         />
-        <button
-          type="button"
-          className="next-btn active"
-          onClick={handleNext}
-        >
+        <button type="button" className="next-btn active" onClick={handleNext}>
           NEXT
         </button>
       </form>

@@ -1,34 +1,34 @@
+//konfirmasi-input-maintenance
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
+import api from "../../../api";
 import "./konfirmasi-input-maintenance.css";
 
 export default function KonfirmasiInputMaintenance() {
   const navigate = useNavigate();
-  const { assetData, addRisk, resetAssetData } = useAssetContext();
+  const { assetData, resetAssetData } = useAssetContext();
 
-  const handleConfirm = () => {
-    // Membuat objek maintenance baru berdasarkan data yang ada
-    const newMaintenance = {
-      id: Date.now(), // Menggunakan timestamp sebagai ID unik
-      idAset: assetData.idAset,
-      alasanPemeliharaan: assetData.alasanPemeliharaan,
-      buktiLampiran: assetData.buktiLampiran,
-    };
+  const handleConfirm = async () => {
+    try {
+      const payload = {
+        idAset: assetData.idAset,
+        alasanPemeliharaan: assetData.alasanPemeliharaan,
+        buktiLampiran: assetData.buktiLampiran,
+      };
 
-    // Menambahkan maintenance ke array risks (atau buat array maintenance terpisah jika perlu)
-    addRisk(newMaintenance);
+      await api.createMaintenance(payload);
 
-    // Reset data setelah konfirmasi
-    resetAssetData();
+      resetAssetData();
 
-    // Navigate ke halaman notifikasi
-    navigate("/notifikasi-user-dinas");
+      navigate("/notifikasi-user-dinas?category-select=Maintenance");
+    } catch (error) {
+      console.error("Gagal create maintenance:", error);
+    }
   };
 
   return (
     <div className="dashboard-container">
-      {/* Navbar */}
       <nav className="navbar">
         <div className="navbar-left">
           <img src="/logo.png" alt="Logo" className="logo" />
@@ -50,13 +50,11 @@ export default function KonfirmasiInputMaintenance() {
         </div>
       </nav>
 
-      {/* Breadcrumb */}
       <div className="breadcrumb">
-        <span onClick={() => navigate("/Dashboard")}>Dashboard</span> {">"}{" "}
-        Input Maintenance
+        <span onClick={() => navigate("/Dashboard")}>Dashboard</span> {">"} Input
+        Maintenance
       </div>
 
-      {/* Form Card */}
       <div className="form-card">
         <div
           className="form-header"
@@ -76,6 +74,7 @@ export default function KonfirmasiInputMaintenance() {
             <label>ID Aset</label>
             <input type="text" value={assetData.idAset} readOnly />
           </div>
+
           <div>
             <label>Alasan Pemeliharaan</label>
             <input type="text" value={assetData.alasanPemeliharaan} readOnly />
@@ -91,7 +90,6 @@ export default function KonfirmasiInputMaintenance() {
           </div>
         </form>
 
-        {/* Buttons */}
         <div className="form-actions">
           <button
             type="button"
@@ -100,6 +98,7 @@ export default function KonfirmasiInputMaintenance() {
           >
             Batal
           </button>
+
           <button type="submit" className="btn-confirm" onClick={handleConfirm}>
             Konfirmasi
           </button>

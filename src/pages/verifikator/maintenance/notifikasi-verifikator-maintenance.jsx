@@ -1,43 +1,56 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../../../api.js";
 import "./notifikasi-verifikator-maintenance.css";
 
 export default function NotifikasiVerifikatorMaintenance() {
   const navigate = useNavigate();
+  const [maintenances, setMaintenances] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // 5 item sesuai contoh gambar
-  const items = [
-    {
-      id: 1579,
-      waktu: "10 mins ago",
-      teks: "Printer Epson L3250 perangkat multifungsi (print, scan, copy) yang digunakan untuk mendukung kegiatan administrasi dan dokumentasi di Dinas Kesehatan.",
-    },
-    {
-      id: 1580,
-      waktu: "25 mins ago",
-      teks: "Laptop Lenovo ThinkPad untuk mendukung staf dalam kegiatan operasional sehari-hari.",
-    },
-    {
-      id: 1581,
-      waktu: "40 mins ago",
-      teks: "Meja kerja kayu ukuran besar digunakan untuk ruang Kepala Bidang.",
-    },
-    {
-      id: 1582,
-      waktu: "1 hour ago",
-      teks: "Kursi ergonomis baru untuk meningkatkan kenyamanan pegawai.",
-    },
-    {
-      id: 1583,
-      waktu: "2 hours ago",
-      teks: "Proyektor Epson digunakan untuk presentasi di ruang rapat.",
-    },
-    {
-      id: 1579,
-      waktu: "10 mins ago",
-      teks: "Printer Epson L3250 perangkat multifungsi (print, scan, copy) yang digunakan untuk mendukung kegiatan administrasi dan dokumentasi di Dinas Kesehatan.",
-    },
-  ];
+  // Function to convert timestamp to relative time
+  const getRelativeTime = (timestamp) => {
+    const now = new Date();
+    const time = new Date(timestamp);
+    const diffInMs = now - time;
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+    if (diffInMinutes < 1) return "just now";
+    if (diffInMinutes < 60) return `${diffInMinutes} mins ago`;
+    if (diffInHours < 24)
+      return `${diffInHours} hour${diffInHours > 1 ? "s" : ""} ago`;
+    return `${diffInDays} day${diffInDays > 1 ? "s" : ""} ago`;
+  };
+
+  useEffect(() => {
+    const fetchMaintenances = async () => {
+      try {
+        const response = await api.getMaintenances();
+        const maintenanceData = response.data.data || response.data;
+        const filteredMaintenances = Array.isArray(maintenanceData)
+          ? maintenanceData.filter((m) => m.status_review === "pending")
+          : [];
+        setMaintenances(filteredMaintenances);
+      } catch (err) {
+        setError(err.message);
+        console.error("Error fetching maintenances:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMaintenances();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="notifikasi-verifikator-maintenance-page">
@@ -86,21 +99,29 @@ export default function NotifikasiVerifikatorMaintenance() {
 
       {/* Content Box dengan daftar notifikasi */}
       <div className="content-box">
-        {items.map((item) => (
+        {maintenances.map((maintenance) => (
           <div
-            key={item.id}
+            key={maintenance.id}
             className="notif-card"
-            onClick={() => navigate("/VerifikasiMaintenance1")} // Assuming a maintenance verification page
+            onClick={() =>
+              navigate("/VerifikasiMaintenance1", {
+                state: { id: maintenance.id },
+              })
+            } // Passing maintenance id
             style={{ cursor: "pointer" }}
           >
             <div className="notif-header-row">
               <div className="notif-header-left">
                 <span className="notif-title">Dinas</span>
-                <span className="notif-id">| {item.id}</span>
+                <span className="notif-id">| {maintenance.id}</span>
               </div>
-              <span className="notif-time">{item.waktu}</span>
+              <span className="notif-time">
+                {getRelativeTime(maintenance.updated_at)}
+              </span>
             </div>
-            <div className="notif-text">{item.teks}</div>
+            <div className="notif-text">
+              {maintenance.alasan_pemeliharaan || "Tidak ada alasan"}
+            </div>
           </div>
         ))}
       </div>

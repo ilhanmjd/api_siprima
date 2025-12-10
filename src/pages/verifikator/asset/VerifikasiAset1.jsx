@@ -15,6 +15,7 @@ function VerifikasiAset1() {
   const [subKategoriFilter, setSubKategoriFilter] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [asset, setAsset] = useState(null);
 
   const subKategoriOptions = [
     "Aset Laptop",
@@ -37,6 +38,7 @@ function VerifikasiAset1() {
       try {
         const response = await api.getAssetById(id);
         const asset = response.data.data || response.data;
+        setAsset(asset);
         setKategori(
           typeof asset.kategori?.nama === "string" ? asset.kategori.nama : ""
         );
@@ -60,8 +62,9 @@ function VerifikasiAset1() {
   }, [location.state]);
 
   const handleNext = () => {
-    // Navigasi ke halaman berikutnya jika diperlukan
-    navigate("/VerifikasiAset2");
+    // Navigasi ke halaman berikutnya dengan id dan asset
+    const id = location.state?.id;
+    navigate("/VerifikasiAset2", { state: { id, asset } });
   };
 
   const handleBack = () => {

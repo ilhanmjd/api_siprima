@@ -1,22 +1,61 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import api from "../../../api.js";
 import "./VerifikasiAset2.css";
 
 function VerifikasiAset2() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [tanggalPerolehan, setTanggalPerolehan] = useState("");
   const [nilaiPerolehan, setNilaiPerolehan] = useState("");
   const [kondisiAset, setKondisiAset] = useState("");
   const [isKondisiDropdownOpen, setIsKondisiDropdownOpen] = useState(false);
   const [doc, setDoc] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchAsset = async () => {
+      const id = location.state?.id;
+      if (!id) {
+        setError("ID asset tidak ditemukan");
+        setLoading(false);
+        return;
+      }
+      try {
+        const response = await api.getAssetById(id);
+        const assetData = response.data.data || response.data;
+        // Format tanggal ke YYYY-MM-DD untuk input type="date"
+        const formattedDate = assetData.tgl_perolehan
+          ? new Date(assetData.tgl_perolehan).toISOString().split("T")[0]
+          : "";
+        setTanggalPerolehan(formattedDate);
+        setNilaiPerolehan(assetData.nilai_perolehan || "");
+        setKondisiAset(assetData.kondisi || "");
+        // Jika ada file lampiran, setDoc bisa diatur jika diperlukan
+        if (assetData.lampiran_bukti) {
+          // Untuk file input, tidak bisa set value langsung, tapi bisa simpan URL atau path
+          setDoc(assetData.lampiran_bukti);
+        }
+      } catch (err) {
+        setError(err.message);
+        console.error("Error fetching asset:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAsset();
+  }, [location.state]);
 
   const handleBack = () => {
-    navigate("/VerifikasiAset1");
+    const id = location.state?.id;
+    navigate("/VerifikasiAset1", { state: { id } });
   };
 
   const handleNext = () => {
-    // Navigasi ke halaman berikutnya jika diperlukan
-    navigate("/VerifikasiAset3");
+    // Navigasi ke halaman berikutnya dengan id asset
+    const id = location.state?.id;
+    navigate("/VerifikasiAset3", { state: { id } });
   };
 
   const handleKondisiSelectChange = (value) => {
@@ -28,6 +67,13 @@ function VerifikasiAset2() {
     setDoc(e.target.files[0]);
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="asset-container">
@@ -130,6 +176,17 @@ function VerifikasiAset2() {
         </div>
         <label>Lampiran Bukti (PNG/PDF)</label>
         <div className="container">
+          {doc && (
+            <div className="existing-file">
+              <p>
+                File saat ini:{" "}
+                {/* Tampilkan sebagai link jika ini adalah URL */}
+                <a href={doc} target="_blank" rel="noopener noreferrer">
+                  {doc.split("/").pop()}
+                </a>
+              </p>
+            </div>
+          )}
           <input
             type="file"
             id="file"
@@ -148,7 +205,7 @@ function VerifikasiAset2() {
           <button
             type="button"
             className="next-btn active"
-            onClick={() => navigate("/VerifikasiAset3")}
+            onClick={handleNext}
           >
             NEXT
           </button>

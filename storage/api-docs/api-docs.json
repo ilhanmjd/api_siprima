@@ -10,7 +10,7 @@
     },
     "servers": [
         {
-            "url": "https://46d083476aee.ngrok-free.app",
+            "url": "https://api.siprima.digitaltech.my.id",
             "description": "API Server"
         }
     ],

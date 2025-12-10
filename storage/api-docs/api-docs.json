@@ -6189,6 +6189,181 @@
                     }
                 ]
             }
+        },
+        "/api/users/by-dinas/{dinas_id}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get users by dinas",
+                "description": "Mendapatkan daftar user berdasarkan dinas_id",
+                "operationId": "72c0f2f1cda0030eff7050f69f2cf1ba",
+                "parameters": [
+                    {
+                        "name": "dinas_id",
+                        "in": "path",
+                        "description": "ID dari dinas",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan data user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data user berhasil diambil"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "John Doe"
+                                                    },
+                                                    "email": {
+                                                        "type": "string",
+                                                        "example": "john@example.com"
+                                                    },
+                                                    "nip": {
+                                                        "type": "string",
+                                                        "example": "123456789"
+                                                    },
+                                                    "jenis_kelamin": {
+                                                        "type": "string",
+                                                        "example": "L"
+                                                    },
+                                                    "dinas_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "unit_kerja_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "role_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "dinas": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Dinas Pendidikan"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "unit_kerja": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Unit IT"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "role": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Admin"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Gagal mengambil data user"
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -6348,6 +6523,10 @@
         {
             "name": "Risk Treatments",
             "description": "Risk Treatments"
+        },
+        {
+            "name": "Users",
+            "description": "Users"
         }
     ]
 }

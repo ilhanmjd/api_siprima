@@ -12,16 +12,18 @@ export default function KonfirmasiInputMaintenance() {
   const handleConfirm = async () => {
     try {
       const payload = {
-        idAset: assetData.idAset,
-        alasanPemeliharaan: assetData.alasanPemeliharaan,
+        asset_id: assetData.idAset,
+        alasan_pemeliharaan: assetData.alasanPemeliharaan,
         buktiLampiran: assetData.buktiLampiran,
+        status_review: "pending",
+        risk_id: assetData.idRisiko,
       };
 
       await api.createMaintenance(payload);
 
       resetAssetData();
 
-      navigate("/notifikasi-user-dinas?category-select=Maintenance");
+      navigate("/notifikasi-user-dinas",{state: {defaultCategory: "Maintenance"}});
     } catch (error) {
       console.error("Gagal create maintenance:", error);
     }

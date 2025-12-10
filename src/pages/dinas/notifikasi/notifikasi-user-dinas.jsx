@@ -65,13 +65,24 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
           : [];
         setRiskTreatmentList(sortByUpdatedAt(treatmentData));
 
-        // Jika nanti ada API Maintenance & Penghapusan Aset,
-        // panggil dan isi maintenanceList & penghapusanasetList di sini.
+        // Maintenance
+        const maintenanceRes = await api.getMaintenances();
+        if (cancelledRef.current || requestId !== requestIdRef.current) return;
+        const maintenanceData = Array.isArray(maintenanceRes?.data?.data)
+          ? maintenanceRes.data.data
+          : Array.isArray(maintenanceRes?.data)
+          ? maintenanceRes.data
+          : [];
+        setMaintenanceList(sortByUpdatedAt(maintenanceData));
+
+        // Jika nanti ada API Penghapusan Aset,
+        // panggil dan isi penghapusanasetList di sini.
       } catch (error) {
         if (cancelledRef.current || requestId !== requestIdRef.current) return;
         setAssetList([]);
         setRiskList([]);
         setRiskTreatmentList([]);
+        setMaintenanceList([]);
       } finally {
         if (cancelledRef.current || requestId !== requestIdRef.current) return;
         setLoading(false);
@@ -255,10 +266,30 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
               {loading ? <p>Loading...</p> :
                 maintenanceList.map((maintenance) => (
                   <div key={maintenance.id} className="aset-item">
-                    <span className="aset-name">{maintenance.nama}</span>
-                    {maintenance.status === "pending" && <button className="verification-button under-review">UnderReview</button>}
-                    {maintenance.status !== "rejected" && maintenance.status !== "pending" && <button className="verification-button accepted" onClick={() => navigate('/notif-accept-maintenance', { state: { id: maintenance.id, nama: maintenance.nama } })}>Accepted</button>}
-                    {maintenance.status === "rejected" && (
+                    <span className="aset-name">
+                      {maintenance.alasan_pemeliharaan}
+                    </span>
+                    {maintenance.status_review === "pending" && (
+                      <button className="verification-button under-review">
+                        UnderReview
+                      </button>
+                    )}
+                    {maintenance.status_review === "accepted" && (
+                      <button
+                        className="verification-button accepted"
+                        onClick={() =>
+                          navigate("/JadwalPemeliharaan", {
+                            state: {
+                              id: maintenance.id,
+                              nama: maintenance.alasan_pemeliharaan,
+                            },
+                          })
+                        }
+                      >
+                        Accepted
+                      </button>
+                    )}
+                    {maintenance.status_review === "rejected" && (
                       <button
                         className="verification-button rejected"
                         onClick={() =>

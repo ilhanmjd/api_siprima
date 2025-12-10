@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
 import "./RiskTreatment2.css";
@@ -6,6 +6,7 @@ import "./RiskTreatment2.css";
 function RiskTreatment2() {
   const navigate = useNavigate();
   const { assetData, updateAssetData } = useAssetContext();
+  const [openDropdown, setOpenDropdown] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,6 +26,15 @@ function RiskTreatment2() {
     }
 
     updateAssetData(updatedData);
+  };
+
+  const toggleDropdown = (name) => {
+    setOpenDropdown((prev) => (prev === name ? "" : name));
+  };
+
+  const handleSelect = (name, value) => {
+    handleChange({ target: { name, value } });
+    setOpenDropdown("");
   };
 
   const handleBack = () => {
@@ -81,20 +91,59 @@ function RiskTreatment2() {
       {/* === FORM === */}
       <form className="asset-form">
         <label>Probabilitas Akhir</label>
-        <input
-          type="number"
-          name="probabilitasAkhir"
-          value={assetData.probabilitasAkhir || ""}
-          onChange={handleChange}
-        />
+        <div className="dropdown">
+          <button
+            type="button"
+            className="dropdown-btn"
+            onClick={() => toggleDropdown("probabilitasAkhir")}
+          >
+            {assetData.probabilitasAkhir || "Pilih Probabilitas Akhir"}{" "}
+            <span>▾</span>
+          </button>
+          <div
+            className={`dropdown-content ${
+              openDropdown === "probabilitasAkhir" ? "show" : ""
+            }`}
+          >
+            {[1, 2, 3, 4, 5].map((option) => (
+              <div
+                key={option}
+                onClick={() =>
+                  handleSelect("probabilitasAkhir", option.toString())
+                }
+              >
+                {option}
+              </div>
+            ))}
+          </div>
+        </div>
 
         <label>Dampak Akhir</label>
-        <input
-          type="number"
-          name="dampakAkhir"
-          value={assetData.dampakAkhir || ""}
-          onChange={handleChange}
-        />
+        <div className="dropdown">
+          <button
+            type="button"
+            className="dropdown-btn"
+            onClick={() => toggleDropdown("dampakAkhir")}
+          >
+            {assetData.dampakAkhir || "Pilih Dampak Akhir"} <span>▾</span>
+          </button>
+          <div
+            className={`dropdown-content ${
+              openDropdown === "dampakAkhir" ? "show" : ""
+            }`}
+          >
+            {[1, 2, 3, 4, 5].map((option) => (
+              <div
+                key={option}
+                onClick={() =>
+                  handleSelect("dampakAkhir", option.toString())
+                }
+              >
+                {option}
+              </div>
+            ))}
+          </div>
+        </div>
 
         <label>Level Residual (otomatis)</label>
         <input

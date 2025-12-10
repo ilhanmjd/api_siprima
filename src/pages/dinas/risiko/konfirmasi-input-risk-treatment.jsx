@@ -43,8 +43,10 @@ export default function KonfirmasiInputRiskTreatment() {
       // Reset data setelah konfirmasi
       resetAssetData();
 
-      // Navigate ke halaman notifikasi
-      navigate("/notifikasi-user-dinas");
+      // Navigate ke halaman notifikasi dengan default kategori "Risk Treatment"
+      navigate("/notifikasi-user-dinas", {
+        state: { defaultCategory: "Risk Treatment" },
+      });
     } catch (error) {
       console.error("Error creating risk treatment:", error);
       // Handle error, e.g., show alert or notification

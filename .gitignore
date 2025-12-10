@@ -13,6 +13,7 @@ dist-ssr
 *.local
 abuse-report.json
 abuse-report.html
+.env
 
 # Editor directories and files
 .vscode/*

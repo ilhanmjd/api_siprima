@@ -137,4 +137,11 @@ export default {
     api.post(`/api/risk-treatments/${id}/reject`, data),
   approveRiskTreatment: (id, data = {}) =>
     api.post(`/api/risk-treatments/${id}/approve`, data),
+
+  // ========== MAINTENANCES ==========
+  getMaintenances: (params = {}) => api.get("/api/maintenances", { params }),
+  createMaintenance: (data) => api.post("/api/maintenances", data),
+  getMaintenanceById: (id, config = {}) =>
+    api.get(`/api/maintenances/${id}`, config),
+  updateMaintenance: (id, data) => api.put(`/api/maintenances/${id}`, data),
 };

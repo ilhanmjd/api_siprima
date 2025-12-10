@@ -30,7 +30,10 @@ export default function NotifikasiVerifikatorMaintenance() {
       try {
         const response = await api.getMaintenances();
         const maintenanceData = response.data.data || response.data;
-        setMaintenances(Array.isArray(maintenanceData) ? maintenanceData : []);
+        const filteredMaintenances = Array.isArray(maintenanceData)
+          ? maintenanceData.filter((m) => m.status_review === "pending")
+          : [];
+        setMaintenances(filteredMaintenances);
       } catch (err) {
         setError(err.message);
         console.error("Error fetching maintenances:", err);

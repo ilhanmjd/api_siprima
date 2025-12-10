@@ -133,11 +133,24 @@ function VerifikasiAset3() {
     setRejectReason("");
   };
 
-  const handleRejectSubmit = () => {
-    // Here you can handle the rejection reason, e.g., send to API
-    setIsRejectModalOpen(false);
-    setRejectReason("");
-    navigate("/VerifikasiRejectAsset");
+  const handleRejectSubmit = async () => {
+    const id = location.state?.id;
+    if (!id) {
+      setError("ID asset tidak ditemukan");
+      return;
+    }
+    try {
+      await api.updateAsset(id, {
+        status: "ditolak",
+        alasan_ditolak: rejectReason,
+      });
+      setIsRejectModalOpen(false);
+      setRejectReason("");
+      navigate("/VerifikasiRejectAsset", { state: { id } });
+    } catch (err) {
+      setError(err.message);
+      console.error("Error updating asset:", err);
+    }
   };
 
   return (

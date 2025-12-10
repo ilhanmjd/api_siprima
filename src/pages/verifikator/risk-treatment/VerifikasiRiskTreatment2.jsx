@@ -129,7 +129,8 @@ function VerifikasiRiskTreatment2() {
           type="text"
           name="probabilitasAkhir"
           value={assetData.probabilitasAkhir || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Dampak Akhir</label>
@@ -137,7 +138,8 @@ function VerifikasiRiskTreatment2() {
           type="text"
           name="dampakAkhir"
           value={assetData.dampakAkhir || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Level Residual</label>
@@ -145,7 +147,8 @@ function VerifikasiRiskTreatment2() {
           type="text"
           name="levelResidual"
           value={assetData.levelResidual || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <div className="button-group">
@@ -156,6 +159,7 @@ function VerifikasiRiskTreatment2() {
           >
             BACK
           </button>
+
           <button
             type="button"
             className="next-btn"
@@ -166,6 +170,7 @@ function VerifikasiRiskTreatment2() {
           >
             REJECT
           </button>
+
           <button
             type="button"
             className={`next-btn ${allFilled ? "active" : "disabled"}`}

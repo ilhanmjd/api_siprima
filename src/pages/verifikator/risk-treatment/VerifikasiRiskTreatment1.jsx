@@ -100,7 +100,8 @@ function VerifikasiRiskTreatment1() {
           type="text"
           name="idRisiko"
           value={assetData.idRisiko || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Strategi</label>
@@ -108,7 +109,8 @@ function VerifikasiRiskTreatment1() {
           type="text"
           name="strategi"
           value={assetData.strategi || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Pengendalian</label>
@@ -116,7 +118,8 @@ function VerifikasiRiskTreatment1() {
           type="text"
           name="pengendalian"
           value={assetData.pengendalian || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Penanggung Jawab</label>
@@ -124,7 +127,8 @@ function VerifikasiRiskTreatment1() {
           type="text"
           name="penanggungJawab"
           value={assetData.penanggungJawab || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Target Tanggal</label>
@@ -132,7 +136,8 @@ function VerifikasiRiskTreatment1() {
           type="date"
           name="targetTanggal"
           value={assetData.targetTanggal || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Biaya</label>
@@ -140,7 +145,8 @@ function VerifikasiRiskTreatment1() {
           type="text"
           name="biaya"
           value={assetData.biaya || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <button

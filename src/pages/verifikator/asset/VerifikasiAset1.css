@@ -239,3 +239,9 @@
 .next-btn.active {
   background-color: #0c4ad2;
 }
+
+input[disabled] {
+  background-color: white !important;
+  color: black !important;
+  opacity: 1 !important;
+}

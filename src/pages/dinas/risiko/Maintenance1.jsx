@@ -1,11 +1,22 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
 import "./Maintenance1.css";
 
 function Maintenance1() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { assetData, updateAssetData } = useAssetContext();
+
+  const riskTreatmentIdFromLocation = location.state?.id;
+
+  console.log("ID Risk Treatment:", riskTreatmentIdFromLocation);
+
+  useEffect(() => {
+    if (riskTreatmentIdFromLocation && assetData.idAset !== riskTreatmentIdFromLocation) {
+      updateAssetData({ idAset: riskTreatmentIdFromLocation });
+    }
+  }, [riskTreatmentIdFromLocation, updateAssetData, assetData.idAset]);
 
   const handleChange = (e) => {
     updateAssetData({ [e.target.name]: e.target.value });
@@ -80,6 +91,7 @@ function Maintenance1() {
           name="idAset"
           value={assetData.idAset || ""}
           onChange={handleChange}
+          readOnly={!!riskTreatmentIdFromLocation} // Make read-only if pre-filled from location state
         />
 
         <label>Alasan Pemeliharaan</label>

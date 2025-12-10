@@ -2,9 +2,11 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import "./notif-reject-risk-treatment.css";
 import api from "../../../api";
+import { useAssetContext } from "../../../contexts/AssetContext";
 
 export default function NotifRejectRiskTreatment() {
   const navigate = useNavigate();
+  const { updateAssetData } = useAssetContext();
   const [selectedCategory, setSelectedCategory] = useState("Risk Treatment");
   const [riskDetail, setRiskDetail] = useState(null);
   const [assetList, setAssetList] = useState([]);
@@ -213,9 +215,15 @@ export default function NotifRejectRiskTreatment() {
 
           <button
             className="aset-btn"
-            onClick={() => navigate("/RiskTreatment1")}
+            onClick={() => {
+              if (riskDetail && riskDetail.id) {
+                updateAssetData({ riskTreatmentId: riskDetail.id });
+                navigate("/Maintenance1");
+              }
+            }}
+            disabled={!riskDetail}
           >
-            Input Risk Treatment
+            Maintenance
           </button>
         </section>
       </div>

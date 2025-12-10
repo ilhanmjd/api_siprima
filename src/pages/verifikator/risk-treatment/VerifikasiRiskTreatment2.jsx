@@ -1,11 +1,34 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
+import api from "../../../api.js";
 import "./VerifikasiRiskTreatment2.css";
 
 function VerifikasiRiskTreatment2() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { assetData, updateAssetData } = useAssetContext();
+
+  useEffect(() => {
+    const fetchRiskTreatment = async () => {
+      const id = location.state?.id;
+      if (id) {
+        try {
+          const response = await api.getRiskTreatmentById(id);
+          const data = response.data.data || response.data;
+          updateAssetData({
+            probabilitasAkhir: data.probabilitas_akhir || "",
+            dampakAkhir: data.dampak_akhir || "",
+            levelResidual: data.level_residual || "",
+          });
+        } catch (error) {
+          console.error("Error fetching risk treatment:", error);
+        }
+      }
+    };
+
+    fetchRiskTreatment();
+  }, [location.state, updateAssetData]);
 
   const handleChange = (e) => {
     updateAssetData({ [e.target.name]: e.target.value });

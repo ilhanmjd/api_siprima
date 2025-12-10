@@ -40,7 +40,8 @@ function VerifikasiRiskTreatment1() {
   };
 
   const handleNext = () => {
-    navigate("/VerifikasiRiskTreatment2");
+    const id = location.state?.id;
+    navigate("/VerifikasiRiskTreatment2", { state: { id } });
   };
 
   const handleBack = () => {

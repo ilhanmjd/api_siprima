@@ -121,7 +121,7 @@ export default function Laporan() {
                   <tr key={item?.id}>
                     <td>{item?.id || "-"}</td>
                     <td>{item?.nama || "-"}</td>
-                    <td>{item?.lokasi?.nama || "-"}</td>
+                    <td>{item?.dinas || "-"}</td>
                     <td>
                       {item?.tgl_perolehan
                         ? new Date(item.tgl_perolehan).toLocaleDateString("id-ID")

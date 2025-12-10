@@ -10,7 +10,7 @@
     },
     "servers": [
         {
-            "url": "https://46d083476aee.ngrok-free.app",
+            "url": "http://127.0.0.1:8000",
             "description": "API Server"
         }
     ],

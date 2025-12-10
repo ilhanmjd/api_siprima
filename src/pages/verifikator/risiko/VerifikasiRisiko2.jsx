@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
 import api from "../../../api.js";
@@ -8,6 +8,8 @@ function VerifikasiRisiko2() {
   const navigate = useNavigate();
   const location = useLocation();
   const { assetData, updateAssetData } = useAssetContext();
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
 
   useEffect(() => {
     const fetchRiskData = async () => {
@@ -44,8 +46,20 @@ function VerifikasiRisiko2() {
     navigate("/VerifikasiRisiko1");
   };
   const handleReject = () => {
+    setIsRejectModalOpen(true);
+  };
+
+  const handleRejectCancel = () => {
+    setIsRejectModalOpen(false);
+    setRejectReason("");
+  };
+  const handleRejectSubmit = () => {
+    // Here you can handle the rejection reason, e.g., send to API
+    setIsRejectModalOpen(false);
+    setRejectReason("");
     navigate("/VerifikasiRejectRisiko");
   };
+  
 
   const handleVerify = async () => {
     if (allFilled) {
@@ -188,6 +202,30 @@ function VerifikasiRisiko2() {
           </button>
         </div>
       </form>
+
+      {/* Reject Modal */}
+      {isRejectModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Alasan Ditolak:</h3>
+            <textarea
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              placeholder="tulis alasan ditolak!!!"
+              rows="4"
+              cols="50"
+            />
+            <div className="modal-buttons">
+              <button className="cancel-btn" onClick={handleRejectCancel}>
+                Cancel
+              </button>
+              <button className="submit-btn" onClick={handleRejectSubmit}>
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -55,25 +55,28 @@ export default function VerifikasiAcceptRisiko() {
             </div>
             <div className="risiko-body">
               <p>
-                <b>Kategori</b> :{" "}
+                <b>Sub Kategori</b> :{" "}
               </p>
               <p>
-                <b>Nama Risiko</b> :{" "}
+                <b>Kategori Risiko</b> :{" "}
               </p>
               <p>
-                <b>Kode Risiko</b> :{" "}
+                <b>Dampak Risiko</b> :{" "}
               </p>
               <p>
-                <b>Person in Change</b> :{" "}
+                <b>Level Risiko</b> :{" "}
+              </p>
+              <p>
+                <b>Penanggung Jawab</b> :{" "}
+              </p>
+              <p>
+                <b>Probabilitas</b> :{" "}
+              </p>
+              <p>
+                <b>Deskripsi</b> :{" "}
               </p>
               <p className="risiko-id">
-                <b>ID RISIKO :</b>
-              </p>
-              <p>
-                <b>Kondisi Risiko</b> :{" "}
-              </p>
-              <p>
-                <b>Deskripsi Risiko</b> :{" "}
+                <b>ID Risiko</b> :
               </p>
             </div>
           </div>

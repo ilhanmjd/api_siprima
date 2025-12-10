@@ -1,9 +1,11 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import api from "../../../api.js";
 import "./VerifikasiAset3.css";
 
 function VerifikasiAset3() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [penanggungJawab, setPenanggungJawab] = useState("");
   const [lokasi, setLokasi] = useState("");
   const [status, setStatus] = useState("");
@@ -12,6 +14,8 @@ function VerifikasiAset3() {
   const [lokasiFilter, setLokasiFilter] = useState("");
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const lokasiOptions = [
     "Kantor Dinkes Lt.2",
@@ -60,15 +64,51 @@ function VerifikasiAset3() {
     option.toLowerCase().includes(lokasiFilter.toLowerCase())
   );
 
+  useEffect(() => {
+    const fetchAsset = async () => {
+      const id = location.state?.id;
+      if (!id) {
+        setError("ID asset tidak ditemukan");
+        setLoading(false);
+        return;
+      }
+      try {
+        const response = await api.getAssetById(id);
+        const assetData = response.data.data || response.data;
+        setPenanggungJawab(assetData.penanggungjawab?.nama || "");
+        setLokasi(assetData.lokasi?.nama || "");
+        setStatus(assetData.status || "");
+      } catch (err) {
+        setError(err.message);
+        console.error("Error fetching asset:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAsset();
+  }, [location.state]);
+
   const handleBack = () => {
-    navigate("/VerifikasiAset2");
+    const id = location.state?.id;
+    navigate("/VerifikasiAset2", { state: { id } });
   };
   const handleReject = () => {
     setIsRejectModalOpen(true);
   };
 
-  const handleVerify = () => {
-    navigate("/VerifikasiAcceptAsset");
+  const handleVerify = async () => {
+    const id = location.state?.id;
+    if (!id) {
+      setError("ID asset tidak ditemukan");
+      return;
+    }
+    try {
+      await api.updateAsset(id, { status: "diterima" });
+      navigate("/VerifikasiAcceptAsset");
+    } catch (err) {
+      setError(err.message);
+      console.error("Error updating asset:", err);
+    }
   };
 
   const handleStatusSelectChange = (value) => {
@@ -99,8 +139,6 @@ function VerifikasiAset3() {
     setRejectReason("");
     navigate("/VerifikasiRejectAsset");
   };
-
-
 
   return (
     <div className="asset-container">
@@ -241,8 +279,12 @@ function VerifikasiAset3() {
               cols="50"
             />
             <div className="modal-buttons">
-              <button className="cancel-btn" onClick={handleRejectCancel}>Cancel</button>
-              <button className="submit-btn" onClick={handleRejectSubmit}>Submit</button>
+              <button className="cancel-btn" onClick={handleRejectCancel}>
+                Cancel
+              </button>
+              <button className="submit-btn" onClick={handleRejectSubmit}>
+                Submit
+              </button>
             </div>
           </div>
         </div>

@@ -62,7 +62,7 @@ export default function DashboardRisk() {
               <p>Tidak ada aset aktif.</p>
             ) : (
               filteredAssets.map((asset) => (
-                <div className="risk-item" key={asset.id || asset.nama}>
+                <div className="risk-itempp" key={asset.id || asset.nama}>
                   <span className="risk-name">{asset.nama}</span>
                   <button
                     className="risk-button"

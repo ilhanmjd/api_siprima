@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Asset;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class AssetSeeder extends Seeder
@@ -12,6 +13,9 @@ class AssetSeeder extends Seeder
      */
     public function run(): void
     {
+        // Get first user as default creator
+        $defaultUser = User::first();
+        
         $assets = [
             [
                 'dinas_id' => 1,
@@ -27,6 +31,7 @@ class AssetSeeder extends Seeder
                 'lampiran_bukti' => null,
                 'is_usage' => 'active',
                 'status' => 'diterima',
+                'created_by' => $defaultUser?->id,
             ],
             [
                 'dinas_id' => 1,
@@ -42,6 +47,7 @@ class AssetSeeder extends Seeder
                 'lampiran_bukti' => null,
                 'is_usage' => 'active',
                 'status' => 'diterima',
+                'created_by' => $defaultUser?->id,
             ],
             [
                 'dinas_id' => 2,
@@ -57,6 +63,7 @@ class AssetSeeder extends Seeder
                 'lampiran_bukti' => null,
                 'is_usage' => 'active',
                 'status' => 'diterima',
+                'created_by' => $defaultUser?->id,
             ],
             [
                 'dinas_id' => 2,
@@ -72,6 +79,7 @@ class AssetSeeder extends Seeder
                 'lampiran_bukti' => null,
                 'is_usage' => 'inactive',
                 'status' => 'pemeliharaan',
+                'created_by' => $defaultUser?->id,
             ],
             [
                 'dinas_id' => 3,
@@ -87,6 +95,7 @@ class AssetSeeder extends Seeder
                 'lampiran_bukti' => null,
                 'is_usage' => 'active',
                 'status' => 'diterima',
+                'created_by' => $defaultUser?->id,
             ],
         ];
 

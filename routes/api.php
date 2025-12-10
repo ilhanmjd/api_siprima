@@ -12,6 +12,7 @@ use App\Http\Controllers\RiskController;
 use App\Http\Controllers\RiskTreatmentController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\AssetDeletionController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -114,5 +115,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{id}', [AssetDeletionController::class, 'show']);
         Route::put('/{id}/review', [AssetDeletionController::class, 'review']);
         Route::delete('/{id}', [AssetDeletionController::class, 'destroy']);
+    });
+
+    Route::prefix('users')->group(function () {
+        Route::get('/by-dinas/{dinas_id}', [UserController::class, 'getByDinas']);
     });
 });

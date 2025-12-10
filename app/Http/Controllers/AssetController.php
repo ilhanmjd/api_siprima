@@ -181,12 +181,15 @@ class AssetController extends Controller
             ], 422);
         }
 
-        $asset = Asset::create($request->all());
+        $data = $request->all();
+        $data['created_by'] = $request->user()->id;
+        
+        $asset = Asset::create($data);
 
         return response()->json([
             'success' => true,
             'message' => 'Asset berhasil dibuat',
-            'data' => $asset->load(['dinas', 'kategori', 'subkategori', 'lokasi', 'penanggungjawab']),
+            'data' => $asset->load(['dinas', 'kategori', 'subkategori', 'lokasi', 'penanggungjawab', 'createdBy']),
         ], 201);
     }
 

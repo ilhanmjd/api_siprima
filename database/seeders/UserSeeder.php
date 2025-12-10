@@ -39,7 +39,7 @@ class UserSeeder extends Seeder
                 'unit_kerja_id' => $unitKerjaPendidikanDasar->id,
                 'role_id' => $roleStaff->id,
                 'nip' => '199001012020011001',
-                'jenis_kelamin' => 'Laki-laki',
+                'jenis_kelamin' => 'L',
             ]);
         }
 
@@ -53,7 +53,7 @@ class UserSeeder extends Seeder
                 'unit_kerja_id' => $unitKerjaKesehatan->id,
                 'role_id' => $roleKepalaSeksi->id,
                 'nip' => '199002022020022002',
-                'jenis_kelamin' => 'Perempuan',
+                'jenis_kelamin' => 'P',
             ]);
         }
 
@@ -67,7 +67,7 @@ class UserSeeder extends Seeder
                 'unit_kerja_id' => $unitKerjaPendidikanDasar->id,
                 'role_id' => $roleAdminKota->id,
                 'nip' => '199003032020033003',
-                'jenis_kelamin' => 'Laki-laki',
+                'jenis_kelamin' => 'L',
             ]);
         }
 
@@ -81,7 +81,7 @@ class UserSeeder extends Seeder
                 'unit_kerja_id' => $unitKerjaKesehatan->id,
                 'role_id' => $roleAuditor->id,
                 'nip' => '199004042020044004',
-                'jenis_kelamin' => 'Perempuan',
+                'jenis_kelamin' => 'P',
             ]);
         }
     }

@@ -24,6 +24,7 @@ class Asset extends Model
         'lampiran_bukti',
         'is_usage',
         'status',
+        'created_by',
     ];
 
     /**
@@ -151,5 +152,13 @@ class Asset extends Model
     public function assetDeletions(): HasMany
     {
         return $this->hasMany(AssetDeletion::class);
+    }
+
+    /**
+     * Get the user who created the asset.
+     */
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

@@ -104,7 +104,7 @@ function VerifikasiAset3() {
     }
     try {
       await api.updateAsset(id, { status: "diterima" });
-      navigate("/VerifikasiAcceptAsset");
+      navigate("/VerifikasiAcceptAsset", { state: { id } });
     } catch (err) {
       setError(err.message);
       console.error("Error updating asset:", err);

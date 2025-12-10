@@ -46,20 +46,6 @@ export default function VerifikasiRejectAsset() {
 
       {/* Main content */}
       <div className="main-content">
-        {/* Sidebar */}
-        <aside className="sidebar">
-          <div className="sidebar-scroll">
-            <button className="sidebar-btn">Aset Laptop</button>
-            <button className="sidebar-btn">Aset Komputer</button>
-            <button className="sidebar-btn">Data Cloud</button>
-            <button className="sidebar-btn">Server</button>
-            <button className="sidebar-btn">Microsoft Office</button>
-            <button className="sidebar-btn">Router</button>
-            <button className="sidebar-btn">Printer</button>
-            <button className="sidebar-btn">Firewall</button>
-          </div>
-        </aside>
-
         {/* Asset detail panel */}
         <section className="asset-detail">
           <div className="asset-card">

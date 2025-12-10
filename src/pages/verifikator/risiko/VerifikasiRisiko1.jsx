@@ -39,7 +39,8 @@ function VerifikasiRisiko1() {
   };
 
   const handleNext = () => {
-    navigate("/VerifikasiRisiko2");
+    const id = location.state?.id;
+    navigate("/VerifikasiRisiko2", { state: { id } });
   };
 
   const handleBack = () => {

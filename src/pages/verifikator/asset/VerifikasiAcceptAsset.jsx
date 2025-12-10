@@ -1,9 +1,44 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import api from "../../../api.js";
 import "./VerifikasiAcceptAsset.css";
 
 export default function VerifikasiAcceptAsset() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [asset, setAsset] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchAsset = async () => {
+      const id = location.state?.id;
+      if (!id) {
+        setError("ID asset tidak ditemukan");
+        setLoading(false);
+        return;
+      }
+      try {
+        const response = await api.getAssetById(id);
+        const assetData = response.data.data || response.data;
+        setAsset(assetData);
+      } catch (err) {
+        setError(err.message);
+        console.error("Error fetching asset:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAsset();
+  }, [location.state]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="page-wrapper">
@@ -46,45 +81,38 @@ export default function VerifikasiAcceptAsset() {
 
       {/* Main content */}
       <div className="main-content">
-        {/* Sidebar */}
-        <aside className="sidebar">
-          <div className="sidebar-scroll">
-            <button className="sidebar-btn">Aset Laptop</button>
-            {/* <button className="sidebar-btn">Aset Komputer</button>
-            <button className="sidebar-btn">Data Cloud</button>
-            <button className="sidebar-btn">Server</button>
-            <button className="sidebar-btn">Microsoft Office</button>
-            <button className="sidebar-btn">Router</button>
-            <button className="sidebar-btn">Printer</button>
-            <button className="sidebar-btn">Firewall</button> */}
-          </div>
-        </aside>
-
         {/* Asset detail panel */}
         <section className="asset-detail">
           <div className="asset-card">
             <div className="asset-header">
-              <h3>Aset Laptop</h3>
-              <span className="asset-date">10/10/2025 - 17:23:34 PM</span>
+              <h3>{asset?.nama || "Nama Aset"}</h3>
+              <span className="asset-date">
+                {asset?.updated_at
+                  ? new Date(asset.updated_at).toLocaleString()
+                  : "Tanggal tidak tersedia"}
+              </span>
             </div>
             <div className="asset-body">
               <p>
-                <b>Sub Kategori</b>
+                <b>Sub Kategori:</b>{" "}
+                {asset?.subkategori?.nama || "Tidak tersedia"}
               </p>
               <p>
-                <b>Kategori Aset</b>
+                <b>Kategori Aset:</b>{" "}
+                {asset?.kategori?.nama || "Tidak tersedia"}
               </p>
               <p>
-                <b>Status Aset</b>
+                <b>Status Aset:</b> {asset?.status || "Tidak tersedia"}
               </p>
               <p>
-                <b>Kondisi Aset:</b>
+                <b>Kondisi Aset:</b> {asset?.kondisi || "Tidak tersedia"}
               </p>
               <p>
-                <b>Penanggung Jawab :</b>
+                <b>Penanggung Jawab:</b>{" "}
+                {asset?.penanggungjawab?.nama || "Tidak tersedia"}
               </p>
               <p>
-                <b>Lokasi</b>
+                <b>Lokasi:</b> {asset?.lokasi?.nama || "Tidak tersedia"}
               </p>
             </div>
           </div>

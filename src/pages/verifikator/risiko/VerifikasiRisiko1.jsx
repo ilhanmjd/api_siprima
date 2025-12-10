@@ -1,18 +1,46 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
+import api from "../../../api.js";
 import "./VerifikasiRisiko1.css";
 
 function VerifikasiRisiko1() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { assetData, updateAssetData } = useAssetContext();
+
+  useEffect(() => {
+    const fetchRiskData = async () => {
+      const id = location.state?.id;
+      if (id) {
+        try {
+          const res = await api.getRiskById(id);
+          const risk = res?.data?.data ?? res?.data;
+          if (risk) {
+            updateAssetData({
+              idAset: risk.asset_id || "",
+              judulRisiko: risk.judul || "",
+              deskripsiRisiko: risk.deskripsi || "",
+              penyebab: risk.penyebab || "",
+              dampak: risk.dampak || "",
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching risk data:", error);
+        }
+      }
+    };
+
+    fetchRiskData();
+  }, [location.state, updateAssetData]);
 
   const handleChange = (e) => {
     updateAssetData({ [e.target.name]: e.target.value });
   };
 
   const handleNext = () => {
-    navigate("/VerifikasiRisiko2");
+    const id = location.state?.id;
+    navigate("/VerifikasiRisiko2", { state: { id } });
   };
 
   const handleBack = () => {
@@ -70,7 +98,8 @@ function VerifikasiRisiko1() {
           type="text"
           name="idAset"
           value={assetData.idAset || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Judul Risiko</label>
@@ -78,7 +107,8 @@ function VerifikasiRisiko1() {
           type="text"
           name="judulRisiko"
           value={assetData.judulRisiko || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Deskripsi Risiko</label>
@@ -86,7 +116,8 @@ function VerifikasiRisiko1() {
           type="text"
           name="deskripsiRisiko"
           value={assetData.deskripsiRisiko || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Penyebab</label>
@@ -94,7 +125,8 @@ function VerifikasiRisiko1() {
           type="text"
           name="penyebab"
           value={assetData.penyebab || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Dampak</label>
@@ -102,15 +134,11 @@ function VerifikasiRisiko1() {
           type="text"
           name="dampak"
           value={assetData.dampak || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
-        <button
-          type="button"
-          className={`next-btn ${allFilled ? "active" : "disabled"}`}
-          disabled={!allFilled}
-          onClick={handleNext}
-        >
+        <button type="button" className="next-btn active" onClick={handleNext}>
           NEXT
         </button>
       </form>

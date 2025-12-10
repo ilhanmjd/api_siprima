@@ -104,7 +104,7 @@ function VerifikasiAset3() {
     }
     try {
       await api.updateAsset(id, { status: "diterima" });
-      navigate("/VerifikasiAcceptAsset");
+      navigate("/VerifikasiAcceptAsset", { state: { id } });
     } catch (err) {
       setError(err.message);
       console.error("Error updating asset:", err);
@@ -187,8 +187,10 @@ function VerifikasiAset3() {
           type="text"
           name="penanggungJawab"
           value={penanggungJawab}
-          onChange={(e) => setPenanggungJawab(e.target.value)}
+          readOnly
+          disabled
         />
+
         <label>Lokasi</label>
         <div className="dropdown">
           <div className="text-dropdown-container">
@@ -196,47 +198,23 @@ function VerifikasiAset3() {
               type="text"
               className="dropdown-input"
               value={lokasi}
-              onChange={handleLokasiInputChange}
-              onClick={() => setIsLokasiDropdownOpen(!isLokasiDropdownOpen)}
+              readOnly
+              disabled
               placeholder="Pilih atau ketik Lokasi"
             />
-            <span
-              className="dropdown-arrow"
-              onClick={() => setIsLokasiDropdownOpen(!isLokasiDropdownOpen)}
-            >
+            <span className="dropdown-arrow" style={{ opacity: 0.5 }}>
               ▾
             </span>
           </div>
-          <div
-            className={`dropdown-content lokasi-dropdown ${
-              isLokasiDropdownOpen ? "show" : ""
-            }`}
-          >
-            {filteredLokasiOptions.map((option, index) => (
-              <div key={index} onClick={() => handleLokasiSelectChange(option)}>
-                {option}
-              </div>
-            ))}
-          </div>
         </div>
+
         <label>Status</label>
         <div className="dropdown">
-          <button
-            type="button"
-            className="dropdown-btn"
-            onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
-          >
+          <button type="button" className="dropdown-btn" disabled>
             {status || "Pilih Status"} <span>▾</span>
           </button>
-          <div
-            className={`dropdown-content ${isStatusDropdownOpen ? "show" : ""}`}
-          >
-            <div onClick={() => handleStatusSelectChange("Active")}>Active</div>
-            <div onClick={() => handleStatusSelectChange("Inactive")}>
-              Inactive
-            </div>
-          </div>
         </div>
+
         <div className="button-group">
           <button
             type="button"
@@ -245,6 +223,7 @@ function VerifikasiAset3() {
           >
             BACK
           </button>
+
           <button
             type="button"
             className="next-btn"
@@ -255,6 +234,7 @@ function VerifikasiAset3() {
           >
             REJECT
           </button>
+
           <button
             type="button"
             className="next-btn active"

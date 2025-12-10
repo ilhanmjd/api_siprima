@@ -1,9 +1,37 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import api from "../../../api.js";
 import "./VerifikasiAcceptRisiko.css";
 
 export default function VerifikasiAcceptRisiko() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [riskData, setRiskData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchRiskData = async () => {
+      const id = location.state?.id;
+      if (id) {
+        try {
+          const res = await api.getRiskById(id);
+          const risk = res?.data?.data ?? res?.data;
+          setRiskData(risk);
+        } catch (err) {
+          console.error("Error fetching risk data:", err);
+          setError("Gagal memuat data risiko");
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+        setError("ID risiko tidak ditemukan");
+      }
+    };
+
+    fetchRiskData();
+  }, [location.state]);
 
   return (
     <div className="page-wrapper">
@@ -46,51 +74,67 @@ export default function VerifikasiAcceptRisiko() {
 
       {/* Main content */}
       <div className="main-content">
-        {/* Sidebar */}
-        <aside className="sidebar">
-          <div className="sidebar-scroll">
-            <button className="sidebar-btn">Risiko Laptop</button>
-            <button className="sidebar-btn">Risiko Komputer</button>
-            <button className="sidebar-btn">Data Cloud</button>
-            <button className="sidebar-btn">Server</button>
-            <button className="sidebar-btn">Microsoft Office</button>
-            <button className="sidebar-btn">Router</button>
-            <button className="sidebar-btn">Printer</button>
-            <button className="sidebar-btn">Firewall</button>
-          </div>
-        </aside>
-
         {/* Risiko detail panel */}
         <section className="risiko-detail">
-          <div className="risiko-card">
-            <div className="risiko-header">
-              <h3>Risiko Laptop</h3>
-              <span className="risiko-date">10/10/2025 - 17:23:34 PM</span>
+          {loading ? (
+            <div className="loading">Memuat data risiko...</div>
+          ) : error ? (
+            <div className="error">{error}</div>
+          ) : riskData ? (
+            <div className="risiko-card">
+              <div className="risiko-header">
+                <h3>{riskData.nama_risiko || "Risiko"}</h3>
+                <span className="risiko-date">
+                  {riskData.created_at
+                    ? new Date(riskData.updated_at).toLocaleString()
+                    : "Tanggal tidak tersedia"}
+                </span>
+              </div>
+              <div className="risiko-body">
+                <p>
+                  <b>Judul</b> : {riskData.judul || ""}
+                </p>
+                <p>
+                  <b>Deskripsi</b> : {riskData.deskripsi || ""}
+                </p>
+                <p>
+                  <b>Penyebab</b> : {riskData.penyebab || ""}
+                </p>
+                <p>
+                  <b>Dampak</b> : {riskData.dampak || ""}
+                </p>
+                <p>
+                  <b>Probabilitas</b> : {riskData.probabilitas || ""}
+                </p>
+                <p>
+                  <b>Nilai Dampak</b> : {riskData.nilai_dampak || ""}
+                </p>
+                <p>
+                  <b>Level Risiko</b> : {riskData.level_risiko || ""}
+                </p>
+                <p>
+                  <b>Kriteria</b> : {riskData.kriteria || ""}
+                </p>
+                <p>
+                  <b>Prioritas</b> : {riskData.prioritas || ""}
+                </p>
+                <p>
+                  <b>Status</b> : {riskData.status || ""}
+                </p>
+                <p>
+                  <b>Aset</b> : {riskData.asset?.nama || ""}
+                </p>
+                <p>
+                  <b>Kode BMD</b> : {riskData.asset?.kode_bmd || ""}
+                </p>
+                <p className="risiko-id">
+                  <b>ID Risiko</b> : {riskData.id || ""}
+                </p>
+              </div>
             </div>
-            <div className="risiko-body">
-              <p>
-                <b>Kategori</b> :{" "}
-              </p>
-              <p>
-                <b>Nama Risiko</b> :{" "}
-              </p>
-              <p>
-                <b>Kode Risiko</b> :{" "}
-              </p>
-              <p>
-                <b>Person in Change</b> :{" "}
-              </p>
-              <p className="risiko-id">
-                <b>ID RISIKO :</b>
-              </p>
-              <p>
-                <b>Kondisi Risiko</b> :{" "}
-              </p>
-              <p>
-                <b>Deskripsi Risiko</b> :{" "}
-              </p>
-            </div>
-          </div>
+          ) : (
+            <div className="no-data">Data risiko tidak ditemukan</div>
+          )}
 
           {/* <button
             className="risk-btn"

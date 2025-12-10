@@ -46,20 +46,6 @@ export default function VerifikasiRejectAsset() {
 
       {/* Main content */}
       <div className="main-content">
-        {/* Sidebar */}
-        <aside className="sidebar">
-          <div className="sidebar-scroll">
-            <button className="sidebar-btn">Aset Laptop</button>
-            <button className="sidebar-btn">Aset Komputer</button>
-            <button className="sidebar-btn">Data Cloud</button>
-            <button className="sidebar-btn">Server</button>
-            <button className="sidebar-btn">Microsoft Office</button>
-            <button className="sidebar-btn">Router</button>
-            <button className="sidebar-btn">Printer</button>
-            <button className="sidebar-btn">Firewall</button>
-          </div>
-        </aside>
-
         {/* Asset detail panel */}
         <section className="asset-detail">
           <div className="asset-card">
@@ -69,25 +55,25 @@ export default function VerifikasiRejectAsset() {
             </div>
             <div className="asset-body">
               <p>
-                <b>Kategori</b> :{" "}
+                <b>Sub Kategori</b> :{" "}
               </p>
               <p>
-                <b>Nama Asset</b> :{" "}
+                <b>Kategori Aset</b> :{" "}
               </p>
               <p>
-                <b>Kode Asset</b> :{" "}
+                <b>Status Aset</b> :{" "}
               </p>
               <p>
-                <b>Person in Change</b> :{" "}
-              </p>
-              <p className="asset-id">
-                <b>ID ASSET :</b>
+                <b>Kondisi Aset</b> :{" "}
               </p>
               <p>
-                <b>Kondisi Asset</b> :{" "}
+                <b>Penanggung Jawab</b> :{" "}
               </p>
               <p>
-                <b>Deskripsi Asset</b> :{" "}
+                <b>Lokasi</b> :{" "}
+              </p>
+              <p>
+                <b>Alasan ditolak</b> :{" "}
               </p>
             </div>
           </div>

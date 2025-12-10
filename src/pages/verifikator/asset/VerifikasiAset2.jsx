@@ -122,78 +122,41 @@ function VerifikasiAset2() {
           type="date"
           name="tanggalPerolehan"
           value={tanggalPerolehan}
-          onChange={(e) => setTanggalPerolehan(e.target.value)}
+          readOnly
+          disabled
         />
+
         <label>Nilai Perolehan Aset</label>
         <input
           type="number"
           name="nilaiPerolehan"
           value={nilaiPerolehan}
-          onChange={(e) => setNilaiPerolehan(e.target.value)}
+          readOnly
+          disabled
         />
+
         <label>Kondisi Aset</label>
         <div className="dropdown">
-          <button
-            type="button"
-            className="dropdown-btn"
-            onClick={() => setIsKondisiDropdownOpen(!isKondisiDropdownOpen)}
-          >
+          <button type="button" className="dropdown-btn" disabled>
             {kondisiAset || "Pilih Kondisi"} <span>▾</span>
           </button>
-          <div
-            className={`dropdown-content ${
-              isKondisiDropdownOpen ? "show" : ""
-            }`}
-          >
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                handleKondisiSelectChange("Baik");
-              }}
-            >
-              Baik
-            </a>
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                handleKondisiSelectChange("Sedang");
-              }}
-            >
-              Sedang
-            </a>
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                handleKondisiSelectChange("Buruk");
-              }}
-            >
-              Buruk
-            </a>
-          </div>
         </div>
+
         <label>Lampiran Bukti (PNG/PDF)</label>
         <div className="container">
           {doc && (
             <div className="existing-file">
               <p>
                 File saat ini:{" "}
-                {/* Tampilkan sebagai link jika ini adalah URL */}
                 <a href={doc} target="_blank" rel="noopener noreferrer">
                   {doc.split("/").pop()}
                 </a>
               </p>
             </div>
           )}
-          <input
-            type="file"
-            id="file"
-            accept=".png,.pdf"
-            onChange={handleFileChange}
-          />
+          <input type="file" id="file" accept=".png,.pdf" disabled />
         </div>
+
         <div className="button-group">
           <button
             type="button"

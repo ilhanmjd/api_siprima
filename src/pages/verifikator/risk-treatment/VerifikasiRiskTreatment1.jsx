@@ -1,18 +1,47 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
+import api from "../../../api.js";
 import "./VerifikasiRiskTreatment1.css";
 
 function VerifikasiRiskTreatment1() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { assetData, updateAssetData } = useAssetContext();
+
+  useEffect(() => {
+    const fetchRiskTreatment = async () => {
+      const id = location.state?.id;
+      if (id) {
+        try {
+          const response = await api.getRiskTreatmentById(id);
+          const data = response.data.data || response.data;
+          updateAssetData({
+            idRisiko: data.risiko_id || "",
+            strategi: data.strategi || "",
+            pengendalian: data.pengendalian || "",
+            penanggungJawab: data.penanggungjawab?.nama || "",
+            targetTanggal: data.target_tanggal
+              ? data.target_tanggal.split("T")[0]
+              : "",
+            biaya: data.biaya ? String(data.biaya) : "",
+          });
+        } catch (error) {
+          console.error("Error fetching risk treatment:", error);
+        }
+      }
+    };
+
+    fetchRiskTreatment();
+  }, [location.state, updateAssetData]);
 
   const handleChange = (e) => {
     updateAssetData({ [e.target.name]: e.target.value });
   };
 
   const handleNext = () => {
-    navigate("/VerifikasiRiskTreatment2");
+    const id = location.state?.id;
+    navigate("/VerifikasiRiskTreatment2", { state: { id } });
   };
 
   const handleBack = () => {

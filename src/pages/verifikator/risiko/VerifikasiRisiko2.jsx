@@ -1,11 +1,42 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
+import api from "../../../api.js";
 import "./VerifikasiRisiko2.css";
 
 function VerifikasiRisiko2() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { assetData, updateAssetData } = useAssetContext();
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
+
+  useEffect(() => {
+    const fetchRiskData = async () => {
+      const id = location.state?.id;
+      if (id) {
+        try {
+          const res = await api.getRiskById(id);
+          const risk = res?.data?.data ?? res?.data;
+          if (risk) {
+            updateAssetData({
+              idRisiko: risk.id || "",
+              probabilitas: risk.probabilitas || "",
+              nilaiDampak: risk.nilai_dampak || "",
+              levelRisiko: risk.level_risiko || "",
+              kriteria: risk.kriteria || "",
+              prioritas: risk.prioritas || "",
+              status: risk.status || "",
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching risk data:", error);
+        }
+      }
+    };
+
+    fetchRiskData();
+  }, [location.state, updateAssetData]);
 
   const handleChange = (e) => {
     updateAssetData({ [e.target.name]: e.target.value });
@@ -15,18 +46,41 @@ function VerifikasiRisiko2() {
     navigate("/VerifikasiRisiko1");
   };
   const handleReject = () => {
+    setIsRejectModalOpen(true);
+  };
+
+  const handleRejectCancel = () => {
+    setIsRejectModalOpen(false);
+    setRejectReason("");
+  };
+  const handleRejectSubmit = () => {
+    // Here you can handle the rejection reason, e.g., send to API
+    setIsRejectModalOpen(false);
+    setRejectReason("");
     navigate("/VerifikasiRejectRisiko");
   };
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     if (allFilled) {
-      navigate("/VerifikasiAcceptRisiko");
+      try {
+        await api.approveRisk(assetData.idRisiko);
+        updateAssetData({ status: "diterima" });
+        navigate("/VerifikasiAcceptRisiko", {
+          state: { id: assetData.idRisiko },
+        });
+      } catch (error) {
+        console.error("Error approving risk:", error);
+        alert(
+          "Terjadi kesalahan saat memverifikasi risiko. Silakan coba lagi."
+        );
+      }
     } else {
       alert("Harap isi semua field");
     }
   };
 
   const allFilled =
+    assetData.idRisiko &&
     assetData.probabilitas &&
     assetData.nilaiDampak &&
     assetData.levelRisiko &&
@@ -75,7 +129,8 @@ function VerifikasiRisiko2() {
           type="text"
           name="probabilitas"
           value={assetData.probabilitas || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Nilai Dampak</label>
@@ -83,7 +138,8 @@ function VerifikasiRisiko2() {
           type="text"
           name="nilaiDampak"
           value={assetData.nilaiDampak || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Level Risiko</label>
@@ -91,7 +147,8 @@ function VerifikasiRisiko2() {
           type="text"
           name="levelRisiko"
           value={assetData.levelRisiko || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Kriteria</label>
@@ -99,7 +156,8 @@ function VerifikasiRisiko2() {
           type="text"
           name="kriteria"
           value={assetData.kriteria || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Prioritas</label>
@@ -107,7 +165,8 @@ function VerifikasiRisiko2() {
           type="text"
           name="prioritas"
           value={assetData.prioritas || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <label>Status</label>
@@ -115,7 +174,8 @@ function VerifikasiRisiko2() {
           type="text"
           name="status"
           value={assetData.status || ""}
-          onChange={handleChange}
+          readOnly
+          disabled
         />
 
         <div className="button-group">
@@ -126,16 +186,16 @@ function VerifikasiRisiko2() {
           >
             BACK
           </button>
+
           <button
             type="button"
             className="next-btn"
-            style={{
-              backgroundColor: "#FF0004",
-            }}
+            style={{ backgroundColor: "#FF0004" }}
             onClick={handleReject}
           >
             REJECT
           </button>
+
           <button
             type="button"
             className={`next-btn ${allFilled ? "active" : "disabled"}`}
@@ -147,6 +207,30 @@ function VerifikasiRisiko2() {
           </button>
         </div>
       </form>
+
+      {/* Reject Modal */}
+      {isRejectModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Alasan Ditolak:</h3>
+            <textarea
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              placeholder="tulis alasan ditolak!!!"
+              rows="4"
+              cols="50"
+            />
+            <div className="modal-buttons">
+              <button className="cancel-btn" onClick={handleRejectCancel}>
+                Cancel
+              </button>
+              <button className="submit-btn" onClick={handleRejectSubmit}>
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

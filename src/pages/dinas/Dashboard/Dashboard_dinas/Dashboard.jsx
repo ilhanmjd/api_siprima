@@ -134,7 +134,7 @@ export default function Dashboard() {
 
           <div className="chart-card">
             <h3>Penanganan Risiko</h3>
-            <div className="risk-list">
+            <div className="risk-list-Penanganan-Risiko">
               {[
                 { name: "Asset Laptop", status: "Ditangani" },
                 { name: "Asset Komputer", status: "Proses" },

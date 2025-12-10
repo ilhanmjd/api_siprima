@@ -94,7 +94,7 @@ export default function NotifikasiVerifikatorRiskTreatment() {
       {/* Content Box dengan daftar notifikasi */}
       <div className="content-box">
         {loading ? (
-          <div className="loading">Memuat data risk treatment...</div>
+          <div className="loading"></div>
         ) : error ? (
           <div className="error">{error}</div>
         ) : riskTreatments.length === 0 ? (

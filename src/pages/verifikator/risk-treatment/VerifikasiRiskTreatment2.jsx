@@ -41,9 +41,20 @@ function VerifikasiRiskTreatment2() {
     navigate("/VerifikasiRejectRiskTreatment");
   };
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     if (allFilled) {
-      navigate("/VerifikasiAcceptRiskTreatment");
+      const id = location.state?.id;
+      if (id) {
+        try {
+          await api.approveRiskTreatment(id);
+          navigate("/VerifikasiAcceptRiskTreatment");
+        } catch (error) {
+          console.error("Error approving risk treatment:", error);
+          alert("Terjadi kesalahan saat menyetujui risk treatment");
+        }
+      } else {
+        alert("ID Risk Treatment tidak ditemukan");
+      }
     } else {
       alert("Harap isi semua field");
     }

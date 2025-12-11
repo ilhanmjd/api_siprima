@@ -12,6 +12,8 @@ function VerifikasiMaintenance1() {
     alasanPemeliharaan: "",
     buktiLampiran: null,
   });
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
 
   useEffect(() => {
     const fetchMaintenance = async () => {
@@ -50,9 +52,7 @@ function VerifikasiMaintenance1() {
   };
 
   const handleReject = () => {
-    navigate("/VerifikasiRejectMaintenance", {
-      state: { id: maintenance?.id },
-    });
+    setIsRejectModalOpen(true);
   };
 
   const handleVerify = () => {
@@ -63,6 +63,20 @@ function VerifikasiMaintenance1() {
     } else {
       alert("Harap isi semua field");
     }
+  };
+
+  const handleRejectCancel = () => {
+    setIsRejectModalOpen(false);
+  };
+
+  const handleRejectSubmit = () => {
+    if (!rejectReason.trim()) {
+      alert("Alasan penolakan harus diisi!");
+      return;
+    }
+    navigate("/VerifikasiRejectMaintenance", {
+      state: { id: maintenance?.id, rejectReason },
+    });
   };
 
   const allFilled =
@@ -162,6 +176,29 @@ function VerifikasiMaintenance1() {
           </button>
         </div>
       </form>
+      {/* Reject Modal */}
+      {isRejectModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Alasan Ditolak:</h3>
+            <textarea
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              placeholder="tulis alasan ditolak!!!"
+              rows="4"
+              cols="50"
+            />
+            <div className="modal-buttons">
+              <button className="cancel-btn" onClick={handleRejectCancel}>
+                Cancel
+              </button>
+              <button className="submit-btn" onClick={handleRejectSubmit}>
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

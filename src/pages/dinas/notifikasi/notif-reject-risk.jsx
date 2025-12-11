@@ -167,7 +167,7 @@ export default function NotifikasiRejectRisk() {
                   return (
                     <div
                       key={risk.id ?? index}
-                      className="aset-item-page-reject"
+                      className="aset-item-page-risk-reject"
                       style={{
                         backgroundColor: risk.status !== "ditolak" && risk.status !== "pending" ? "#ff3636" : undefined,
                         border: isSelected ? "2px solid #000" : "none",
@@ -188,7 +188,7 @@ export default function NotifikasiRejectRisk() {
         <section className="asset-detail">
           <div className="asset-card">
             <div className="asset-header">
-              <h3>{riskDetail?.judul || riskDetail?.nama || "Detail Risk"}</h3>
+              <h3>{riskDetail?.judul || riskDetail?.nama || "Risk Rejected"}</h3>
               <span className="asset-date">
                 {riskDetail?.updated_at
                   ? new Date(riskDetail.updated_at).toLocaleString()

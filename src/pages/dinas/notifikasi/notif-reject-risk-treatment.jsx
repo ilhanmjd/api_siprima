@@ -169,7 +169,7 @@ export default function NotifRejectRiskTreatment() {
                 riskList.map((risk) => (
                   <div
                     key={risk.id}
-                    className="aset-item-page-reject"
+                    className="aset-item-page-risktreatment-reject"
                     style={{ backgroundColor: "#ff3636", cursor: "pointer" }}
                     onClick={() => handleRiskTreatmentClick(risk)}
                   >
@@ -185,7 +185,7 @@ export default function NotifRejectRiskTreatment() {
         <section className="asset-detail">
           <div className="asset-card">
             <div className="asset-header">
-              <h3>{riskDetail?.risk?.judul || riskDetail?.judul || " Detail Risk Treatment"}</h3>
+              <h3>{riskDetail?.risk?.judul || riskDetail?.judul || " Risk Treatment Rejected"}</h3>
               <span className="asset-date">{formatDateTime(riskDetail?.updated_at)}</span>
             </div>
             <div className="asset-body">
@@ -208,7 +208,10 @@ export default function NotifRejectRiskTreatment() {
                 <b>PxD</b> :{riskDetail?.risk?.level_risiko || ""}
               </p>
               <p>
-                <b>Alasan ditolak</b> :{" "}
+                <b className="status-rejected">Status Pengajuan : DITOLAK</b>
+              </p>
+              <p>
+                <b>Alasan ditolak</b> :{riskDetail?.risk?.alasan_ditolak || ""}
               </p>
             </div>
           </div>

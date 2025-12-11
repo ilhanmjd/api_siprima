@@ -160,3 +160,13 @@ body {
   overflow-x: hidden;
   align-items: center;
 }
+
+.aset-item-page-maintenance-reject {
+  width: 210px;
+  height: auto;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: 0.2s ease;
+}

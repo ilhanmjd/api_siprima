@@ -92,9 +92,9 @@ body {
   align-items: center;
 }
 
-.aset-item-page-reject {
+.aset-item-page-risktreatment-reject {
   width: 210px;
-  height: 20px;
+  height: auto;
   padding: 10px;
   border-radius: 8px;
   cursor: pointer;

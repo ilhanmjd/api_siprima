@@ -52,7 +52,8 @@ function PenghapusanAset() {
 
   const handleVerify = () => {
     if (allFilled) {
-      navigate("/verifikasi-accept-penghapusan-aset");
+      const id = location.state?.id;
+      navigate("/verifikasi-accept-penghapusan-aset", { state: { id } });
     } else {
       alert("Harap isi semua field");
     }

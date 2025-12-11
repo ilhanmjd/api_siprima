@@ -1,38 +1,91 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { useAssetContext } from "../../../contexts/AssetContext";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import api from "../../../api.js";
 import "./VerifikasiMaintenance1.css";
 
 function VerifikasiMaintenance1() {
   const navigate = useNavigate();
-  const { assetData, updateAssetData } = useAssetContext();
+  const location = useLocation();
+  const [maintenance, setMaintenance] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [formData, setFormData] = useState({
+    idAset: "",
+    alasanPemeliharaan: "",
+    buktiLampiran: null,
+  });
+
+  useEffect(() => {
+    const fetchMaintenance = async () => {
+      const id = location.state?.id;
+      if (!id) {
+        setError("ID maintenance tidak ditemukan");
+        setLoading(false);
+        return;
+      }
+      try {
+        const response = await api.getMaintenanceById(id);
+        const maintenanceData = response.data.data || response.data;
+        setMaintenance(maintenanceData);
+        setFormData({
+          idAset: maintenanceData.asset?.id || "",
+          alasanPemeliharaan: maintenanceData.alasan_pemeliharaan || "",
+          buktiLampiran: null, // File input tidak bisa di-pre-fill
+        });
+        setMaintenance(maintenanceData);
+      } catch (err) {
+        setError(err.message);
+        console.error("Error fetching maintenance:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMaintenance();
+  }, [location.state]);
 
   const handleChange = (e) => {
-    updateAssetData({ [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e) => {
+    setFormData((prev) => ({ ...prev, buktiLampiran: e.target.files[0] }));
   };
 
   const handleBack = () => {
     navigate("/notifikasi-verifikator-maintenance");
   };
+
   const handleReject = () => {
-    navigate("/VerifikasiRejectMaintenance");
+    navigate("/VerifikasiRejectMaintenance", {
+      state: { id: maintenance?.id },
+    });
   };
 
   const handleVerify = () => {
     if (allFilled) {
-      navigate("/VerifikasiAcceptMaintenance");
+      navigate("/VerifikasiAcceptMaintenance", {
+        state: { id: maintenance?.id },
+      });
     } else {
       alert("Harap isi semua field");
     }
   };
 
   const allFilled =
-    assetData.idAset && assetData.alasanPemeliharaan && assetData.buktiLampiran;
+    maintenance && formData.idAset && formData.alasanPemeliharaan;
 
-  const step1Active = assetData.idAset;
-  const connectorActive = assetData.idAset && assetData.alasanPemeliharaan;
-  const step2Active =
-    assetData.idAset && assetData.alasanPemeliharaan && assetData.buktiLampiran;
+  const step1Active = formData.idAset;
+  const connectorActive = formData.idAset && formData.alasanPemeliharaan;
+  const step2Active = formData.idAset && formData.alasanPemeliharaan;
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="asset-container">
@@ -80,31 +133,26 @@ function VerifikasiMaintenance1() {
       </div>
 
       {/* === FORM === */}
+      {/* === FORM === */}
       <form className="asset-form">
         <label>Id Aset</label>
-        <input
-          type="text"
-          name="idAset"
-          value={assetData.idAset || ""}
-          onChange={handleChange}
-        />
+        <input type="text" name="idAset" value={formData.idAset} readOnly />
 
         <label>Alasan Pemeliharaan</label>
         <input
           type="text"
           name="alasanPemeliharaan"
-          value={assetData.alasanPemeliharaan || ""}
-          onChange={handleChange}
+          value={formData.alasanPemeliharaan}
+          readOnly
         />
 
         <label>Bukti Lampiran</label>
-        <input
-          type="file"
-          name="buktiLampiran"
-          onChange={(e) =>
-            updateAssetData({ buktiLampiran: e.target.files[0] })
-          }
-        />
+        {maintenance?.bukti_lampiran && (
+          <p>File existing: {maintenance.bukti_lampiran}</p>
+        )}
+
+        {/* File input tidak boleh readonly, jadi disable */}
+        <input type="file" name="buktiLampiran" disabled />
 
         <div className="button-group">
           <button
@@ -117,12 +165,13 @@ function VerifikasiMaintenance1() {
           >
             REJECT
           </button>
+
           <button
             type="button"
             className={`next-btn ${allFilled ? "active" : "disabled"}`}
-            disabled={!allFilled}
+            disabled={false} // <-- selalu bisa ditekan
             onClick={handleVerify}
-            style={{ backgroundColor: allFilled ? "#29AE08" : undefined }}
+            style={{ backgroundColor: "#29AE08" }}
           >
             VERIFIKASI
           </button>

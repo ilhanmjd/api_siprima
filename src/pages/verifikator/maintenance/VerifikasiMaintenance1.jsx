@@ -14,6 +14,7 @@ function VerifikasiMaintenance1() {
   });
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
+  const [rejectError, setRejectError] = useState("");
 
   useEffect(() => {
     const fetchMaintenance = async () => {
@@ -67,11 +68,13 @@ function VerifikasiMaintenance1() {
 
   const handleRejectCancel = () => {
     setIsRejectModalOpen(false);
+    setRejectReason("");
+    setRejectError("");
   };
 
   const handleRejectSubmit = () => {
     if (!rejectReason.trim()) {
-      alert("Alasan penolakan harus diisi!");
+      setRejectError("Alasan harus diisi");
       return;
     }
     navigate("/VerifikasiRejectMaintenance", {
@@ -188,6 +191,7 @@ function VerifikasiMaintenance1() {
               rows="4"
               cols="50"
             />
+            {rejectError && <p style={{ color: "red" }}>{rejectError}</p>}
             <div className="modal-buttons">
               <button className="cancel-btn" onClick={handleRejectCancel}>
                 Cancel

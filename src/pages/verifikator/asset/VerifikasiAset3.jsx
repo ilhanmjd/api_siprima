@@ -138,10 +138,11 @@ function VerifikasiAset3() {
 
   const handleRejectSubmit = async () => {
     if (!rejectReason.trim()) {
-      setRejectError("Alasan harus diisi");
+      alert("Alasan penolakan harus diisi!");
       return;
     }
     const id = location.state?.id;
+
     if (!id) {
       setError("ID asset tidak ditemukan");
       return;

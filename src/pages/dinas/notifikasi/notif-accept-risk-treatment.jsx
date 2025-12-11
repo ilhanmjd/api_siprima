@@ -213,24 +213,24 @@ export default function NotifAcceptAset() {
 
           {/* ===================== RISK TREATMENT ===================== */}
           {selectedCategory === "Risk Treatment" && (
-            <div className="aset-list">
+            <div className="aset-list-risk-treatment-accept">
               {loading ? <p>Loading...</p> :
                 riskTreatmentList
-                  .filter((risk) => risk.status !== "pending" && risk.status !== "rejected")
-                  .map((risk, index) => {
-                  const isSelected = selectedRiskTreatment && selectedRiskTreatment.id === risk.id;
+                  .filter((RiskTreatment) => RiskTreatment.status !== "pending" && RiskTreatment.status !== "rejected")
+                  .map((riskTreatment, index) => {
+                  const isSelected = selectedRiskTreatment && selectedRiskTreatment.id === riskTreatment.id;
                   return (
                   <div
-                    key={risk.id ?? index}
-                    className="aset-item-page-reject"
+                    key={riskTreatment.id ?? index}
+                    className="aset-item-page-risk-treatment-accept"
                     style={{
-                      backgroundColor: risk.status !== "rejected" && risk.status !== "pending" ? "#a9c9f8" : undefined,
+                      backgroundColor: riskTreatment.status !== "rejected" && riskTreatment.status !== "pending" ? "#a9c9f8" : undefined,
                       border: isSelected ? "2px solid #000" : "none",
                       cursor: "pointer"
                     }}
-                      onClick={() => setRiskDetail(risk)}
+                      onClick={() => setRiskDetail(riskTreatment)}
                     >
-                      <span className="aset-name">{risk.risk?.judul || risk.nama || `Risk Treatment ${risk.id}`}</span>
+                      <span className="aset-name">Risk Treatment {riskTreatment.risk.asset.nama || `Risk Treatment ${riskTreatment.id}`}</span>
                     </div>
                   );
                 })

@@ -113,15 +113,16 @@ body {
   transition: 0.3s ease;
 }
 
-.aset-list {
+.aset-list-asset-accept {
   display: flex;
   flex-direction: column;
   gap: 10px;
   overflow-x: hidden;
   align-items: center;
+  height: auto;
 }
 
-.aset-item-page-accept {
+.aset-item-page-asset-accept {
   width: 210px;
   height: 20px;
   padding: 10px;

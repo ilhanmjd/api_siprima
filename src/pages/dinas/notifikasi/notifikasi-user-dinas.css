@@ -160,7 +160,7 @@
 /* ================================
    List Aset / Risk / Maintenance
 ================================ */
-.aset-list {
+.aset-list-notifikasi-user-dinas {
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -168,9 +168,9 @@
   overflow-y: auto;
 }
 
-.aset-item {
+.aset-item-notifikasi-user-dinas {
   width: 600px;
-  height: 36px;
+  height: auto;
   display: flex;
   justify-content: space-between;
   align-items: center;

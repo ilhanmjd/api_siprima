@@ -225,7 +225,7 @@ useEffect(() => {
           </div>
           {/* ===================== RISK ===================== */}
           {selectedCategory === "Risk" && (
-            <div className="aset-list">
+            <div className="aset-list-risk-accept">
               {loading ? <p>Loading...</p> :
                 riskList
                   .filter((risk) => risk.status !== "pending" && risk.status !== "rejected")
@@ -234,7 +234,7 @@ useEffect(() => {
                   return (
                     <div
                       key={risk.id ?? index}
-                      className="aset-item-page-reject"
+                      className="aset-item-page-risk-accept"
                       style={{
                         backgroundColor: risk.status !== "rejected" && risk.status !== "pending" ? "#a9c9f8" : undefined,
                         border: isSelected ? "2px solid #000" : "none",
@@ -242,7 +242,7 @@ useEffect(() => {
                       }}
                       onClick={() => setSelectedRisk(risk)}
                     >
-                      <span className="aset-name">{risk.judul || risk.nama || `Risk ${risk.id}`}</span>
+                      <span className="aset-name">Risiko Asset {risk.asset.nama || `Risk ${risk.id}`}</span>
                     </div>
                   );
                 })

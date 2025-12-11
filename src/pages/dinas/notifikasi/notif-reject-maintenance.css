@@ -152,3 +152,11 @@ body {
 .aset-btn:hover {
   background-color: #ba1114;
 }
+
+.aset-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-x: hidden;
+  align-items: center;
+}

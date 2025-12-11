@@ -147,3 +147,22 @@ body {
 .risk-btn:hover {
   background-color: #2f6421;
 }
+
+.aset-list-risk-accept {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-x: hidden;
+  align-items: center;
+  height: auto;
+}
+
+.aset-item-page-risk-accept {
+  width: 90%;
+  padding: 10px 15px;
+  background-color: #f8d7da;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 210px;
+  height: auto;
+}

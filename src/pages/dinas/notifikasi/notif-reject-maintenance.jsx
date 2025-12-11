@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../../../api";
 import "./notif-reject-maintenance.css";
 
 export default function NotifRejectMaintenance() {
@@ -26,15 +27,19 @@ export default function NotifRejectMaintenance() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [assetsRes, risksRes, maintenancesRes] = await Promise.all([
-          getAssets(),
-          getRisks(),
-          getMaintenances(),
-        ]);
-        setAssetList(assetsRes.data || []);
-        setRiskList(risksRes.data || []);
-        setMaintenanceList(maintenancesRes.data || []);
+        const maintenancesRes = await api.getMaintenances();
+        const maintenanceData = Array.isArray(maintenancesRes?.data?.data)
+          ? maintenancesRes.data.data
+          : Array.isArray(maintenancesRes?.data)
+          ? maintenancesRes.data
+          : [];
+
+        const rejectedMaintenances = maintenanceData.filter(
+          (m) => m.status_review === "rejected"
+        );
+        setMaintenanceList(rejectedMaintenances);
       } catch (error) {
+        setMaintenanceList([]);
       } finally {
         setLoading(false);
       }
@@ -132,257 +137,26 @@ export default function NotifRejectMaintenance() {
               <option value="Maintenance">Maintenance</option>
             </select>
           </div>
-          {selectedCategory === "Asset" && (
-            <div className="aset-list">
-              {loading ? (
-                <p>Loading...</p>
-              ) : (
-                assetList.map((asset) => (
-                  <div
-                    key={asset.id}
-                    className="aset-item"
-                    style={{ backgroundColor: "#9C9C9C" }}
-                  >
-                    <span className="aset-name" style={{ color: "black" }}>
-                      {asset.nama}
-                    </span>
-                  </div>
-                ))
-              )}
-            </div>
-          )}
-          {selectedCategory === "Risk" && (
-            <div className="aset-list" style={{ fontSize: "12px" }}>
-              {loading ? (
-                <p style={{ fontSize: "12px" }}>Loading...</p>
-              ) : (
-                riskList.map((risk) => (
-                  <div
-                    key={risk.id}
-                    className="aset-item"
-                    style={{ fontSize: "12px", backgroundColor: "#9C9C9C" }}
-                  >
-                    <span
-                      className="aset-name"
-                      style={{ fontSize: "12px", color: "black" }}
-                    >
-                      {risk.judul}
-                    </span>
-                  </div>
-                ))
-              )}
-            </div>
-          )}
-          {selectedCategory === "Risk Treatment" && (
-            <div className="aset-list" style={{ fontSize: "12px" }}>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#9C9C9C" }}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "black" }}
-                >
-                  Aset Laptop
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#0845C9" }}
-                onClick={() => navigate("/notif-accept-risk-treatment")}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "white" }}
-                >
-                  Aset Komputer
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#FF0004" }}
-                onClick={() => navigate("/notif-reject-risk-treatment")}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "white" }}
-                >
-                  Data Cloud
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#FF0004" }}
-                onClick={() => navigate("/notif-reject-risk-treatment")}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "white" }}
-                >
-                  Server
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#0845C9" }}
-                onClick={() => navigate("/notif-accept-risk-treatment")}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "white" }}
-                >
-                  Microsoft Office
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#9C9C9C" }}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "black" }}
-                >
-                  Router
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#FF0004" }}
-                onClick={() => navigate("/notif-reject-risk-treatment")}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "white" }}
-                >
-                  Printer
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#0845C9" }}
-                onClick={() => navigate("/notif-accept-risk-treatment")}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "white" }}
-                >
-                  Firewall
-                </span>
-              </div>
-            </div>
-          )}
+        </aside>
+          {/* ===================== RISK TREATMENT ===================== */}
           {selectedCategory === "Maintenance" && (
             <div className="aset-list">
               {loading ? (
                 <p>Loading...</p>
               ) : (
-                maintenanceList.map((maintenance) => (
+                riskList.map((risk) => (
                   <div
-                    key={maintenance.id}
-                    className="aset-item"
-                    style={{ backgroundColor: "#9C9C9C" }}
+                    key={risk.id}
+                    className="aset-item-page-reject"
+                    style={{ backgroundColor: "#ff3636", cursor: "pointer" }}
+                    onClick={() => handleRiskTreatmentClick(risk)}
                   >
-                    <span className="aset-name" style={{ color: "black" }}>
-                      {maintenance.nama}
-                    </span>
+                    <span className="aset-name">{risk.risk?.judul || risk.nama || `Risk Treatment ${risk.id}`}</span>
                   </div>
                 ))
               )}
             </div>
           )}
-          {selectedCategory === "Penghapusan Aset" && (
-            <div className="aset-list" style={{ fontSize: "12px" }}>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#9C9C9C" }}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "black" }}
-                >
-                  Aset Laptop
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#0845C9" }}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "white" }}
-                >
-                  Aset Komputer
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#FF0004" }}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "white" }}
-                >
-                  Data Cloud
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#FF0004" }}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "white" }}
-                >
-                  Server
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#0845C9" }}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "white" }}
-                >
-                  Microsoft Office
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#9C9C9C" }}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "black" }}
-                >
-                  Router
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#FF0004" }}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "white" }}
-                >
-                  Printer
-                </span>
-              </div>
-              <div
-                className="aset-item"
-                style={{ fontSize: "12px", backgroundColor: "#0845C9" }}
-              >
-                <span
-                  className="aset-name"
-                  style={{ fontSize: "12px", color: "white" }}
-                >
-                  Firewall
-                </span>
-              </div>
-            </div>
-          )}
-        </aside>
 
         {/* Asset detail panel */}
         <section className="asset-detail">

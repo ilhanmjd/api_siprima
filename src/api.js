@@ -144,4 +144,16 @@ export default {
   getMaintenanceById: (id, config = {}) =>
     api.get(`/api/maintenances/${id}`, config),
   updateMaintenance: (id, data) => api.put(`/api/maintenances/${id}`, data),
+
+  // ========== ASSET DELETIONS ==========
+  getAssetDeletions: (params = {}) => {
+    const { signal, ...rest } = params || {};
+    return api.get("/api/asset-deletions", { params: rest, signal });
+  },
+  createAssetDeletion: (data) => api.post("/api/asset-deletions", data),
+  getAssetDeletionById: (id, config = {}) =>
+    api.get(`/api/asset-deletions/${id}`, config),
+  deleteAssetDeletion: (id) => api.delete(`/api/asset-deletions/${id}`),
+  reviewAssetDeletion: (id, data = {}) =>
+    api.put(`/api/asset-deletions/${id}/review`, data),
 };

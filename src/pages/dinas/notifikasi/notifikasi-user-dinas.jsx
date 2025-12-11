@@ -171,12 +171,12 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
 
           {/* ===================== ASSET ===================== */}
           {selectedCategory === "Asset" && (
-            <div className="aset-list">
+            <div className="aset-list-notifikasi-user-dinas">
               {loading || loadingAssets ? <p>Loading...</p> :
                 assetList.map((asset, index) => {
                   return (
-                    <div key={index} className="aset-item">
-                      <span className="aset-name">{asset.nama}</span>
+                    <div key={index} className="aset-item-notifikasi-user-dinas">
+                      <span className="aset-name">Asset {asset.nama}</span>
                       {asset.status === "pending" && <button className="verification-button under-review">UnderReview</button>}
                       {asset.status !== "ditolak" && asset.status !== "pending" && <button className="verification-button accepted" onClick={() => navigate('/notif-accept-aset', { state: { id: asset.id, nama: asset.nama } })}>Accepted</button>}
                       {asset.status === "ditolak" && (
@@ -196,11 +196,11 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
 
           {/* ===================== RISK ===================== */}
           {selectedCategory === "Risk" && (
-            <div className="aset-list">
+            <div className="aset-list-notifikasi-user-dinas">
               {loading ? <p>Loading...</p> :
                 riskList.map((risk) => (
-                  <div key={risk.id} className="aset-item">
-                    <span className="aset-name">{risk.judul}</span>
+                  <div key={risk.id} className="aset-item-notifikasi-user-dinas">
+                    <span className="aset-name">Risiko Asset {risk.asset?.nama}</span>
                     {risk.status === "pending" && <button className="verification-button under-review">UnderReview</button>}
                     {risk.status !== "rejected" && risk.status !== "pending" && (
                       <button
@@ -232,11 +232,11 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
 
           {/* ===================== RISK TREATMENT ===================== */}
           {selectedCategory === "Risk Treatment" && (
-            <div className="aset-list">
+            <div className="aset-list-notifikasi-user-dinas">
               {loading ? <p>Loading...</p> :
                 riskTreatmentList.map((risk_treatment) => (
-                  <div key={risk_treatment.id} className="aset-item">
-                    <span className="aset-name">{risk_treatment.risk.judul}</span>
+                  <div key={risk_treatment.id} className="aset-item-notifikasi-user-dinas">
+                    <span className="aset-name">Risk Treatment Asset {risk_treatment.risk.asset.nama}</span>
                     {risk_treatment.status === "pending" && <button className="verification-button under-review">UnderReview</button>}
                     {risk_treatment.status !== "rejected" && risk_treatment.status !== "pending" && (
                       <button
@@ -270,12 +270,12 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
 
           {/* ===================== MAINTENANCE ===================== */}
           {selectedCategory === "Maintenance" && (
-            <div className="aset-list">
+            <div className="aset-list-notifikasi-user-dinas">
               {loading ? <p>Loading...</p> :
                 maintenanceList.map((maintenance) => (
-                  <div key={maintenance.id} className="aset-item">
+                  <div key={maintenance.id} className="aset-item-notifikasi-user-dinas">
                     <span className="aset-name">
-                      {maintenance.alasan_pemeliharaan}
+                      Maintenance {maintenance.asset?.nama || `Maintenance ${maintenance.id}`}
                     </span>
                     {maintenance.status_review === "pending" && (
                       <button className="verification-button under-review">
@@ -317,13 +317,13 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
 
           {/* ===================== PENGHAPUSAN ASET ===================== */}
           {selectedCategory === "Penghapusan Aset" && (
-            <div className="aset-list">
+            <div className="aset-list-notifikasi-user-dinas">
               {loading ? <p>Loading...</p> :
                 penghapusanasetList.map((asset_deletions) => (
-                  <div key={asset_deletions.id} className="aset-item">
-                    <span className="aset-name">{asset_deletions?.asset?.nama}</span>
+                  <div key={asset_deletions.id} className="aset-item-notifikasi-user-dinas">
+                    <span className="aset-name">Penghapusan Asset {asset_deletions?.asset?.nama}</span>
                     {asset_deletions.status === "pending" && <button className="verification-button under-review">UnderReview</button>}
-                    {asset_deletions.status !== "rejected" && asset_deletions.status !== "pending" && <button className="verification-button accepted" onClick={() => navigate('/notif-accept-penghapusan-aset', { state: { id: asset_deletions.id, nama: asset_deletions.nama } })}>Accepted</button>}
+                    {asset_deletions.status !== "rejected" && asset_deletions.status !== "pending" && <button className="verification-button accepted" onClick={() => navigate({ state: { id: asset_deletions.id, nama: asset_deletions.nama } })}>Accepted</button>}
                     {asset_deletions.status === "rejected" && <button className="verification-button rejected">Rejected</button>}
                   </div>
                 ))

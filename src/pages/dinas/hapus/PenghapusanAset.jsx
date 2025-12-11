@@ -152,6 +152,7 @@ function PenghapusanAset() {
         <input
           type="file"
           name="lampiran"
+          accept=".pdf,.jpg,.jpeg,.png"
           onChange={handleFileChange}
           required
         />

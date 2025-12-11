@@ -75,14 +75,22 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
           : [];
         setMaintenanceList(sortByUpdatedAt(maintenanceData));
 
-        // Jika nanti ada API Penghapusan Aset,
-        // panggil dan isi penghapusanasetList di sini.
+        // Penghapusan Aset
+        const assetDeletionRes = await api.getAssetDeletions();
+        if (cancelledRef.current || requestId !== requestIdRef.current) return;
+        const assetDeletionData = Array.isArray(assetDeletionRes?.data?.data)
+          ? assetDeletionRes.data.data
+          : Array.isArray(assetDeletionRes?.data)
+          ? assetDeletionRes.data
+          : [];
+        setPenghapusanasetList(sortByUpdatedAt(assetDeletionData));
       } catch (error) {
         if (cancelledRef.current || requestId !== requestIdRef.current) return;
         setAssetList([]);
         setRiskList([]);
         setRiskTreatmentList([]);
         setMaintenanceList([]);
+        setPenghapusanasetList([]);
       } finally {
         if (cancelledRef.current || requestId !== requestIdRef.current) return;
         setLoading(false);
@@ -311,12 +319,12 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
           {selectedCategory === "Penghapusan Aset" && (
             <div className="aset-list">
               {loading ? <p>Loading...</p> :
-                penghapusanasetList.map((penghapusan_aset) => (
-                  <div key={penghapusan_aset.id} className="aset-item">
-                    <span className="aset-name">{penghapusan_aset.nama}</span>
-                    {penghapusan_aset.status === "pending" && <button className="verification-button under-review">UnderReview</button>}
-                    {penghapusan_aset.status !== "rejected" && penghapusan_aset.status !== "pending" && <button className="verification-button accepted" onClick={() => navigate('/notif-accept-penghapusan-aset', { state: { id: penghapusan_aset.id, nama: penghapusan_aset.nama } })}>Accepted</button>}
-                    {penghapusan_aset.status === "rejected" && <button className="verification-button rejected">Rejected</button>}
+                penghapusanasetList.map((asset_deletions) => (
+                  <div key={asset_deletions.id} className="aset-item">
+                    <span className="aset-name">{asset_deletions?.asset?.nama}</span>
+                    {asset_deletions.status === "pending" && <button className="verification-button under-review">UnderReview</button>}
+                    {asset_deletions.status !== "rejected" && asset_deletions.status !== "pending" && <button className="verification-button accepted" onClick={() => navigate('/notif-accept-penghapusan-aset', { state: { id: asset_deletions.id, nama: asset_deletions.nama } })}>Accepted</button>}
+                    {asset_deletions.status === "rejected" && <button className="verification-button rejected">Rejected</button>}
                   </div>
                 ))
               }

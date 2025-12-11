@@ -2,31 +2,33 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
+import api from "../../../api";
 import "./konfirmasi-penghapusan-aset.css";
 
 export default function KonfirmasiPenghapusanAset() {
   const navigate = useNavigate();
-  const { assetData, addRisk, resetAssetData } = useAssetContext();
+  const { assetData, resetAssetData } = useAssetContext();
 
-  const handleConfirm = () => {
-    // Membuat objek penghapusan aset baru berdasarkan data yang ada
-    const newPenghapusan = {
-      id: Date.now(), // Menggunakan timestamp sebagai ID unik
-      idAset: assetData.idAset,
-      alasanPenghapusan: assetData.alasanPenghapusan,
-      lampiran: assetData.lampiran,
-    };
+  const handleConfirm = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("asset_id", assetData.idAset);
+      formData.append("alasan_penghapusan", assetData.alasanPenghapusan);
+      formData.append("status_review", "pending");
+      if (assetData.lampiran) {
+        formData.append("lampiran", assetData.lampiran);
+      }
 
-    // Menambahkan penghapusan ke array risks (atau buat array penghapusan terpisah jika perlu)
-    addRisk(newPenghapusan);
+      await api.createAssetDeletion(formData);
 
-    // Reset data setelah konfirmasi
-    resetAssetData();
+      resetAssetData();
 
-    // Navigate ke halaman notifikasi
-    navigate("/notifikasi-user-dinas", {
-      state: { defaultCategory: "Penghapusan Aset" },
-    });
+      navigate("/notifikasi-user-dinas", {
+        state: { defaultCategory: "Penghapusan Aset" },
+      });
+    } catch (error) {
+      console.error("Gagal create asset deletion:", error);
+    }
   };
 
   return (

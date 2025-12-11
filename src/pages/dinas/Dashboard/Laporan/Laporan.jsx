@@ -28,6 +28,7 @@ export default function Laporan() {
   const [risks, setRisks] = useState([]);
   const [loadingRisks, setLoadingRisks] = useState(false);
   const [risksError, setRisksError] = useState(null);
+  const [dinasMap, setDinasMap] = useState({});
 
   // keep latest fetch fn without adding function to dependency arrays
   fetchAssetsOnceRef.current = fetchAssetsOnce;
@@ -85,11 +86,12 @@ export default function Laporan() {
       if (search) {
         const term = search.toLowerCase();
         const name = (asset?.nama || asset?.nama_aset || "").toLowerCase();
-        const dinas = (asset?.dinas || asset?.dinas || "").toLowerCase();
+        const dinas = (asset?.dinas?.name || asset?.dinas || "").toLowerCase();
         if (
           !name.includes(term) &&
           !dinas.includes(term) &&
-          !`${asset?.asset_id ?? asset?.id ?? ""}`.includes(term)
+          !`${asset?.asset_id ?? asset?.id ?? ""}`.includes(term) &&  
+          !`${asset?.dinas ?? dinas?.id ?? ""}`.includes(term)
         ) {
           return false;
         }
@@ -119,7 +121,7 @@ export default function Laporan() {
           const term = search.toLowerCase();
           const title = (risk?.judul || "").toLowerCase();
           const assetName = (risk?.asset?.nama || risk?.asset_nama || "").toLowerCase();
-          const dinas = (risk?.dinas?.nama || risk?.dinas || "").toLowerCase();
+          const dinas = (risk?.dinas?.name || risk?.dinas || "").toLowerCase();
           if (
             !title.includes(term) &&
             !assetName.includes(term) &&
@@ -145,9 +147,59 @@ export default function Laporan() {
             return false;
           }
         }
-        return true;
-      });
+      return true;
+    });
   }, [risks, search, kriteriaFilter, dateFrom, dateTo]);
+
+  useEffect(() => {
+    if (reportType !== "risk") return;
+    const list = Array.isArray(risks) ? risks : [];
+    const ids = Array.from(
+      new Set(
+        list
+          .map((risk) => risk?.asset?.dinas_id)
+          .filter((id) => id !== null && id !== undefined)
+      )
+    );
+    if (!ids.length) return;
+
+    let cancelled = false;
+
+    const fetchDinasForIds = async () => {
+      try {
+        const entries = await Promise.all(
+          ids.map(async (id) => {
+            try {
+              const res = await api.getDinasById(id);
+              const data = res?.data?.data ?? res?.data ?? {};
+              const name = data?.nama || data?.name || data?.dinas || null;
+              return [id, name];
+            } catch {
+              return [id, null];
+            }
+          })
+        );
+
+        if (cancelled) return;
+
+        setDinasMap((prev) => {
+          const next = { ...prev };
+          entries.forEach(([id, name]) => {
+            if (name) next[id] = name;
+          });
+          return next;
+        });
+      } catch {
+        // ignore errors; fallback ke data yang sudah ada di risk/asset
+      }
+    };
+
+    fetchDinasForIds();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [reportType, risks]);
 
   const handleDownloadAsset = (asset) => {
     if (asset?.lampiran_url) {
@@ -158,16 +210,11 @@ export default function Laporan() {
   };
 
   const handleDownloadRisk = (risk) => {
-    const identifier = risk?.id ?? risk?.risk_id ?? "risk";
-    const blob = new Blob([JSON.stringify(risk ?? {}, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `risk-${identifier}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
+    if (risk?.lampiran_url) {
+      window.open(risk.lampiran_url, "_blank");
+    } else {
+      alert("Lampiran tidak tersedia untuk risiko ini.");
+    }
   };
 
   const isAssetReport = reportType === "asset";
@@ -303,7 +350,7 @@ export default function Laporan() {
                     return (
                       <tr key={item?.asset_id ?? item?.id}>
                         <td>{item?.nama || item?.nama_aset || "-"}</td>
-                        <td>{""}</td>
+                        <td>{item?.dinas?.name || item?.dinas || "-"}</td>
                         <td>
                           {item?.tgl_perolehan
                             ? new Date(item.tgl_perolehan).toLocaleDateString("id-ID")
@@ -344,11 +391,18 @@ export default function Laporan() {
                     );
                   }
                   const riskId = item?.id ?? item?.risk_id;
+                  const dinasName =
+                    dinasMap[item?.asset?.dinas_id] ||
+                    item?.dinas?.name ||
+                    item?.dinas ||
+                    item?.asset?.dinas?.name ||
+                    item?.asset?.dinas ||
+                    "-";
                   return (
                     <tr key={`risk-${riskId}`}>
-                      <td>{item?.judul || "Risiko tanpa judul"}</td>
-                      <td>{item?.asset?.nama || item?.asset_nama || "-"}</td>
-                      <td>{item?.dinas?.nama || item?.dinas || "-"}</td>
+                      <td>{item?.judul || "-l"}</td>
+                      <td>{item?.asset?.nama || "-"}</td>
+                      <td>{dinasName}</td>
                       <td>{item?.kriteria || "-"}</td>
                       <td className="status-tag">{item?.status || "-"}</td>
                       <td>
@@ -361,6 +415,7 @@ export default function Laporan() {
                           type="button"
                           className="download-btn"
                           onClick={() => handleDownloadRisk(item)}
+                          disabled={!item?.lampiran_url}
                         >
                           Download
                         </button>

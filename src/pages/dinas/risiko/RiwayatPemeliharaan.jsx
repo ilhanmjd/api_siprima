@@ -9,6 +9,9 @@ export default function RiwayatPemeliharaan() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedMaintenance, setSelectedMaintenance] = useState(null);
+  const [selectedMonthYear, setSelectedMonthYear] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedLevel, setSelectedLevel] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -53,6 +56,78 @@ export default function RiwayatPemeliharaan() {
     };
   }, []);
 
+  const getMonthYearLabel = (value) => {
+    if (!value) return "";
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return "";
+    return d.toLocaleDateString("id-ID", {
+      month: "long",
+      year: "numeric",
+    });
+  };
+
+  const monthYearOptions = Array.from(
+    new Set(
+      maintenances
+        .map((m) => m.risk_treatment?.target_tanggal)
+        .filter(Boolean)
+        .map((v) => getMonthYearLabel(v))
+        .filter(Boolean)
+    )
+  );
+
+  const statusOptions = Array.from(
+    new Set(
+      maintenances
+        .map((m) => m.status_pemeliharaan)
+        .filter((v) => v && String(v).trim() !== "")
+    )
+  );
+
+  const levelOptions = Array.from(
+    new Set(
+      maintenances
+        .map((m) => m.risk?.kriteria)
+        .filter((v) => v && String(v).trim() !== "")
+    )
+  );
+
+  const filteredMaintenances = maintenances.filter((item) => {
+    const itemMonthYear = getMonthYearLabel(
+      item.risk_treatment?.target_tanggal
+    );
+    if (selectedMonthYear && itemMonthYear !== selectedMonthYear) {
+      return false;
+    }
+
+    const itemStatus = item.status_pemeliharaan ?? "";
+    if (selectedStatus && itemStatus !== selectedStatus) {
+      return false;
+    }
+
+    const itemLevel = item.risk?.kriteria ?? "";
+    if (selectedLevel && itemLevel !== selectedLevel) {
+      return false;
+    }
+
+    return true;
+  });
+
+  useEffect(() => {
+    if (loading || error) return;
+    if (filteredMaintenances.length === 0) {
+      setSelectedMaintenance(null);
+      return;
+    }
+
+    if (
+      !selectedMaintenance ||
+      !filteredMaintenances.some((m) => m.id === selectedMaintenance.id)
+    ) {
+      setSelectedMaintenance(filteredMaintenances[0]);
+    }
+  }, [loading, error, filteredMaintenances, selectedMaintenance]);
+
   return (
     <div className="page-bg">
       {/* Navbar */}
@@ -95,16 +170,43 @@ export default function RiwayatPemeliharaan() {
 
       {/* Filter Row */}
       <div className="filter-row">
-        <select className="filter-select">
-          <option>Oktober 2025</option>
+        <select
+          className="filter-select"
+          value={selectedMonthYear}
+          onChange={(e) => setSelectedMonthYear(e.target.value)}
+        >
+          <option value="">Pilih Bulan dan Tahun</option>
+          {monthYearOptions.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
         </select>
 
-        <select className="filter-select">
-          <option>Semua Status</option>
+        <select
+          className="filter-select"
+          value={selectedStatus}
+          onChange={(e) => setSelectedStatus(e.target.value)}
+        >
+          <option value="">Pilih Status</option>
+          {statusOptions.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
         </select>
 
-        <select className="filter-select">
-          <option>Semua Jenis</option>
+        <select
+          className="filter-select"
+          value={selectedLevel}
+          onChange={(e) => setSelectedLevel(e.target.value)}
+        >
+          <option value="">Pilih Level</option>
+          {levelOptions.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
         </select>
 
         <button className="btn-search">
@@ -134,12 +236,12 @@ export default function RiwayatPemeliharaan() {
               <tr>
                 <td colSpan="5">{error}</td>
               </tr>
-            ) : maintenances.length === 0 ? (
+            ) : filteredMaintenances.length === 0 ? (
               <tr>
                 <td colSpan="5">Tidak ada jadwal pemeliharaan.</td>
               </tr>
             ) : (
-              maintenances.map((item, index) => (
+              filteredMaintenances.map((item, index) => (
                 <tr
                   key={item.id ?? index}
                   className={

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class RiskTreatment extends Model
 {
@@ -47,5 +48,13 @@ class RiskTreatment extends Model
     public function rejection(): HasOne
     {
         return $this->hasOne(RiskTreatmentRejected::class);
+    }
+
+    /**
+     * Get the maintenances for the risk treatment.
+     */
+    public function maintenances(): HasMany
+    {
+        return $this->hasMany(Maintenance::class);
     }
 }

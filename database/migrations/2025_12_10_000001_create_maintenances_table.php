@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('asset_id')->constrained('assets')->onDelete('cascade');
             $table->foreignId('risk_id')->nullable()->constrained('risks')->onDelete('set null');
+            $table->foreignId('risk_treatment_id')->nullable()->constrained('risk_treatments')->onDelete('set null');
             $table->text('alasan_pemeliharaan');
             $table->enum('status_pemeliharaan', ['pending', 'penanganan', 'selesai'])->nullable();
             $table->enum('status_review', ['pending', 'accepted', 'rejected'])->default('pending');

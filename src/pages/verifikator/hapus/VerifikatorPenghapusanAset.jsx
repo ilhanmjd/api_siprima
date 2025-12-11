@@ -1,11 +1,33 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
+import api from "../../../api.js";
 import "./VerifikatorPenghapusanAset.css";
 
 function PenghapusanAset() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { assetData, updateAssetData } = useAssetContext();
+
+  useEffect(() => {
+    const fetchAssetDeletion = async () => {
+      const id = location.state?.id;
+      if (id) {
+        try {
+          const response = await api.getAssetDeletionById(id);
+          const data = response.data.data || response.data;
+          updateAssetData({
+            idAset: data.asset_id || "",
+            alasanPenghapusan: data.alasan_penghapusan || "",
+            lampiran: data.lampiran || null,
+          });
+        } catch (error) {
+          console.error("Error fetching asset deletion:", error);
+        }
+      }
+    };
+    fetchAssetDeletion();
+  }, [location.state, updateAssetData]);
 
   const handleChange = (e) => {
     updateAssetData({ [e.target.name]: e.target.value });

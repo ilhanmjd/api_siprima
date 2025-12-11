@@ -209,7 +209,7 @@ export default function QRPopup({ isOpen, asset, onClose }) {
                     handleDownload();
                   }}
                 >
-                  Unduh Cepat PNG
+                  Unduh
                 </button>
               </aside>
             </main>

@@ -324,7 +324,14 @@ const NotifikasiUserDinasRisikoDariVerifikator = () => {
                     <span className="aset-name">Penghapusan Asset {asset_deletions?.asset?.nama}</span>
                     {asset_deletions.status === "pending" && <button className="verification-button under-review">UnderReview</button>}
                     {asset_deletions.status !== "rejected" && asset_deletions.status !== "pending" && <button className="verification-button accepted" onClick={() => navigate({ state: { id: asset_deletions.id, nama: asset_deletions.nama } })}>Accepted</button>}
-                    {asset_deletions.status === "rejected" && <button className="verification-button rejected">Rejected</button>}
+                    {asset_deletions.status === "rejected" && (
+                      <button
+                        className="verification-button rejected"
+                        onClick={() => navigate("/PenghapusanAset")}
+                      >
+                        Rejected
+                      </button>
+                    )}
                   </div>
                 ))
               }

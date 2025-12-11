@@ -154,7 +154,8 @@ body {
   gap: 10px;
   overflow-x: hidden;
   align-items: center;
-  height: auto;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 .aset-item-page-risk-accept {

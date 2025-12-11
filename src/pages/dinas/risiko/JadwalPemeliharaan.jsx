@@ -1,9 +1,53 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./JadwalPemeliharaan.css";
+import api from "../../../api";
 
 export default function JadwalPemeliharaan() {
   const navigate = useNavigate();
+  const [maintenances, setMaintenances] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchMaintenances = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await api.getMaintenances();
+        const data = Array.isArray(res?.data?.data)
+          ? res.data.data
+          : Array.isArray(res?.data)
+          ? res.data
+          : [];
+
+        const acceptedMaintenances = data.filter(
+          (item) => item.status_review === "accepted"
+        );
+
+        if (!cancelled) {
+          setMaintenances(acceptedMaintenances);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError("Gagal memuat jadwal pemeliharaan.");
+          setMaintenances([]);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchMaintenances();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <div className="page-bg">
@@ -67,16 +111,48 @@ export default function JadwalPemeliharaan() {
             </thead>
 
             <tbody>
-              <tr
-                onClick={() => navigate("/RiwayatPemeliharaan")}
-                style={{ cursor: "pointer" }}
-              >
-                <td className="asset">r14a Laptop</td>
-                <td>LCD Pecah</td>
-                <td>Sedang</td>
-                <td>20 Okt 2025</td>
-                <td></td>
-              </tr>
+              {loading ? (
+                <tr>
+                  <td colSpan="5">Loading...</td>
+                </tr>
+              ) : error ? (
+                <tr>
+                  <td colSpan="5">{error}</td>
+                </tr>
+              ) : maintenances.length === 0 ? (
+                <tr>
+                  <td colSpan="5">Tidak ada jadwal pemeliharaan.</td>
+                </tr>
+              ) : (
+                maintenances.map((item, index) => (
+                  <tr
+                    key={item.id ?? index}
+                    onClick={() => navigate("/RiwayatPemeliharaan")}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <td className="asset">
+                      {(item.asset_id ?? "") +
+                        " - " +
+                        (item.asset?.nama ?? "")}
+                    </td>
+                    <td>{item.risk?.judul ?? ""}</td>
+                    <td>{item.risk?.kriteria ?? ""}</td>
+                    <td>
+                      {item.target_tanggal
+                        ? new Date(item.target_tanggal).toLocaleDateString(
+                            "id-ID",
+                            {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            }
+                          )
+                        : ""}
+                    </td>
+                    <td>{item.status_pemeliharaan ?? ""}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

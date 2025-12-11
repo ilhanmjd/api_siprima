@@ -1,37 +1,49 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../../../api.js";
 import "./Notifikasi-verifikator-penghapusan-aset.css";
 
 export default function NotifikasiVerifikatorPenghapusanAset() {
   const navigate = useNavigate();
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const items = [
-    {
-      id: 2101,
-      waktu: "12 mins ago",
-      teks: "Pengajuan penghapusan Printer Epson L3250 karena kondisi rusak berat dan tidak bisa diperbaiki.",
-    },
-    {
-      id: 2102,
-      waktu: "30 mins ago",
-      teks: "Laptop ASUS lama diajukan untuk penghapusan karena performa tidak lagi memadai.",
-    },
-    {
-      id: 2103,
-      waktu: "1 hour ago",
-      teks: "Meja kerja kayu rusak pada bagian kaki dan diajukan untuk penghapusan.",
-    },
-    {
-      id: 2104,
-      waktu: "2 hours ago",
-      teks: "Kursi staf rusak pada bagian sandaran dan tidak layak digunakan, diajukan untuk penghapusan.",
-    },
-    {
-      id: 2105,
-      waktu: "3 hours ago",
-      teks: "Proyektor lama diajukan untuk penghapusan karena kualitas gambar sudah tidak layak.",
-    },
-  ];
+  function getRelativeTime(timestamp) {
+    const now = new Date();
+    const time = new Date(timestamp);
+    const diff = now - time;
+    const minutes = Math.floor(diff / 60000);
+    if (minutes < 1) return "just now";
+    if (minutes < 60) return `${minutes} mins ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+    const days = Math.floor(hours / 24);
+    return `${days} day${days > 1 ? "s" : ""} ago`;
+  }
+
+  useEffect(() => {
+    const fetchDeletions = async () => {
+      try {
+        const response = await api.getAssetDeletions();
+        const data = response.data.data || response.data;
+        const filteredData = data.filter((item) => item.status === "pending");
+        const sortedData = filteredData.sort((a, b) => a.id - b.id);
+        const mappedItems = sortedData.map((item) => ({
+          id: item.id,
+          waktu: getRelativeTime(item.updated_at),
+          teks: item.alasan_penghapusan,
+        }));
+
+        setItems(mappedItems);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDeletions();
+  }, []);
 
   return (
     <div className="notifikasi-verifikator-penghapusan-page">
@@ -73,23 +85,31 @@ export default function NotifikasiVerifikatorPenghapusanAset() {
       </div>
 
       <div className="content-box">
-        {items.map((item) => (
-          <div
-            key={item.id}
-            className="notif-card"
-            onClick={() => navigate("/verifikator-penghapusan-aset")}
-            style={{ cursor: "pointer" }}
-          >
-            <div className="notif-header-row">
-              <div className="notif-header-left">
-                <span className="notif-title">Dinas</span>
-                <span className="notif-id">| {item.id}</span>
+        {loading && <div></div>}
+        {error && <div>Error: {error}</div>}
+        {!loading &&
+          !error &&
+          items.map((item) => (
+            <div
+              key={item.id}
+              className="notif-card"
+              onClick={() =>
+                navigate("/verifikator-penghapusan-aset", {
+                  state: { id: item.id },
+                })
+              }
+              style={{ cursor: "pointer" }}
+            >
+              <div className="notif-header-row">
+                <div className="notif-header-left">
+                  <span className="notif-title">Dinas</span>
+                  <span className="notif-id">| {item.id}</span>
+                </div>
+                <span className="notif-time">{item.waktu}</span>
               </div>
-              <span className="notif-time">{item.waktu}</span>
+              <div className="notif-text">{item.teks}</div>
             </div>
-            <div className="notif-text">{item.teks}</div>
-          </div>
-        ))}
+          ))}
       </div>
     </div>
   );

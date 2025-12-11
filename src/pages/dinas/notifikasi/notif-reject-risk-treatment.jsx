@@ -211,7 +211,7 @@ export default function NotifRejectRiskTreatment() {
                 <b className="status-rejected">Status Pengajuan : DITOLAK</b>
               </p>
               <p>
-                <b>Alasan ditolak</b> :{riskDetail?.risk?.alasan_ditolak || ""}
+                <b>Alasan ditolak</b> : {riskDetail?.risk?.alasan_ditolak || ""}
               </p>
             </div>
           </div>

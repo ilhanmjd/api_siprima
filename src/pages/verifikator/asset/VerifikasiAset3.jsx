@@ -14,7 +14,9 @@ function VerifikasiAset3() {
   const [lokasiFilter, setLokasiFilter] = useState("");
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
+  const [rejectError, setRejectError] = useState("");
   const [loading, setLoading] = useState(true);
+
   const [error, setError] = useState(null);
 
   const lokasiOptions = [
@@ -131,9 +133,14 @@ function VerifikasiAset3() {
   const handleRejectCancel = () => {
     setIsRejectModalOpen(false);
     setRejectReason("");
+    setRejectError("");
   };
 
   const handleRejectSubmit = async () => {
+    if (!rejectReason.trim()) {
+      setRejectError("Alasan harus diisi");
+      return;
+    }
     const id = location.state?.id;
     if (!id) {
       setError("ID asset tidak ditemukan");
@@ -146,6 +153,7 @@ function VerifikasiAset3() {
       });
       setIsRejectModalOpen(false);
       setRejectReason("");
+      setRejectError("");
       navigate("/VerifikasiRejectAsset", { state: { id } });
     } catch (err) {
       setError(err.message);
@@ -271,6 +279,7 @@ function VerifikasiAset3() {
               rows="4"
               cols="50"
             />
+            {rejectError && <p style={{ color: "red" }}>{rejectError}</p>}
             <div className="modal-buttons">
               <button className="cancel-btn" onClick={handleRejectCancel}>
                 Cancel

@@ -8,8 +8,6 @@ export default function NotifikasiVerifikatorAset() {
   const navigate = useNavigate();
 
   const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchAssets = async () => {
@@ -27,22 +25,11 @@ export default function NotifikasiVerifikatorAset() {
 
         setItems(mappedItems);
       } catch (err) {
-        setError(err.message);
         console.error("Error fetching assets:", err);
-      } finally {
-        setLoading(false);
       }
     };
     fetchAssets();
   }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
 
   return (
     <div className="notifikasi-verifikator-aset-page">

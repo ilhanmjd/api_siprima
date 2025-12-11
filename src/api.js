@@ -26,11 +26,11 @@ const getToken = () => localStorage.getItem("token");
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 15000,
-  
-//   // hapus kalau server udah kembali
-//   headers: {
-//      "ngrok-skip-browser-warning": "true",
-//   },
+
+  //   // hapus kalau server udah kembali
+  //   headers: {
+  //      "ngrok-skip-browser-warning": "true",
+  //   },
 });
 
 // Inject Authorization token
@@ -63,8 +63,7 @@ api.interceptors.response.use(
 
 export default {
   // ========== AUTH ==========
-  login: (email, password) =>
-    api.post("/api/login", { email, password }),
+  login: (email, password) => api.post("/api/login", { email, password }),
 
   logout: (config = {}) => api.post("/api/logout", null, config),
 
@@ -78,7 +77,6 @@ export default {
   updateSubKategori: (id, data) => api.put(`/api/sub-kategoris/${id}`, data),
   deleteSubKategori: (id) => api.delete(`/api/sub-kategoris/${id}`),
 
-
   // ========== ASSETS ==========
   getAssets: (params = {}) => {
     const { signal, ...rest } = params || {};
@@ -88,7 +86,6 @@ export default {
   createAsset: (data) => api.post("/api/assets", data),
   updateAsset: (id, data) => api.put(`/api/assets/${id}`, data),
   deleteAsset: (id) => api.delete(`/api/assets/${id}`),
-
 
   // ========== DINAS ==========
   getDinas: () => api.get("/api/dinas"),
@@ -114,7 +111,6 @@ export default {
     api.put(`/api/penanggungjawabs/${id}`, data),
   deletePenanggungjawab: (id) => api.delete(`/api/penanggungjawabs/${id}`),
 
-  
   // ========== RISK ==========
   getRisks: (params = {}) => {
     const { signal, ...rest } = params || {};
@@ -138,7 +134,13 @@ export default {
   approveRiskTreatment: (id, data = {}) =>
     api.post(`/api/risk-treatments/${id}/approve`, data),
 
+  // ========== RISK REJECTEDS ==========
+  getRiskRejecteds: (params = {}) => api.get("/api/risk-rejecteds", { params }),
+  getRiskRejectedById: (id, config = {}) =>
+    api.get(`/api/risk-rejecteds/${id}`, config),
+
   // ========== MAINTENANCES ==========
+
   getMaintenances: (params = {}) => api.get("/api/maintenances", { params }),
   createMaintenance: (data) => api.post("/api/maintenances", data),
   getMaintenanceById: (id, config = {}) =>

@@ -8,9 +8,12 @@ function Maintenance1() {
   const location = useLocation();
   const { assetData, updateAssetData } = useAssetContext();
 
-  const riskTreatmentIdFromLocation = location.state?.id;
-
-  console.log("ID Risk Treatment:", riskTreatmentIdFromLocation);
+  const riskTreatmentIdFromLocation = location.state?.asset_id;
+  const risiko_id = location.state?.risiko_id;
+  const risk_treatment_id = location.state?.risk_treatment_id;
+  console.log("asset_id:", riskTreatmentIdFromLocation);
+  console.log("risiko_id:", risiko_id);
+  console.log("risk_treatment_id:", risk_treatment_id);
 
   useEffect(() => {
     if (riskTreatmentIdFromLocation && assetData.idAset !== riskTreatmentIdFromLocation) {
@@ -23,7 +26,7 @@ function Maintenance1() {
   };
 
   const handleNext = () => {
-    navigate("/konfirmasi-input-maintenance");
+    navigate("/konfirmasi-input-maintenance", {state:{risiko_id: risiko_id, risk_treatment_id: risk_treatment_id}});
   };
 
   const handleBack = () => {

@@ -274,8 +274,9 @@ export default function NotifAcceptAset() {
             <button
               className="risk-btn"
               onClick={() =>
+                console.log("Navigating to Maintenance with:", riskDetail) ||
                 navigate("/Maintenance1", {
-                  state: { id: riskDetail?.risk?.asset_id }
+                  state: { asset_id: riskDetail?.risk?.asset_id, risiko_id: riskDetail?.risk?.id, risk_treatment_id: riskDetail?.id },
                 })
               }
             >

@@ -10,6 +10,8 @@ export default function NotifRejectMaintenance() {
   const [riskList, setRiskList] = useState([]);
   const [maintenanceList, setMaintenanceList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selectedMaintenance, setSelectedMaintenance] = useState(null);
+  
 
   const handleCategoryChange = useCallback(
     (value) => {
@@ -77,59 +79,18 @@ export default function NotifRejectMaintenance() {
         Notification
       </div>
 
-      {/* Main content */}
       <div className="main-content">
-        {/* Sidebar */}
         <aside className="sidebar">
-          <div
-            className="dropdown-container"
-            style={{
-              marginBottom: "22.5px",
-              textAlign: "left",
-              animation: "fadeInUp 0.5s ease-out",
-              fontSize: "12px",
-            }}
-          >
-            <label
-              htmlFor="category-select"
-              style={{
-                fontWeight: "500",
-                color: "#111",
-                marginBottom: "6px",
-                display: "block",
-                animation: "fadeIn 0.3s ease-out 0.2s both",
-                fontSize: "12px",
-              }}
-            >
+          <div className="dropdown-container">
+            <label htmlFor="category-select" className="dropdown-label">
               Pilih Kategori:
             </label>
+
             <select
               id="category-select"
               value={selectedCategory}
               onChange={(e) => handleCategoryChange(e.target.value)}
-              style={{
-                padding: "9px 12px",
-                borderRadius: "6px",
-                border: "1px solid #d1d5db",
-                backgroundColor: "#ffffff",
-                boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-                fontSize: "12px",
-                color: "#374151",
-                cursor: "pointer",
-                transition: "all 0.3s ease-in-out",
-                width: "150px",
-                animation: "slideInLeft 0.5s ease-out 0.4s both",
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = "#3b82f6";
-                e.target.style.boxShadow = "0 0 0 3px rgba(59, 130, 246, 0.1)";
-                e.target.style.transform = "scale(1.02)";
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = "#d1d5db";
-                e.target.style.boxShadow = "0 1px 3px rgba(0, 0, 0, 0.1)";
-                e.target.style.transform = "scale(1)";
-              }}
+              className="dropdown-select"
             >
               <option value="Asset">Asset</option>
               <option value="Risk">Risk</option>
@@ -137,49 +98,64 @@ export default function NotifRejectMaintenance() {
               <option value="Maintenance">Maintenance</option>
             </select>
           </div>
-        </aside>
-          {/* ===================== RISK TREATMENT ===================== */}
+
+          {/* ===================== MAINTENANCE ===================== */}
           {selectedCategory === "Maintenance" && (
             <div className="aset-list">
-              {loading ? (
-                <p>Loading...</p>
-              ) : (
-                riskList.map((risk) => (
-                  <div
-                    key={risk.id}
-                    className="aset-item-page-reject"
-                    style={{ backgroundColor: "#ff3636", cursor: "pointer" }}
-                    onClick={() => handleRiskTreatmentClick(risk)}
-                  >
-                    <span className="aset-name">{risk.risk?.judul || risk.nama || `Risk Treatment ${risk.id}`}</span>
-                  </div>
-                ))
-              )}
+              {loading ? <p>Loading...</p> :
+                maintenanceList.filter(maintenance => maintenance.status_review === "rejected").map((maintenance, index) => {
+                  const isSelected = selectedMaintenance && selectedMaintenance.id === maintenance.id;
+                  return (
+                    <div
+                      key={index}
+                      className="aset-item-page-maintenance-reject"
+                      style={{
+                        backgroundColor: maintenance.status_review === "rejected" ? "#ff3636" : undefined,
+                        border: isSelected ? "2px solid #000" : "none",
+                        cursor: "pointer"
+                      }}
+                      onClick={() => setSelectedMaintenance(maintenance)}
+                    >
+                      <span className="aset-name">Maintenance {maintenance.asset.nama}</span>
+                    </div>
+                  );
+                })
+              }
             </div>
           )}
+        </aside>
 
         {/* Asset detail panel */}
         <section className="asset-detail">
           <div className="asset-card">
             <div className="asset-header">
-              <h3>Aset Laptop</h3>
-              <span className="asset-date">10/10/2025 - 17:23:34 PM</span>
+              <h3>
+                {selectedMaintenance?.asset?.nama || "Maintenance Rejected"}
+              </h3>
+              <span className="asset-date">
+                {selectedMaintenance?.updated_at || ""}
+              </span>
             </div>
             <div className="asset-body">
               <p>
-                <b>Id Aset:</b>
+                <b>Id Aset:</b>{" "}
+                {selectedMaintenance && selectedMaintenance.asset
+                  ? `${selectedMaintenance.asset.id} - ${selectedMaintenance.asset.nama}`
+                  : ""}
               </p>
               <p>
-                <b>Alasan Pemeliharaan:</b>
+                <b>Alasan Pemeliharaan:</b>{" "}
+                {selectedMaintenance?.alasan_pemeliharaan || ""}
               </p>
               <p>
-                <b>Catatan Maintenance:</b>
+                <b>Catatan Maintenance:</b>{" "}
+                {selectedMaintenance?.risk?.deskripsi || ""}
               </p>
               <p>
                 <b className="status-rejected">Status Pengajuan : DITOLAK</b>
               </p>
               <p>
-                <b>Alasan:</b>
+                <b>Alasan:</b> {selectedMaintenance?.alasan_ditolak || ""}
               </p>
             </div>
           </div>

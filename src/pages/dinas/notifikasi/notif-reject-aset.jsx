@@ -142,7 +142,7 @@ export default function NotifAcceptAset() {
                   return (
                     <div
                       key={index}
-                      className="aset-item-page-reject"
+                      className="aset-item-page-asset-reject"
                       style={{
                         backgroundColor: asset.status === "ditolak" ? "#ff3636" : undefined,
                         border: isSelected ? "2px solid #000" : "none",
@@ -157,113 +157,13 @@ export default function NotifAcceptAset() {
               }
             </div>
           )}
-
-          {/* ===================== RISK ===================== */}
-          {selectedCategory === "Risk" && (
-            <div className="aset-list">
-              {loading ? <p>Loading...</p> :
-                riskList.filter(risk => risk.status === "ditolak").map((risk, index) => {
-                  const isSelected = selectedRisk && selectedRisk.id === risk.id;
-                  return (
-                    <div
-                      key={index}
-                      className="aset-item-page-reject"
-                      style={{
-                        backgroundColor: risk.status === "ditolak" ? "#ff3636" : undefined,
-                        border: isSelected ? "2px solid #000" : "none",
-                        cursor: "pointer"
-                      }}
-                      onClick={() => setSelectedRisk(risk)}
-                    >
-                      <span className="aset-name">{risk.nama}</span>
-                    </div>
-                  );
-                })
-              }
-            </div>
-          )}
-
-          {/* ===================== RISK TREATMENT ===================== */}
-          {selectedCategory === "Risk Treatment" && (
-            <div className="aset-list">
-              {loading ? <p>Loading...</p> :
-                riskTreatmentList.filter(riskTreatment => riskTreatment.status === "ditolak").map((riskTreatment, index) => {
-                  const isSelected = selectedRiskTreatment && selectedRiskTreatment.id === riskTreatment.id;
-                  return (
-                    <div
-                      key={index}
-                      className="aset-item-page-reject"
-                      style={{
-                        backgroundColor: riskTreatment.status === "ditolak" ? "#ff3636" : undefined,
-                        border: isSelected ? "2px solid #000" : "none",
-                        cursor: "pointer"
-                      }}
-                      onClick={() => setSelectedRiskTreatment(riskTreatment)}
-                    >
-                      <span className="aset-name">{riskTreatment.nama}</span>
-                    </div>
-                  );
-                })
-              }
-            </div>
-          )}
-
-          {/* ===================== MAINTENANCE ===================== */}
-          {selectedCategory === "Maintenance" && (
-            <div className="aset-list">
-              {loading ? <p>Loading...</p> :
-                maintenanceList.filter(maintenance => maintenance.status === "ditolak").map((maintenance, index) => {
-                  const isSelected = selectedmaintenance && selectedmaintenance.id === maintenance.id;
-                  return (
-                    <div
-                      key={index}
-                      className="aset-item-page-reject"
-                      style={{
-                        backgroundColor: maintenance.status === "ditolak" ? "#ff3636" : undefined,
-                        border: isSelected ? "2px solid #000" : "none",
-                        cursor: "pointer"
-                      }}
-                      onClick={() => setSelectedmaintenance(maintenance)}
-                    >
-                      <span className="aset-name">{maintenance.nama}</span>
-                    </div>
-                  );
-                })
-              }
-            </div>
-          )}
-
-          {/* ===================== PENGHAPUSAN ASET ===================== */}
-          {selectedCategory === "Penghapusan Aset" && (
-            <div className="aset-list">
-              {loading ? <p>Loading...</p> :
-                penghapusanasetList.filter(penghapusanaset => penghapusanaset.status === "ditolak").map((penghapusanaset, index) => {
-                  const isSelected = selectedpenghapusanaset && selectedpenghapusanaset.id === penghapusanaset.id;
-                  return (
-                    <div
-                      key={index}
-                      className="aset-item-page-reject"
-                      style={{
-                        backgroundColor: penghapusanaset.status === "ditolak" ? "#ff3636" : undefined,
-                        border: isSelected ? "2px solid #000" : "none",
-                        cursor: "pointer"
-                      }}
-                      onClick={() => setSelectedpenghapusanaset(penghapusanaset)}
-                    >
-                      <span className="aset-name">{penghapusanaset.nama}</span>
-                    </div>
-                  );
-                })
-              }
-            </div>
-          )}
         </aside>
 
         {/* Asset detail panel */}
         <section className="asset-detail">
           <div className="asset-card">
             <div className="asset-header">
-              <h3>{assetDetail?.nama || selectedAsset?.nama || "Detail Aset"}</h3>
+              <h3>{assetDetail?.nama || selectedAsset?.nama || "Aset Rejected"}</h3>
               <span className="asset-date">
                 {assetDetail?.tgl_perolehan
                   ? new Date(assetDetail.tgl_perolehan).toLocaleString()
@@ -287,7 +187,7 @@ export default function NotifAcceptAset() {
                 <b className="status-rejected">Status Pengajuan : DITOLAK</b>
               </p>
               <p>
-                <b>Alasan</b> : {assetDetail?.alasan || ""}
+                <b>Alasan</b> : {assetDetail?.alasan_ditolak || ""}
               </p>
             </div>
           </div>

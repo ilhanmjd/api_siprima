@@ -23,7 +23,7 @@ export default function KonfirmasiInputMaintenance() {
         buktiLampiran: assetData.buktiLampiran,
         status_review: "pending",
         risk_id: risiko_id,
-        risktreatment_id: risk_treatment_id,
+        risk_treatment_id: risk_treatment_id,
       };
 
       await api.createMaintenance(payload);

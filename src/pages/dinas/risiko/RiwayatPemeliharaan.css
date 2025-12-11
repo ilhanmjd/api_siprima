@@ -44,6 +44,7 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 14px;
+  width: 418px;
 }
 
 .btn-search {
@@ -87,6 +88,23 @@
   padding: 20px;
   font-size: 15px;
   color: #333;
+}
+
+.riwayat-table tbody tr {
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.riwayat-table tbody tr.row-clickable {
+  cursor: pointer;
+}
+
+.riwayat-table tbody tr.row-clickable:hover {
+  background-color: #f3f6ff;
+  transform: translateY(-1px);
+}
+
+.riwayat-table tbody tr.row-selected {
+  background-color: #a9c9f8;
 }
 
 .badge-red {

@@ -134,8 +134,8 @@ export default function JadwalPemeliharaan() {
                     <td>{item.risk?.judul ?? ""}</td>
                     <td>{item.risk?.kriteria ?? ""}</td>
                     <td>
-                      {item.target_tanggal
-                        ? new Date(item.target_tanggal).toLocaleDateString(
+                      {item.risk_treatment?.target_tanggal
+                        ? new Date(item.risk_treatment?.target_tanggal).toLocaleDateString(
                             "id-ID",
                             {
                               day: "2-digit",

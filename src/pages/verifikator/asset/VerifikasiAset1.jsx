@@ -8,30 +8,19 @@ function VerifikasiAset1() {
   const location = useLocation();
   const [kategori, setKategori] = useState("");
 
-  // Removed unused state variables for read-only form
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [asset, setAsset] = useState(null);
-
-  // Removed unused variables for read-only form
 
   useEffect(() => {
     const fetchAsset = async () => {
       const id = location.state?.id;
-      if (!id) {
-        setError("ID asset tidak ditemukan");
-        setLoading(false);
-        return;
-      }
-      try {
-        const response = await api.getAssetById(id);
-        const asset = response.data.data || response.data;
-        setAsset(asset);
-      } catch (err) {
-        setError(err.message);
-        console.error("Error fetching asset:", err);
-      } finally {
-        setLoading(false);
+      if (id) {
+        try {
+          const response = await api.getAssetById(id);
+          const asset = response.data.data || response.data;
+          setAsset(asset);
+        } catch (err) {
+          console.error("Error fetching asset:", err);
+        }
       }
     };
     fetchAsset();
@@ -46,14 +35,6 @@ function VerifikasiAset1() {
   const handleBack = () => {
     navigate("/notifikasi-verifikator-aset");
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
 
   return (
     <div className="asset-container">

@@ -7,8 +7,6 @@ function VerifikasiMaintenance1() {
   const navigate = useNavigate();
   const location = useLocation();
   const [maintenance, setMaintenance] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     idAset: "",
     alasanPemeliharaan: "",
@@ -19,8 +17,6 @@ function VerifikasiMaintenance1() {
     const fetchMaintenance = async () => {
       const id = location.state?.id;
       if (!id) {
-        setError("ID maintenance tidak ditemukan");
-        setLoading(false);
         return;
       }
       try {
@@ -34,10 +30,7 @@ function VerifikasiMaintenance1() {
         });
         setMaintenance(maintenanceData);
       } catch (err) {
-        setError(err.message);
         console.error("Error fetching maintenance:", err);
-      } finally {
-        setLoading(false);
       }
     };
     fetchMaintenance();
@@ -78,14 +71,6 @@ function VerifikasiMaintenance1() {
   const step1Active = formData.idAset;
   const connectorActive = formData.idAset && formData.alasanPemeliharaan;
   const step2Active = formData.idAset && formData.alasanPemeliharaan;
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
 
   return (
     <div className="asset-container">

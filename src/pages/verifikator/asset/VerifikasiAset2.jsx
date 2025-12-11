@@ -11,37 +11,29 @@ function VerifikasiAset2() {
   const [kondisiAset, setKondisiAset] = useState("");
   const [isKondisiDropdownOpen, setIsKondisiDropdownOpen] = useState(false);
   const [doc, setDoc] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchAsset = async () => {
       const id = location.state?.id;
-      if (!id) {
-        setError("ID asset tidak ditemukan");
-        setLoading(false);
-        return;
-      }
-      try {
-        const response = await api.getAssetById(id);
-        const assetData = response.data.data || response.data;
-        // Format tanggal ke YYYY-MM-DD untuk input type="date"
-        const formattedDate = assetData.tgl_perolehan
-          ? new Date(assetData.tgl_perolehan).toISOString().split("T")[0]
-          : "";
-        setTanggalPerolehan(formattedDate);
-        setNilaiPerolehan(assetData.nilai_perolehan || "");
-        setKondisiAset(assetData.kondisi || "");
-        // Jika ada file lampiran, setDoc bisa diatur jika diperlukan
-        if (assetData.lampiran_bukti) {
-          // Untuk file input, tidak bisa set value langsung, tapi bisa simpan URL atau path
-          setDoc(assetData.lampiran_bukti);
+      if (id) {
+        try {
+          const response = await api.getAssetById(id);
+          const assetData = response.data.data || response.data;
+          // Format tanggal ke YYYY-MM-DD untuk input type="date"
+          const formattedDate = assetData.tgl_perolehan
+            ? new Date(assetData.tgl_perolehan).toISOString().split("T")[0]
+            : "";
+          setTanggalPerolehan(formattedDate);
+          setNilaiPerolehan(assetData.nilai_perolehan || "");
+          setKondisiAset(assetData.kondisi || "");
+          // Jika ada file lampiran, setDoc bisa diatur jika diperlukan
+          if (assetData.lampiran_bukti) {
+            // Untuk file input, tidak bisa set value langsung, tapi bisa simpan URL atau path
+            setDoc(assetData.lampiran_bukti);
+          }
+        } catch (err) {
+          console.error("Error fetching asset:", err);
         }
-      } catch (err) {
-        setError(err.message);
-        console.error("Error fetching asset:", err);
-      } finally {
-        setLoading(false);
       }
     };
     fetchAsset();
@@ -66,14 +58,6 @@ function VerifikasiAset2() {
   const handleFileChange = (e) => {
     setDoc(e.target.files[0]);
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
 
   return (
     <div className="asset-container">

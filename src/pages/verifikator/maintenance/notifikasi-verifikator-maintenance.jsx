@@ -6,8 +6,6 @@ import "./notifikasi-verifikator-maintenance.css";
 export default function NotifikasiVerifikatorMaintenance() {
   const navigate = useNavigate();
   const [maintenances, setMaintenances] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   // Function to convert timestamp to relative time
   const getRelativeTime = (timestamp) => {
@@ -35,22 +33,11 @@ export default function NotifikasiVerifikatorMaintenance() {
           : [];
         setMaintenances(filteredMaintenances);
       } catch (err) {
-        setError(err.message);
         console.error("Error fetching maintenances:", err);
-      } finally {
-        setLoading(false);
       }
     };
     fetchMaintenances();
   }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
 
   return (
     <div className="notifikasi-verifikator-maintenance-page">

@@ -207,6 +207,75 @@ function MaintenancePieChart({ greenCount, redCount, size = 160 }) {
   );
 }
 
+function RiskPriorityBarChart({ data, width = 420, height = 220 }) {
+  if (!Array.isArray(data) || data.length === 0) {
+    return <p>Tidak ada data risiko untuk tahun ini.</p>;
+  }
+
+  const margin = { top: 20, right: 20, bottom: 30, left: 120 };
+  const innerWidth = width - margin.left - margin.right;
+  const innerHeight = height - margin.top - margin.bottom;
+
+  const maxCount = Math.max(...data.map((d) => d.count), 1);
+  const barGap = 10;
+  const barHeight = 20;
+
+  const colorForPriority = (priority) => {
+    const value = String(priority || "").toLowerCase();
+    if (value === "high") return "#ef4444";
+    if (value === "medium") return "#facc15";
+    return "#4ade80";
+  };
+
+  return (
+    <svg
+      viewBox={`0 0 ${width} ${height}`}
+      className="risk-priority-bar-chart"
+      role="img"
+      aria-label="Risiko prioritas per sub kategori"
+    >
+      {data.map((item, index) => {
+        const y = margin.top + index * (barHeight + barGap);
+        const barWidth = (item.count / maxCount) * innerWidth;
+        const color = colorForPriority(item.priority);
+
+        return (
+          <g key={item.subName}>
+            <text
+              x={margin.left - 8}
+              y={y + barHeight / 2}
+              textAnchor="end"
+              alignmentBaseline="middle"
+              fontSize="9"
+              fill="#374151"
+            >
+              {item.subName}
+            </text>
+            <rect
+              x={margin.left}
+              y={y}
+              width={barWidth || 2}
+              height={barHeight}
+              fill={color}
+              rx={3}
+              ry={3}
+            />
+            <text
+              x={margin.left + barWidth + 4}
+              y={y + barHeight / 2}
+              alignmentBaseline="middle"
+              fontSize="9"
+              fill="#111827"
+            >
+              {item.count}
+            </text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const { resetAssetData, loading, error, assets, risks, fetchAssetsOnce } =
@@ -221,6 +290,10 @@ export default function Dashboard() {
     red: 0,
   });
   const [maintenanceList, setMaintenanceList] = useState([]);
+  const [riskRawData, setRiskRawData] = useState([]);
+  const [riskBarData, setRiskBarData] = useState([]);
+  const [riskYears, setRiskYears] = useState([]);
+  const [selectedRiskYear, setSelectedRiskYear] = useState(null);
 
   useEffect(() => {
     resetAssetDataRef.current = resetAssetData;
@@ -274,29 +347,175 @@ export default function Dashboard() {
       return;
     }
 
-    let yearToUse = selectedYear;
-    if (!yearToUse || !years.includes(yearToUse)) {
-      yearToUse = years[years.length - 1];
+    let effectiveYear = selectedYear;
+    if (effectiveYear !== null && !years.includes(effectiveYear)) {
+      effectiveYear = years[years.length - 1];
     }
-    if (yearToUse !== selectedYear) {
-      setSelectedYear(yearToUse);
+    if (effectiveYear !== selectedYear) {
+      setSelectedYear(effectiveYear);
     }
 
     const countsByMonth = Array(12).fill(0);
     points.forEach((p) => {
-      if (p.year === yearToUse) {
+      if (effectiveYear === null || p.year === effectiveYear) {
         countsByMonth[p.month] += 1;
       }
     });
 
     const fullYearData = MONTH_NAMES_ID.map((_, monthIndex) => ({
-      year: yearToUse,
+      year: effectiveYear,
       month: monthIndex,
       count: countsByMonth[monthIndex] || 0,
     }));
 
     setChartData(fullYearData);
   }, [assets, selectedYear]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchRisks = async () => {
+      try {
+        const res = await api.getRisks();
+        const list = Array.isArray(res?.data?.data)
+          ? res.data.data
+          : Array.isArray(res?.data)
+          ? res.data
+          : [];
+
+        const yearsSet = new Set();
+        const normalized = [];
+        const subCache = {};
+
+        for (const risk of list) {
+          if (!risk || typeof risk !== "object") continue;
+
+          const status = String(risk?.status || "").toLowerCase();
+          if (status === "pending" || status === "rejected") continue;
+
+          const updatedRaw =
+            risk?.updated_at || risk?.updatedAt || risk?.created_at;
+          if (!updatedRaw) continue;
+
+          const date = new Date(updatedRaw);
+          if (Number.isNaN(date.getTime())) continue;
+
+          const year = date.getFullYear();
+          yearsSet.add(year);
+
+          let subName =
+            risk?.asset?.subkategori?.nama ||
+            risk?.asset?.subkategori_nama ||
+            risk?.asset?.sub_kategori ||
+            "";
+
+          let subId =
+            risk?.asset?.subkategori?.id ||
+            risk?.asset?.subkategori_id ||
+            risk?.asset?.subkategoriId ||
+            risk?.asset?.sub_kategori_id ||
+            null;
+
+          if (!subName && subId) {
+            if (subCache[subId]) {
+              subName = subCache[subId];
+            } else {
+              try {
+                const subRes = await api.getSubKategoriById(subId);
+                const subData = subRes?.data?.data ?? subRes?.data;
+                const name =
+                  subData?.nama ||
+                  subData?.name ||
+                  subData?.subkategori ||
+                  `Subkategori ${subId}`;
+                subCache[subId] = name;
+                subName = name;
+              } catch {
+                subName = `Subkategori ${subId}`;
+              }
+            }
+          }
+
+          if (!subName) {
+            subName = "Tidak diketahui";
+          }
+
+          const priority = String(risk?.prioritas || "").toLowerCase();
+
+          normalized.push({
+            year,
+            subName,
+            priority,
+          });
+        }
+
+        if (cancelled) return;
+
+        const years = Array.from(yearsSet).sort((a, b) => a - b);
+        setRiskYears(years);
+        setRiskRawData(normalized);
+
+        if (!years.length) {
+          setSelectedRiskYear(null);
+        } else if (
+          selectedRiskYear !== null &&
+          !years.includes(selectedRiskYear)
+        ) {
+          setSelectedRiskYear(years[years.length - 1]);
+        }
+      } catch {
+        if (!cancelled) {
+          setRiskYears([]);
+          setRiskRawData([]);
+          setSelectedRiskYear(null);
+        }
+      }
+    };
+
+    fetchRisks();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedRiskYear]);
+
+  useEffect(() => {
+    if (!Array.isArray(riskRawData) || !riskRawData.length) {
+      setRiskBarData([]);
+      return;
+    }
+
+    const rankPriority = (p) => {
+      const value = String(p || "").toLowerCase();
+      if (value === "high") return 3;
+      if (value === "medium") return 2;
+      return 1;
+    };
+
+    const subMap = new Map();
+
+    riskRawData.forEach((item) => {
+      if (!item) return;
+      if (selectedRiskYear !== null && item.year !== selectedRiskYear) return;
+      const key = item.subName;
+      const existing =
+        subMap.get(key) || { subName: key, count: 0, priority: "low" };
+
+      existing.count += 1;
+
+      if (rankPriority(item.priority) > rankPriority(existing.priority)) {
+        existing.priority = item.priority;
+      }
+
+      subMap.set(key, existing);
+    });
+
+    const aggregated = Array.from(subMap.values()).sort(
+      (a, b) => b.count - a.count
+    );
+
+    setRiskBarData(aggregated);
+  }, [riskRawData, selectedRiskYear]);
 
   useEffect(() => {
     let cancelled = false;
@@ -449,8 +668,12 @@ export default function Dashboard() {
                 <select
                   className="chart-year-select"
                   value={selectedYear ?? ""}
-                  onChange={(e) => setSelectedYear(Number(e.target.value))}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setSelectedYear(value === "" ? null : Number(value));
+                  }}
                 >
+                  <option value="">Semua Tahun</option>
                   {availableYears.map((year) => (
                     <option key={year} value={year}>
                       {year}
@@ -478,10 +701,30 @@ export default function Dashboard() {
         <div className="chart-grid">
           <div className="chart-card">
             <h3>Risiko Prioritas</h3>
+            <div className="chart-header">
+              {riskYears.length > 0 && (
+                <select
+                  className="chart-year-select"
+                  value={selectedRiskYear ?? ""}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setSelectedRiskYear(value === "" ? null : Number(value));
+                  }}
+                >
+                  <option value="">Semua Tahun</option>
+                  {riskYears.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
             <div className="chart-placeholder">
-              📊<p>Risiko Prioritas (Kosong)</p>
+              <RiskPriorityBarChart data={riskBarData} />
             </div>
           </div>
+
 
           <div className="chart-card">
             <h3>Penanganan Risiko</h3>

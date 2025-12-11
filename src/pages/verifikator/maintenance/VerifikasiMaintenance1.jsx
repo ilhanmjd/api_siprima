@@ -74,7 +74,7 @@ function VerifikasiMaintenance1() {
 
   const handleRejectSubmit = () => {
     if (!rejectReason.trim()) {
-      setRejectError("Alasan harus diisi");
+      alert("Alasan penolakan harus diisi!");
       return;
     }
     navigate("/VerifikasiRejectMaintenance", {

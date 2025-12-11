@@ -94,7 +94,7 @@ export default function JadwalPemeliharaan() {
       <div className="table-container">
         <div className="table-card">
           <div className="table-header-actions">
-            <button className="btn-laporan">
+            <button className="btn-laporan" onClick={() => navigate("/Riwayatpemeliharaan")}>
               Laporan <i className="fas fa-plus-circle"></i>
             </button>
           </div>
@@ -125,11 +125,7 @@ export default function JadwalPemeliharaan() {
                 </tr>
               ) : (
                 maintenances.map((item, index) => (
-                  <tr
-                    key={item.id ?? index}
-                    onClick={() => navigate("/RiwayatPemeliharaan")}
-                    style={{ cursor: "pointer" }}
-                  >
+                  <tr>
                     <td className="asset">
                       {(item.asset_id ?? "") +
                         " - " +

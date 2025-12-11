@@ -208,10 +208,6 @@ export default function RiwayatPemeliharaan() {
             </option>
           ))}
         </select>
-
-        <button className="btn-search">
-          <i className="fas fa-search"></i>
-        </button>
       </div>
 
       {/* Table */}

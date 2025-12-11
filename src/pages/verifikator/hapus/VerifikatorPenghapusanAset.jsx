@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAssetContext } from "../../../contexts/AssetContext";
 import api from "../../../api.js";
@@ -8,6 +8,8 @@ function PenghapusanAset() {
   const navigate = useNavigate();
   const location = useLocation();
   const { assetData, updateAssetData } = useAssetContext();
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
 
   useEffect(() => {
     const fetchAssetDeletion = async () => {
@@ -47,12 +49,44 @@ function PenghapusanAset() {
     navigate("/Notifikasi-verifikator-penghapusan-aset");
   };
   const handleReject = () => {
-    navigate("/verifikasi-reject-penghapusan-aset");
+    setIsRejectModalOpen(true);
   };
 
-  const handleVerify = () => {
+  const handleRejectCancel = () => {
+    setIsRejectModalOpen(false);
+    setRejectReason("");
+  };
+
+  const handleRejectSubmit = async () => {
+    const id = location.state?.id;
+    if (id && rejectReason.trim()) {
+      try {
+        await api.updateAssetDeletion(id, {
+          status: "rejected",
+          reject_reason: rejectReason,
+        });
+        navigate("/verifikasi-reject-penghapusan-aset", { state: { id } });
+      } catch (error) {
+        console.error("Error rejecting asset deletion:", error);
+        alert("Gagal menolak penghapusan aset. Silakan coba lagi.");
+      }
+    } else {
+      alert("Harap isi alasan penolakan.");
+    }
+  };
+
+  const handleVerify = async () => {
     if (allFilled) {
-      navigate("/verifikasi-accept-penghapusan-aset");
+      const id = location.state?.id;
+      if (id) {
+        try {
+          await api.updateAssetDeletion(id, { status: "accepted" });
+          navigate("/verifikasi-accept-penghapusan-aset", { state: { id } });
+        } catch (error) {
+          console.error("Error updating asset deletion status:", error);
+          alert("Gagal memperbarui status. Silakan coba lagi.");
+        }
+      }
     } else {
       alert("Harap isi semua field");
     }
@@ -167,6 +201,30 @@ function PenghapusanAset() {
           </button>
         </div>
       </form>
+
+      {/* Reject Modal */}
+      {isRejectModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Alasan Ditolak:</h3>
+            <textarea
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              placeholder="tulis alasan ditolak!!!"
+              rows="4"
+              cols="50"
+            />
+            <div className="modal-buttons">
+              <button className="cancel-btn" onClick={handleRejectCancel}>
+                Cancel
+              </button>
+              <button className="submit-btn" onClick={handleRejectSubmit}>
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -218,6 +218,7 @@ class MaintenanceController extends Controller
         $data = $validator->validated();
 
         $data['status_review'] = 'pending';
+        $data['status_pemeliharaan'] = 'penanganan';
 
 
         // Upload bukti lampiran jika ada
@@ -231,7 +232,7 @@ class MaintenanceController extends Controller
         $maintenance = Maintenance::create($data);
 
         // Jika status maintenance adalah "penanganan", update status asset menjadi "pemeliharaan"
-        if ($maintenance->status === 'penanganan') {
+        if ($maintenance->status_pemeliharaan === 'penanganan') {
             $asset = Asset::find($maintenance->asset_id);
             if ($asset) {
                 $asset->update(['status' => 'pemeliharaan']);

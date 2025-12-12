@@ -951,6 +951,108 @@
                 ]
             }
         },
+        "/api/assets/active": {
+            "get": {
+                "tags": [
+                    "Assets"
+                ],
+                "summary": "Get all active assets",
+                "description": "Mendapatkan daftar semua asset dengan is_usage = active",
+                "operationId": "f68ff2e4eebdf505668d27c97d387072",
+                "parameters": [
+                    {
+                        "name": "dinas_id",
+                        "in": "query",
+                        "description": "Filter berdasarkan dinas ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "kategori_id",
+                        "in": "query",
+                        "description": "Filter berdasarkan kategori ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter berdasarkan status (pending, diterima, ditolak, pemeliharaan)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan data active assets",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 150
+                                                },
+                                                "assets": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "dinas_id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "nama": {
+                                                                "type": "string",
+                                                                "example": "Laptop Dell Latitude 5420"
+                                                            },
+                                                            "is_usage": {
+                                                                "type": "string",
+                                                                "example": "active"
+                                                            },
+                                                            "status": {
+                                                                "type": "string",
+                                                                "example": "diterima"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/asset-deletions": {
             "get": {
                 "tags": [

@@ -44,6 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('assets')->group(function () {
         Route::get('/', [AssetController::class, 'index']);
+        Route::get('/active', [AssetController::class, 'getActive']);
         Route::post('/', [AssetController::class, 'store']);
         Route::get('/{id}', [AssetController::class, 'show']);
         Route::put('/{id}', [AssetController::class, 'update']);

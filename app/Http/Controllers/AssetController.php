@@ -419,4 +419,93 @@ class AssetController extends Controller
             'message' => 'Asset berhasil dihapus',
         ]);
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/assets/active",
+     *     tags={"Assets"},
+     *     summary="Get all active assets",
+     *     description="Mendapatkan daftar semua asset dengan is_usage = active",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="dinas_id",
+     *         in="query",
+     *         description="Filter berdasarkan dinas ID",
+     *         required=false,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="kategori_id",
+     *         in="query",
+     *         description="Filter berdasarkan kategori ID",
+     *         required=false,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Filter berdasarkan status (pending, diterima, ditolak, pemeliharaan)",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Berhasil mendapatkan data active assets",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="total", type="integer", example=150),
+     *                 @OA\Property(
+     *                     property="assets",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="id", type="integer", example=1),
+     *                         @OA\Property(property="dinas_id", type="integer", example=1),
+     *                         @OA\Property(property="nama", type="string", example="Laptop Dell Latitude 5420"),
+     *                         @OA\Property(property="is_usage", type="string", example="active"),
+     *                         @OA\Property(property="status", type="string", example="diterima")
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated"
+     *     )
+     * )
+     */
+    public function getActive(Request $request)
+    {
+        $query = Asset::with(['dinas', 'kategori', 'subkategori', 'lokasi', 'penanggungjawab'])
+            ->where('is_usage', 'active');
+
+        // Filter berdasarkan dinas
+        if ($request->has('dinas_id')) {
+            $query->where('dinas_id', $request->dinas_id);
+        }
+
+        // Filter berdasarkan kategori
+        if ($request->has('kategori_id')) {
+            $query->where('kategori_id', $request->kategori_id);
+        }
+
+        // Filter berdasarkan status
+        if ($request->has('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $assets = $query->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'total' => $assets->count(),
+                'assets' => $assets,
+            ],
+        ]);
+    }
 }

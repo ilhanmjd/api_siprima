@@ -103,105 +103,90 @@ function AssetsLineChart({ data, width = 420, height = 220 }) {
   );
 }
 
-function MaintenancePieChart({ greenCount, redCount, size = 160 }) {
-  const total = greenCount + redCount;
+function MaintenancePieChart({ statusCounts, size = 160 }) {
+  console.log("Pie Chart statusCounts:", statusCounts);
+  const total = Object.values(statusCounts).reduce((sum, count) => sum + count, 0);
+  console.log("Pie Chart total:", total);
 
   if (!total) {
     return <p>Tidak ada data pemeliharaan.</p>;
   }
 
-  const radius = size / 2 - 4;
+  const radius = 70;
   const cx = size / 2;
   const cy = size / 2;
 
-  const polarToCartesian = (centerX, centerY, r, angleInDegrees) => {
-    const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
-    return {
-      x: centerX + r * Math.cos(angleInRadians),
-      y: centerY + r * Math.sin(angleInRadians),
-    };
+  // Define colors for each status
+  const statusColors = {
+    selesai: "#4ade80",      // green
+    penanganan: "#facc15",   // yellow
+    pending: "#f97316",      // orange
+    ditolak: "#ef4444",      // red
   };
-
-  const describeArc = (startAngle, endAngle) => {
-    const start = polarToCartesian(cx, cy, radius, endAngle);
-    const end = polarToCartesian(cx, cy, radius, startAngle);
-    const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
-
-    return [
-      "M",
-      cx,
-      cy,
-      "L",
-      start.x,
-      start.y,
-      "A",
-      radius,
-      radius,
-      0,
-      largeArcFlag,
-      0,
-      end.x,
-      end.y,
-      "Z",
-    ].join(" ");
-  };
-
-  const greenFraction = greenCount / total;
-
-  const greenAngle = greenFraction * 360;
 
   const slices = [];
+  let cumulativePercent = 0;
 
-  if (greenCount > 0 && redCount > 0) {
-    // Green slice (from 0 to greenAngle)
-    slices.push({
-      d: describeArc(0, greenAngle),
-      fill: "#4ade80",
-    });
-    // Red slice (remaining)
-    slices.push({
-      d: describeArc(greenAngle, 360),
-      fill: "#ef4444",
-    });
-  } else if (greenCount > 0) {
-    // Only green
-    slices.push({
-      d: describeArc(0, 359.999),
-      fill: "#4ade80",
-    });
-  } else {
-    // Only red
-    slices.push({
-      d: describeArc(0, 359.999),
-      fill: "#ef4444",
-    });
-  }
-
-  const greenPercent = Math.round((greenCount / total) * 100);
-  const redPercent = Math.round((redCount / total) * 100);
+  // Create slices for each status
+  Object.entries(statusCounts).forEach(([status, count]) => {
+    if (count > 0) {
+      const percent = count / total;
+      slices.push({
+        status,
+        count,
+        percent: Math.round(percent * 100),
+        color: statusColors[status] || "#9ca3af",
+        offset: cumulativePercent,
+      });
+      cumulativePercent += percent;
+    }
+  });
 
   return (
     <div className="maintenance-chart-wrapper">
       <svg
+        width={size}
+        height={size}
         viewBox={`0 0 ${size} ${size}`}
         className="maintenance-pie-chart"
         role="img"
         aria-label="Distribusi status pemeliharaan"
       >
-        {slices.map((slice, index) => (
-          <path key={index} d={slice.d} fill={slice.fill} />
-        ))}
+        {slices.map((slice, index) => {
+          const strokeDasharray = `${slice.percent} ${100 - slice.percent}`;
+          const strokeDashoffset = -slice.offset * 100;
+          const rotation = -90; // Start from top
+
+          return (
+            <circle
+              key={index}
+              cx={cx}
+              cy={cy}
+              r={radius}
+              fill="transparent"
+              stroke={slice.color}
+              strokeWidth={radius * 2}
+              strokeDasharray={strokeDasharray}
+              strokeDashoffset={strokeDashoffset}
+              transform={`rotate(${rotation} ${cx} ${cy})`}
+              style={{
+                transition: "stroke-dashoffset 0.3s ease",
+              }}
+            />
+          );
+        })}
       </svg>
       <div className="maintenance-legend">
         <div className="maintenance-total">Total: {total}</div>
-        <div className="legend-row">
-          <span className="legend-color legend-green" />
-          <span>{greenPercent} % selesai</span>
-        </div>
-        <div className="legend-row">
-          <span className="legend-color legend-red" />
-          <span>{redPercent} % penanganan dan pending</span>
-        </div>
+        {slices.map((slice) => (
+          <div className="legend-row" key={slice.status}>
+            <span 
+              className="legend-color" 
+              style={{ backgroundColor: slice.color }}
+            />
+            <span>{slice.percent}% {slice.status} ({slice.count})</span>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -286,14 +271,17 @@ export default function Dashboard() {
   const [availableYears, setAvailableYears] = useState([]);
   const [selectedYear, setSelectedYear] = useState(null);
   const [maintenanceCounts, setMaintenanceCounts] = useState({
-    green: 0,
-    red: 0,
+    selesai: 0,
+    penanganan: 0,
+    pending: 0,
+    ditolak: 0,
   });
   const [maintenanceList, setMaintenanceList] = useState([]);
   const [riskRawData, setRiskRawData] = useState([]);
   const [riskBarData, setRiskBarData] = useState([]);
   const [riskYears, setRiskYears] = useState([]);
   const [selectedRiskYear, setSelectedRiskYear] = useState(null);
+  const [riskTreatmentList, setRiskTreatmentList] = useState([]);
 
   useEffect(() => {
     resetAssetDataRef.current = resetAssetData;
@@ -523,41 +511,106 @@ export default function Dashboard() {
     const fetchMaintenances = async () => {
       try {
         const res = await api.getMaintenances();
+        console.log("Maintenance API Response:", res);
+        
         const data = Array.isArray(res?.data?.data)
           ? res.data.data
           : Array.isArray(res?.data)
           ? res.data
           : [];
 
-        const accepted = data.filter(
-          (item) => String(item?.status_review || "") === "accepted"
-        );
+        console.log("Maintenance Data:", data);
 
-        let green = 0;
-        let red = 0;
+        if (cancelled) return;
 
-        accepted.forEach((item) => {
-          const status = String(item?.status_pemeliharaan || "").toLowerCase();
-          if (status === "selesai") {
-            green += 1;
-          } else if (status === "penanganan" || status === "pending") {
-            red += 1;
+        // Tampilkan semua data maintenance tanpa filter status_review
+        console.log("All Maintenance:", data);
+
+        const counts = {
+          selesai: 0,
+          penanganan: 0,
+          pending: 0,
+          ditolak: 0,
+        };
+
+        data.forEach((item) => {
+          console.log("Item:", item);
+          // Cek berbagai kemungkinan field status
+          const status = String(
+            item?.status_pemeliharaan || 
+            item?.status || 
+            item?.statusPemeliharaan ||
+            ""
+          ).toLowerCase();
+          console.log("Status pemeliharaan:", status);
+          
+          // Tambahkan ke counts jika status cocok
+          if (counts.hasOwnProperty(status)) {
+            counts[status] += 1;
+          } else if (status) {
+            // Jika ada status tapi tidak ada di object counts, tambahkan
+            counts[status] = (counts[status] || 0) + 1;
           }
         });
 
+        console.log("Maintenance Counts:", counts);
+
         if (!cancelled) {
-          setMaintenanceCounts({ green, red });
-          setMaintenanceList(accepted);
+          setMaintenanceCounts(counts);
+          setMaintenanceList(data);
         }
-      } catch {
+      } catch (err) {
+        console.error("Error fetching maintenances:", err);
         if (!cancelled) {
-          setMaintenanceCounts({ green: 0, red: 0 });
+          setMaintenanceCounts({
+            selesai: 0,
+            penanganan: 0,
+            pending: 0,
+            ditolak: 0,
+          });
           setMaintenanceList([]);
         }
       }
     };
 
     fetchMaintenances();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchRiskTreatments = async () => {
+      try {
+        const res = await api.getRiskTreatments();
+        const data = Array.isArray(res?.data?.data)
+          ? res.data.data
+          : Array.isArray(res?.data)
+          ? res.data
+          : [];
+
+        if (cancelled) return;
+
+        // Filter hanya yang sudah diterima
+        const accepted = data.filter(
+          (item) => String(item?.status || "").toLowerCase() === "accepted"
+        );
+
+        if (!cancelled) {
+          setRiskTreatmentList(accepted);
+        }
+      } catch (err) {
+        console.error("Error fetching risk treatments:", err);
+        if (!cancelled) {
+          setRiskTreatmentList([]);
+        }
+      }
+    };
+
+    fetchRiskTreatments();
 
     return () => {
       cancelled = true;
@@ -690,8 +743,7 @@ export default function Dashboard() {
             <h3>Maintenance</h3>
             <div className="chart-placeholder">
               <MaintenancePieChart
-                greenCount={maintenanceCounts.green}
-                redCount={maintenanceCounts.red}
+                statusCounts={maintenanceCounts}
               />
             </div>
           </div>
@@ -729,32 +781,36 @@ export default function Dashboard() {
           <div className="chart-card">
             <h3>Penanganan Risiko</h3>
             <div className="risk-list-Penanganan-Risiko">
-              {maintenanceList.slice(0, 5).map((item) => {
-                const statusRaw = item?.status_pemeliharaan || "";
-                const statusLower = String(statusRaw).toLowerCase();
-                const isDone = statusLower === "selesai";
-                const assetName =
-                  item?.asset?.nama || item?.asset_nama || "Tanpa nama aset";
-                return (
-                  <div className="risk-item" key={item.id ?? assetName}>
-                    <span>
-                      <img
-                        src="/logo kalender.png"
-                        alt="Kalender"
-                        className="calendar-icon"
-                      />{" "}
-                      {assetName}
-                    </span>
-                    <button
-                      className={`status-btn ${
-                        isDone ? "done" : "process"
-                      }`}
-                    >
-                      {statusRaw || "-"}
-                    </button>
-                  </div>
-                );
-              })}
+              {riskTreatmentList.length === 0 ? (
+                <p>Tidak ada data penanganan risiko.</p>
+              ) : (
+                riskTreatmentList.slice(0, 5).map((item) => {
+                  const targetDate = item?.target_tanggal || "";
+                  const strategi = item?.strategi || "";
+                  const riskTitle = item?.risk?.judul || "Tanpa judul risiko";
+                  const penanggungJawab = item?.penanggungjawab?.nama || 
+                                         item?.penanggung_jawab?.nama || 
+                                         "Tanpa PJ";
+                  
+                  return (
+                    <div className="risk-item" key={item.id ?? riskTitle}>
+                      <span>
+                        <img
+                          src="/logo kalender.png"
+                          alt="Kalender"
+                          className="calendar-icon"
+                        />{" "}
+                        {riskTitle} ({strategi})
+                      </span>
+                      <button
+                        className="status-btn process"
+                      >
+                        {targetDate ? new Date(targetDate).toLocaleDateString('id-ID') : "-"}
+                      </button>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
         </div>

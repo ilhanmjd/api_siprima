@@ -31,6 +31,7 @@ export default function NotifikasiVerifikatorPenghapusanAset() {
         const sortedData = filteredData.sort((a, b) => a.id - b.id);
         const mappedItems = sortedData.map((item) => ({
           id: item.id,
+          dinas: item.asset?.dinas?.name || "Dinas",
           waktu: getRelativeTime(item.updated_at),
           teks: item.alasan_penghapusan,
         }));
@@ -85,8 +86,11 @@ export default function NotifikasiVerifikatorPenghapusanAset() {
       </div>
 
       <div className="content-box">
-        {loading && <div></div>}
-        {error && <div>Error: {error}</div>}
+        {loading && <div className="loading-text">Loading...</div>}
+        {error && <div className="error-text">Error: {error}</div>}
+        {!loading && !error && items.length === 0 && (
+          <div className="empty-text">Tidak ada notifikasi penghapusan asset</div>
+        )}
         {!loading &&
           !error &&
           items.map((item) => (
@@ -98,11 +102,10 @@ export default function NotifikasiVerifikatorPenghapusanAset() {
                   state: { id: item.id },
                 })
               }
-              style={{ cursor: "pointer" }}
             >
               <div className="notif-header-row">
                 <div className="notif-header-left">
-                  <span className="notif-title">Dinas</span>
+                  <span className="notif-title">{item.dinas}</span>
                   <span className="notif-id">| {item.id}</span>
                 </div>
                 <span className="notif-time">{item.waktu}</span>

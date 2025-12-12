@@ -63,6 +63,14 @@ export default function NotifAcceptAset() {
           if (asset) {
             handleSelectAssetRef.current?.(asset);
           }
+        } else {
+          // Auto-select first item if no locationStateId
+          const activeList = list.filter(
+            (asset) => asset.status !== "pending" && asset.status !== "ditolak"
+          );
+          if (activeList.length > 0) {
+            handleSelectAssetRef.current?.(activeList[0]);
+          }
         }
       })
       .catch((error) => {

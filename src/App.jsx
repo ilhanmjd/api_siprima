@@ -63,6 +63,7 @@ import NotifikasiVerifikatorPenghapusanAset from "./pages/verifikator/hapus/Noti
 import VerifikatorPenghapusanAset from "./pages/verifikator/hapus/VerifikatorPenghapusanAset";
 import VerifikasiRejectPenghapusanAset from "./pages/verifikator/hapus/VerifikasiRejectPenghapusanAset";
 import VerifikasiAcceptPenghapusanAset from "./pages/verifikator/hapus/VerifikasiAcceptPenghapusanAset";
+import AssetAktif from "./pages/verifikator/asset/AssetAktif";
 import ServiceDesk from "./pages/dinas/Dashboard/Request/service-desk";
 import FAQ from "./pages/dinas/Dashboard/FAQ/FAQ";
 import Laporan from "./pages/dinas/Dashboard/Laporan/Laporan";
@@ -370,6 +371,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute allowedRoles={['kepala_seksi']}>
         <DashboardVerifikator />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/asset-aktif",
+    element: (
+      <ProtectedRoute allowedRoles={['kepala_seksi']}>
+        <AssetAktif />
       </ProtectedRoute>
     ),
   },

@@ -1,5 +1,5 @@
-/* Notifikasi Verifikator Penghapusan Aset */
-.notifikasi-verifikator-penghapusan-page {
+/* Asset Aktif Page */
+.asset-aktif-page {
   min-height: 100vh;
   background-color: #dfe9f5;
   font-family: "Poppins", sans-serif;
@@ -83,8 +83,8 @@
   padding: 20px;
 }
 
-/* Notification Card */
-.notif-card {
+/* Asset Card */
+.asset-card {
   background-color: white;
   border-radius: 8px;
   padding: 20px;
@@ -94,41 +94,46 @@
   transition: all 0.2s ease;
 }
 
-.notif-card:hover {
+.asset-card:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   transform: translateY(-2px);
 }
 
-.notif-header-row {
+.asset-header-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
 }
 
-.notif-header-left {
+.asset-header-left {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex: 1;
 }
 
-.notif-title {
+.asset-title {
   font-weight: 600;
   font-size: 16px;
   color: #333;
 }
 
-.notif-id {
+.asset-id {
   font-size: 14px;
   color: #666;
 }
 
-.notif-time {
+.asset-kondisi {
   font-size: 12px;
-  color: #999;
+  padding: 4px 12px;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border-radius: 12px;
+  text-transform: capitalize;
 }
 
-.notif-text {
+.asset-text {
   color: #555;
   font-size: 14px;
   line-height: 1.5;
@@ -136,7 +141,6 @@
 
 /* Loading & Error States */
 .loading-text,
-.error-text,
 .empty-text {
   text-align: center;
   padding: 40px;

@@ -1,13 +1,78 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api";
 import "./DashboardAuditor.css";
-// AbortController presence for logout flow
-const auditorAbortController = new AbortController();
-
 
 export default function DashboardAuditor() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [statistics, setStatistics] = useState({
+    totalAssets: 0,
+    risksByLevel: { High: 0, Medium: 0, Low: 0 },
+    totalRisks: 0,
+    maintenances: [],
+    assetDeletions: [],
+    dinasStats: []
+  });
+
+  useEffect(() => {
+    fetchAuditorData();
+  }, []);
+
+  const fetchAuditorData = async () => {
+    try {
+      setLoading(true);
+      
+      // Fetch all data in parallel
+      const [assetsRes, risksRes, maintenancesRes, deletionsRes, dinasRes, treatmentsRes] = await Promise.all([
+        api.getAssets(),
+        api.getRisks(),
+        api.getMaintenances(),
+        api.getAssetDeletions(),
+        api.getDinas(),
+        api.getRiskTreatments()
+      ]);
+
+      const assets = assetsRes.data.data || [];
+      const risks = risksRes.data.data || [];
+      const maintenances = maintenancesRes.data.data || [];
+      const deletions = deletionsRes.data.data || [];
+      const dinases = dinasRes.data.data || [];
+      const treatments = treatmentsRes.data.data || [];
+
+      // Calculate risk statistics
+      const riskStats = {
+        High: risks.filter(r => r.kriteria === 'High').length,
+        Medium: risks.filter(r => r.kriteria === 'Medium').length,
+        Low: risks.filter(r => r.kriteria === 'Low').length
+      };
+
+      // Calculate per-dinas statistics
+      const dinasStatistics = dinases.map(dinas => {
+        const dinasAssets = assets.filter(a => a.dinas_id === dinas.id);
+        const pendingCount = dinasAssets.filter(a => a.status === 'pending').length;
+        return {
+          id: dinas.id,
+          name: dinas.name,
+          assetCount: dinasAssets.length,
+          pendingCount: pendingCount
+        };
+      });
+
+      setStatistics({
+        totalAssets: assets.length,
+        risksByLevel: riskStats,
+        totalRisks: risks.length,
+        maintenances: maintenances.slice(0, 5), // Top 5 for display
+        assetDeletions: deletions.filter(d => d.status === 'accepted'),
+        dinasStats: dinasStatistics
+      });
+    } catch (error) {
+      console.error('Failed to fetch auditor data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -16,7 +81,6 @@ export default function DashboardAuditor() {
       localStorage.removeItem('role');
       navigate("/");
     } catch (err) {
-      // Still clear localStorage and navigate even if API fails
       localStorage.removeItem('token');
       localStorage.removeItem('role');
       navigate("/");
@@ -42,42 +106,48 @@ export default function DashboardAuditor() {
 
       {/* Content */}
       <div className="content">
-        <h1 className="title">Dashboard</h1>
+        <h1 className="title">Auditor Dashboard</h1>
 
-        {/* TOP WIDGETS */}
-        <div className="top-grid">
-          <div className="card total-aset">
-            <div className="total-aset-container" style={{display: "flex", justifyContent: "space-between"}}>
-              <div className="total-aset-section" style={{flex: "1", marginRight: "10px"}}>
-                <h4>Total Seluruh Aset</h4>
-                <div className="value">128</div>
-              </div>
-              <div className="risiko-teridentifikasi-section" style={{flex: "1", marginLeft: "10px"}}>
-                <h4>Risiko Teridentifikasi</h4>
-                <div className="risk-list">
-                  <div>🟦 Low: 45</div>
-                  <div>🟧 Medium: 50</div>
-                  <div>🟥 High: 33</div>
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '50px' }}>Loading dashboard data...</div>
+        ) : (
+          <>
+            {/* TOP WIDGETS */}
+            <div className="top-grid">
+              <div className="card total-aset">
+                <div className="total-aset-container" style={{display: "flex", justifyContent: "space-between"}}>
+                  <div className="total-aset-section" style={{flex: "1", marginRight: "10px"}}>
+                    <h4>Total Seluruh Aset</h4>
+                    <div className="value">{statistics.totalAssets}</div>
+                  </div>
+                  <div className="risiko-teridentifikasi-section" style={{flex: "1", marginLeft: "10px"}}>
+                    <h4>Risiko Teridentifikasi</h4>
+                    <div className="risk-list">
+                      <div>🟦 Low: {statistics.risksByLevel.Low}</div>
+                      <div>🟧 Medium: {statistics.risksByLevel.Medium}</div>
+                      <div>🟥 High: {statistics.risksByLevel.High}</div>
+                    </div>
+                  </div>
                 </div>
               </div>
+
+              <div className="card risiko merah">
+                <span>Risiko Tinggi</span>
+                <h1>{statistics.risksByLevel.High}</h1>
+              </div>
+
+              <div className="card risiko kuning">
+                <span>Risiko Sedang</span>
+                <h1>{statistics.risksByLevel.Medium}</h1>
+              </div>
+
+              <div className="card risiko biru">
+                <span>Risiko Rendah</span>
+                <h1>{statistics.risksByLevel.Low}</h1>
+              </div>
             </div>
-          </div>
-
-          <div className="card risiko merah">
-            <span>Risiko Tinggi</span>
-            <h1>4</h1>
-          </div>
-
-          <div className="card risiko kuning">
-            <span>Risiko Sedang</span>
-            <h1>2</h1>
-          </div>
-
-          <div className="card risiko biru">
-            <span>Risiko Rendah</span>
-            <h1>1</h1>
-          </div>
-        </div>
+          </>
+        )}
 
         {/* CHART + HEATMAP */}
         <div className="mid-grid">
@@ -120,65 +190,101 @@ export default function DashboardAuditor() {
               <h3>Jadwal Pemeliharaan</h3>
             </div>
             <div className="jadwal-content" style={{flexGrow: 1}}>
-              {[
-                { name: "Asset laptop", status: "Ditangani" },
-                { name: "Asset Komputer", status: "Proses" },
-                { name: "Data Cloud", status: "Proses" },
-                { name: "Router", status: "Ditangani" },
-                { name: "Microsoft Office", status: "Ditangani" },
-              ].map((item) => (
-                <div className="row" key={item.name}>
-                  <span>{item.name}</span>
-                  <button className={item.status.toLowerCase()}>{item.status}</button>
+              {loading ? (
+                <div style={{ padding: '20px', textAlign: 'center' }}>Loading...</div>
+              ) : statistics.maintenances.length === 0 ? (
+                <div style={{ padding: '20px', textAlign: 'center', color: '#999' }}>
+                  Tidak ada jadwal pemeliharaan
                 </div>
-              ))}
+              ) : (
+                statistics.maintenances.map((item) => (
+                  <div className="row" key={item.id}>
+                    <span>{item.asset?.nama || `Asset #${item.asset_id}`}</span>
+                    <button className={item.status_review === 'accepted' ? 'ditangani' : 'proses'}>
+                      {item.status_review === 'accepted' ? 'Approved' : 
+                       item.status_review === 'pending' ? 'Pending' : 'Rejected'}
+                    </button>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
           <div className="card verifikasi" style={{display: "flex", flexDirection: "column"}}>
             <div className="verifikasi-title" style={{flexShrink: 0}}>
-              <h3>Verifikasi Dinas</h3>
+              <h3>Status Dinas</h3>
             </div>
             <div className="verifikasi-content" style={{flexGrow: 1}}>
-              <div>Dinas PUPR belum update data aset <span>85%</span></div>
-              <div>Risiko tinggi di Dinas Kesehatan belum ditangani <span>75%</span></div>
-              <div>Aset kritis di Dinas Pendidikan rusak <span>80%</span></div>
-              <div>Audit log user terbaru tersedia <span>70%</span></div>
+              {loading ? (
+                <div style={{ padding: '20px', textAlign: 'center' }}>Loading...</div>
+              ) : statistics.dinasStats.length === 0 ? (
+                <div style={{ padding: '20px', textAlign: 'center', color: '#999' }}>
+                  Tidak ada data dinas
+                </div>
+              ) : (
+                statistics.dinasStats.map((dinas) => {
+                  const percentage = dinas.assetCount > 0 
+                    ? Math.round((dinas.assetCount - dinas.pendingCount) / dinas.assetCount * 100)
+                    : 100;
+                  return (
+                    <div key={dinas.id} style={{ marginBottom: '10px' }}>
+                      {dinas.name} - {dinas.assetCount} assets ({dinas.pendingCount} pending)
+                      <span style={{ marginLeft: '10px', fontWeight: 'bold' }}>{percentage}%</span>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
 
           <div className="card notifver" style={{display: "flex", flexDirection: "column"}}>
             <div className="notifver-title" style={{flexShrink: 0}}>
-              <h3>Notifikasi Verifikasi</h3>
+              <h3>Notifikasi Per Dinas</h3>
             </div>
             <div className="notifver-content" style={{flexGrow: 1}}>
-              {[
-                ["Dinas Pendidikan", 2],
-                ["Dinas Kesehatan", 3],
-                ["Dinas PUPR", 1],
-                ["Dinas Perhubungan", 4],
-              ].map(([name, count]) => (
-                <div className="notif-row" key={name}>
-                  <span>{name}</span>
-                  <span className="badge">{count}</span>
-                  <button className="lihat">Lihat</button>
+              {loading ? (
+                <div style={{ padding: '20px', textAlign: 'center' }}>Loading...</div>
+              ) : statistics.dinasStats.length === 0 ? (
+                <div style={{ padding: '20px', textAlign: 'center', color: '#999' }}>
+                  Tidak ada notifikasi
                 </div>
-              ))}
+              ) : (
+                statistics.dinasStats.map((dinas) => (
+                  <div className="notif-row" key={dinas.id}>
+                    <span>{dinas.name}</span>
+                    <span className="badge">{dinas.pendingCount}</span>
+                    <button className="lihat" onClick={() => alert(`Pending verifications: ${dinas.pendingCount}`)}>
+                      Lihat
+                    </button>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
           <div className="card hapus" style={{display: "flex", flexDirection: "column"}}>
             <div className="hapus-title" style={{flexShrink: 0}}>
-              <h3>Penghapusan Aset</h3>
+              <h3>Penghapusan Aset ({statistics.assetDeletions.length})</h3>
             </div>
             <div className="hapus-content" style={{flexGrow: 1}}>
-              {["Dinas Pendidikan", "Dinas Kesehatan", "Dinas PUPR", "Dinas Perhubungan"].map(
-                (name) => (
-                  <div className="hapus-row" key={name}>
-                    <span>{name}</span>
-                    <button className="detail">Detail</button>
+              {loading ? (
+                <div style={{ padding: '20px', textAlign: 'center' }}>Loading...</div>
+              ) : statistics.assetDeletions.length === 0 ? (
+                <div style={{ padding: '20px', textAlign: 'center', color: '#999' }}>
+                  Tidak ada penghapusan aset
+                </div>
+              ) : (
+                statistics.assetDeletions.map((deletion) => (
+                  <div className="hapus-row" key={deletion.id}>
+                    <span>{deletion.asset?.nama || `Asset #${deletion.asset_id}`}</span>
+                    <button 
+                      className="detail"
+                      onClick={() => alert(`Asset: ${deletion.asset?.nama}\nReason: ${deletion.alasan_penghapusan}`)}
+                    >
+                      Detail
+                    </button>
                   </div>
-                )
+                ))
               )}
             </div>
           </div>

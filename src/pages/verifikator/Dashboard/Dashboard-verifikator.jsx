@@ -43,7 +43,7 @@ export default function DashboardVerifikator() {
         api.getRiskTreatments({ status: 'pending' }),
         api.getMaintenances({ status_review: 'pending' }),
         api.getAssetDeletions({ status: 'pending' }),
-        api.getRiskfs() // Get all risks for priority chart
+        api.getRisk()
       ]);
 
       const pendingAssets = assetsRes.data.data || [];

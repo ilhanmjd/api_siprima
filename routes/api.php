@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\DinasController;
 use App\Http\Controllers\UnitKerjaController;
+use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\SubKategoriController;
 use App\Http\Controllers\PenanggungjawabController;
 use App\Http\Controllers\LokasiController;
@@ -15,6 +16,8 @@ use App\Http\Controllers\RiskTreatmentRejectedController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\AssetDeletionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\StatisticsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -45,6 +48,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{id}', [AssetController::class, 'show']);
         Route::put('/{id}', [AssetController::class, 'update']);
         Route::delete('/{id}', [AssetController::class, 'destroy']);
+    });
+
+    Route::prefix('kategoris')->group(function () {
+        Route::get('/', [KategoriController::class, 'index']);
+        Route::post('/', [KategoriController::class, 'store']);
+        Route::get('/{id}', [KategoriController::class, 'show']);
+        Route::put('/{id}', [KategoriController::class, 'update']);
+        Route::delete('/{id}', [KategoriController::class, 'destroy']);
     });
 
     Route::prefix('sub-kategoris')->group(function () {
@@ -131,5 +142,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('risk-treatment-rejecteds')->group(function () {
         Route::get('/', [RiskTreatmentRejectedController::class, 'index']);
         Route::get('/{id}', [RiskTreatmentRejectedController::class, 'show']);
+    });
+
+    // Dashboard routes
+    Route::prefix('dashboard')->group(function () {
+        Route::get('/diskominfo', [DashboardController::class, 'diskominfo']);
+        Route::get('/auditor', [DashboardController::class, 'auditor']);
+        Route::get('/dinas/{dinas_id}', [DashboardController::class, 'dinas']);
+    });
+
+    // Statistics routes
+    Route::prefix('statistics')->group(function () {
+        Route::get('/summary', [StatisticsController::class, 'summary']);
+        Route::get('/risk-heatmap', [StatisticsController::class, 'riskHeatmap']);
+        Route::get('/trends', [StatisticsController::class, 'trends']);
     });
 });

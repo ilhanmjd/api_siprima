@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('risk_id')->constrained('risks')->onDelete('cascade');
             $table->text('alasan');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

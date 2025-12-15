@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->foreignId('dinas_id')->constrained('dinas');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

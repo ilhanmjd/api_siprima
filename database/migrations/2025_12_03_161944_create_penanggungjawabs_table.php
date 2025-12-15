@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('nama');
             $table->string('jabatan')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -24,6 +24,7 @@ return new class extends Migration
             $table->integer('level_residual');
             $table->enum('status', ['pending', 'rejected', 'accepted'])->default('pending');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

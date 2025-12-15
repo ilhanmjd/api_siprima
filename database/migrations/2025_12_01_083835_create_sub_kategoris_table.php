@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('kategori_id')->constrained('kategoris')->onDelete('cascade');
             $table->string('nama');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

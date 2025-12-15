@@ -26,6 +26,7 @@ return new class extends Migration
             $table->enum('status', ['pending', 'rejected', 'accepted'])->default('pending');
             $table->string('lampiran_url')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

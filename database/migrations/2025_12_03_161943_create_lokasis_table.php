@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('latitude')->nullable();
             $table->integer('longitude')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

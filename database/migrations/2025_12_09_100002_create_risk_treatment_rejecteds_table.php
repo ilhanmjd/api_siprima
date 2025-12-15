@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('risk_treatment_id')->constrained('risk_treatments')->onDelete('cascade');
             $table->text('alasan');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

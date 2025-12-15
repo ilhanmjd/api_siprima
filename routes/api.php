@@ -52,7 +52,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{id}/pengajuan-delete', [AssetController::class, 'pengajuanDelete']);
        
         Route::get('/all/asset-deletions', [AssetController::class, 'getAllAssetDeletions']);
-        Route::post('/{id}/softdelete/bydiskominfo', [AssetController::class, 'diskominfo']);
+        Route::post('/{id}/delete-diskominfo', [AssetController::class, 'diskominfo']);
 
     });
 

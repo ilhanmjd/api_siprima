@@ -691,38 +691,41 @@ class AssetController extends Controller
      */
     public function rejectedDelete(Request $request, $id)
     {
-        $assetDeletion = AssetDeletion::find($id);
+        try {
+            $validator = Validator::make($request->all(), [
+                'alasan_ditolak' => 'required|string',
+            ]);
 
-        if (!$assetDeletion) {
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation error',
+                    'errors' => $validator->errors(),
+                ], 422);
+            }
+            $assetDeletion = AssetDeletion::find($id);
+            if (!$assetDeletion) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Pengajuan penghapusan tidak ditemukan',
+                ], 404);
+            }
+
+            $assetDeletion->update([
+                'status' => 'ditolak',
+                'alasan_ditolak' => $request->alasan_ditolak,
+            ]); 
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Pengajuan penghapusan asset ditolak',
+            ]);
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Pengajuan penghapusan tidak ditemukan',
-            ], 404);
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+            ], 500);
         }
-
-        $validator = Validator::make($request->all(), [
-            'alasan_ditolak' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation error',
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
-        // Update status pengajuan menjadi ditolak dengan alasan
-        $assetDeletion->update([
-            'status' => 'ditolak',
-            'alasan_ditolak' => $request->alasan_ditolak,
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Pengajuan penghapusan asset ditolak',
-            'data' => $assetDeletion->load('asset'),
-        ]);
     }
 
     /**

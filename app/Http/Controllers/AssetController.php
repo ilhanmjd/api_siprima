@@ -7,6 +7,7 @@ use App\Models\AssetDeletion;
 use App\Models\Maintenance;
 use App\Models\Risk;
 use App\Models\RiskTreatment;
+use Dompdf\Dompdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
@@ -909,18 +910,18 @@ class AssetController extends Controller
             $filename = 'asset-' . $asset->id . '-' . date('Ymd-His') . '.pdf';
             $filepath = 'assets/lampiran/' . $filename;
 
-            // TODO: Generate PDF atau file content sesuai kebutuhan
-            // Contoh: menggunakan library PDF seperti DomPDF atau mPDF
-            // Untuk saat ini, kita simpan file placeholder
-            $content = "Asset Report\n\n";
-            $content .= "Kode BMD: " . $asset->kode_bmd . "\n";
-            $content .= "Nama: " . $asset->nama . "\n";
-            $content .= "Dinas: " . $asset->dinas->nama . "\n";
-            $content .= "Kategori: " . $asset->kategori->nama . "\n";
-            $content .= "Tanggal: " . date('Y-m-d H:i:s') . "\n";
+            // Generate konten PDF dengan Dompdf
+            $html = view('pdf.asset', ['asset' => $asset])->render();
 
-            // Simpan file ke storage
-            Storage::put($filepath, $content);
+            $dompdf = new Dompdf();
+            $dompdf->loadHtml($html);
+            $dompdf->setPaper('A4', 'portrait');
+            $dompdf->render();
+
+            $pdfContent = $dompdf->output();
+
+            // Simpan file ke storage (disk public -> storage/app/public)
+            Storage::disk('public')->put($filepath, $pdfContent);
 
             // Update lampiran_url di database
             $asset->lampiran_url = $filepath;
@@ -931,8 +932,8 @@ class AssetController extends Controller
                 'message' => 'File berhasil digenerate dan disimpan',
                 'data' => [
                     'lampiran_url' => $filepath,
-                    'download_url' => Storage::url($filepath),
-                    'full_url' => url('storage/' . $filepath),
+                    'download_url' => Storage::disk('public')->url($filepath),
+                    'full_url' => url(Storage::disk('public')->url($filepath)),
                 ],
             ]);
 

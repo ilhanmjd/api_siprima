@@ -712,7 +712,7 @@ class AssetController extends Controller
             }
 
             $assetDeletion->update([
-                'status' => 'ditolak',
+                'status' => 'rejected',
                 'alasan_ditolak' => $request->alasan_ditolak,
             ]); 
 

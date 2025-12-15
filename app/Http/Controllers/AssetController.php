@@ -831,7 +831,7 @@ class AssetController extends Controller
             // Soft delete related risks
             Risk::where('asset_id', $asset->id)->delete();
 
-            // Soft delete the asset
+            AssetDeletion::where('asset_id', $asset->id)->delete();
             $asset->delete();
 
             return response()->json([

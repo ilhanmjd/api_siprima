@@ -37,19 +37,24 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/sso/callback', [SsoController::class, 'handleCallback']);
 
+// Public assets routes
+Route::prefix('assets')->group(function () {
+    Route::get('/', [AssetController::class, 'index']);
+    Route::get('/active', [AssetController::class, 'getActive']);
+    Route::get('/{id}', [AssetController::class, 'show']);
+});
+
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
 
     Route::prefix('assets')->group(function () {
-        Route::get('/', [AssetController::class, 'index']);
-        Route::get('/active', [AssetController::class, 'getActive']);
         Route::post('/', [AssetController::class, 'store']);
-        Route::get('/{id}', [AssetController::class, 'show']);
         Route::put('/{id}', [AssetController::class, 'update']);
         // Route::delete('/{id}', [AssetController::class, 'destroy']);
         Route::post('/{id}/pengajuan-delete', [AssetController::class, 'pengajuanDelete']);
+        Route::post('/{id}/download', [AssetController::class, 'download']);
        
         Route::get('/all/asset-deletions', [AssetController::class, 'getAllAssetDeletions']);
         Route::delete('/{id}/delete-diskominfo', [AssetController::class, 'deleteDiskominfo']);

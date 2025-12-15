@@ -25,6 +25,7 @@ class Asset extends Model
         'nilai_perolehan',
         'kondisi',
         'lampiran_bukti',
+        'lampiran_url',
         'is_usage',
         'status',
         'alasan_ditolak',

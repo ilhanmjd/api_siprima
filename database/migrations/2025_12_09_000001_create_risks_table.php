@@ -24,6 +24,7 @@ return new class extends Migration
             $table->enum('kriteria', ['Low', 'Medium', 'High']);
             $table->enum('prioritas', ['Low', 'Medium', 'High']);
             $table->enum('status', ['pending', 'rejected', 'accepted'])->default('pending');
+            $table->string('lampiran_url')->nullable();
             $table->timestamps();
         });
     }

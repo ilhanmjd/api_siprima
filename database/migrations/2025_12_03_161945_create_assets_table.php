@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('lampiran_bukti')->nullable();
             $table->enum('is_usage', ['active', 'inactive'])->nullable();
             $table->enum('status', ['pending', 'diterima', 'ditolak', 'pemeliharaan', 'dihapus'])->default('pending');
+            $table->string('lampiran_url')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

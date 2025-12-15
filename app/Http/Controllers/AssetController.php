@@ -9,6 +9,8 @@ use App\Models\Risk;
 use App\Models\RiskTreatment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class AssetController extends Controller
 {
@@ -18,7 +20,6 @@ class AssetController extends Controller
      *     tags={"Assets"},
      *     summary="Get all assets",
      *     description="Mendapatkan daftar semua asset dengan relasi kategori, subkategori, lokasi, dan penanggung jawab",
-     *     security={{"sanctum":{}}},
      *     @OA\Parameter(
      *         name="dinas_id",
      *         in="query",
@@ -68,13 +69,6 @@ class AssetController extends Controller
      *                     @OA\Property(property="updated_at", type="string", format="date-time")
      *                 )
      *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
      *         )
      *     )
      * )
@@ -203,7 +197,6 @@ class AssetController extends Controller
      *     tags={"Assets"},
      *     summary="Get asset by ID",
      *     description="Mendapatkan detail asset berdasarkan ID",
-     *     security={{"sanctum":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -225,13 +218,6 @@ class AssetController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Asset tidak ditemukan")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
      *         )
      *     )
      * )
@@ -430,7 +416,6 @@ class AssetController extends Controller
      *     tags={"Assets"},
      *     summary="Get all active assets",
      *     description="Mendapatkan daftar semua asset dengan is_usage = active",
-     *     security={{"sanctum":{}}},
      *     @OA\Parameter(
      *         name="dinas_id",
      *         in="query",
@@ -475,10 +460,6 @@ class AssetController extends Controller
      *                 )
      *             )
      *         )
-     *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated"
      *     )
      * )
      */
@@ -840,6 +821,104 @@ class AssetController extends Controller
                 'success' => true,
                 'message' => "Asset dengan id {$id} telah dihapus secara soft delete",
             ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/assets/{id}/download",
+     *     tags={"Assets"},
+     *     summary="Generate dan download lampiran asset",
+     *     description="Generate file lampiran untuk asset dan simpan ke storage, kemudian update field lampiran_url di database dengan path file yang digenerate",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID asset yang akan digenerate lampirannya",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="File berhasil digenerate dan URL disimpan",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="File berhasil digenerate dan disimpan"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="lampiran_url", type="string", example="assets/lampiran/asset-123-20251215-143022.pdf"),
+     *                 @OA\Property(property="download_url", type="string", example="/storage/assets/lampiran/asset-123-20251215-143022.pdf"),
+     *                 @OA\Property(property="full_url", type="string", example="http://localhost/storage/assets/lampiran/asset-123-20251215-143022.pdf")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Asset tidak ditemukan",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Asset tidak ditemukan")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Terjadi kesalahan: [error message]")
+     *         )
+     *     )
+     * )
+     */
+    public function download($id)
+    {
+        try {
+            $asset = Asset::with(['dinas', 'kategori', 'subkategori', 'lokasi', 'penanggungjawab'])->find($id);
+
+            if (!$asset) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Asset tidak ditemukan',
+                ], 404);
+            }
+
+            // Generate filename
+            $filename = 'asset-' . $asset->id . '-' . date('Ymd-His') . '.pdf';
+            $filepath = 'assets/lampiran/' . $filename;
+
+            // TODO: Generate PDF atau file content sesuai kebutuhan
+            // Contoh: menggunakan library PDF seperti DomPDF atau mPDF
+            // Untuk saat ini, kita simpan file placeholder
+            $content = "Asset Report\n\n";
+            $content .= "Kode BMD: " . $asset->kode_bmd . "\n";
+            $content .= "Nama: " . $asset->nama . "\n";
+            $content .= "Dinas: " . $asset->dinas->nama . "\n";
+            $content .= "Kategori: " . $asset->kategori->nama . "\n";
+            $content .= "Tanggal: " . date('Y-m-d H:i:s') . "\n";
+
+            // Simpan file ke storage
+            Storage::put($filepath, $content);
+
+            // Update lampiran_url di database
+            $asset->lampiran_url = $filepath;
+            $asset->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'File berhasil digenerate dan disimpan',
+                'data' => [
+                    'lampiran_url' => $filepath,
+                    'download_url' => Storage::url($filepath),
+                    'full_url' => url('storage/' . $filepath),
+                ],
+            ]);
+
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,

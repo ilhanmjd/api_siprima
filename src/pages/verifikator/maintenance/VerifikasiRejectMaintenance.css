@@ -1,0 +1,149 @@
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background-color: #e8f0fb;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #a9c9f8;
+  padding: 10px 30px;
+  height: 60px;
+}
+
+.logo {
+  font-weight: bold;
+  color: #004aad;
+  font-size: 18px;
+}
+
+.nav a {
+  margin: 0 15px;
+  text-decoration: none;
+  color: black;
+  font-weight: 500;
+}
+
+.nav a.active {
+  border-bottom: 2px solid #f6c80b;
+}
+
+.icons span {
+  font-size: 20px;
+  margin-left: 15px;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  background: white;
+  margin: 20px 80px;
+  padding: 15px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Layout */
+.main-content {
+  display: flex;
+  margin: 20px 80px;
+  gap: 30px;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 260px;
+  background: white;
+  padding: 25px 10px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-height: 400px; /* Adjust height to show about 8 buttons */
+  overflow-y: auto;
+}
+
+.sidebar-btn {
+  background-color: #e8f0fb;
+  border: none;
+  border-radius: 6px;
+  padding: 15px;
+  cursor: pointer;
+  text-align: center;
+  font-weight: 500;
+}
+
+.sidebar-btn:hover {
+  background-color: #cfe0ff;
+}
+
+/* Asset detail */
+.asset-detail {
+  flex: 1;
+  background: white;
+  padding: 25px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.asset-card {
+  width: 95%;
+  background-color: #d9ecff;
+  border-radius: 5px;
+  padding: 15px;
+}
+
+.asset-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #a9c9f8;
+  padding: 8px 15px;
+  border-radius: 4px 4px 0 0;
+}
+
+.asset-header h3 {
+  margin: 0;
+  color: #000;
+  font-size: 15px;
+}
+
+.asset-date {
+  font-size: 12px;
+}
+
+.asset-body {
+  padding: 10px 20px;
+  background: #e8f4ff;
+  min-height: 200px;
+}
+
+.asset-id {
+  margin-top: 15px;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.risk-btn {
+  background-color: #3b7c2a;
+  color: white;
+  border: none;
+  padding: 10px 50px;
+  border-radius: 6px;
+  font-size: 15px;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.risk-btn:hover {
+  background-color: #2f6421;
+}

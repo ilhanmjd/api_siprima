@@ -4,10 +4,13 @@
 > This document outlines all API endpoint requirements for the SIPRIMA (Sistem Informasi Prima) frontend application.  
 > Use this as a reference guide for implementing or verifying backend endpoints.
 
+<<<<<<< HEAD
 > ✅ **Implementation Status: 100% Complete**  
 > All core API endpoints have been implemented. All 62 documented endpoints are available and functional.  
 > Last verified: December 12, 2025
 
+=======
+>>>>>>> 94b12556fa8b0175b2e617b3c5ca2812e14c0d1c
 ---
 
 ## 📋 Table of Contents
@@ -714,6 +717,7 @@ PUT /api/penanggungjawabs/{id}
 DELETE /api/penanggungjawabs/{id}
 ```
 
+<<<<<<< HEAD
 #### Kategori (Main Category)
 ```http
 GET /api/kategoris
@@ -723,6 +727,8 @@ PUT /api/kategoris/{id}
 DELETE /api/kategoris/{id}
 ```
 
+=======
+>>>>>>> 94b12556fa8b0175b2e617b3c5ca2812e14c0d1c
 #### Sub Kategori
 ```http
 GET /api/sub-kategoris
@@ -769,9 +775,15 @@ accepted → [diskominfo executes DELETE /api/assets/{id}]
 
 ---
 
+<<<<<<< HEAD
 ## ✅ Additional Implemented Endpoints (Not in Original Requirements)
 
 ### 1. Unit Kerja Management
+=======
+## 🔴 Missing Endpoints (Not Yet Implemented)
+
+### 1. Unit Kerja Management (Optional)
+>>>>>>> 94b12556fa8b0175b2e617b3c5ca2812e14c0d1c
 ```http
 GET /api/unit-kerjas
 POST /api/unit-kerjas
@@ -780,7 +792,11 @@ PUT /api/unit-kerjas/{id}
 DELETE /api/unit-kerjas/{id}
 ```
 
+<<<<<<< HEAD
 **Status:** ✅ Fully implemented
+=======
+**Status:** Backend API exists but no frontend implementation.
+>>>>>>> 94b12556fa8b0175b2e617b3c5ca2812e14c0d1c
 
 **Data Structure:**
 ```json
@@ -795,7 +811,14 @@ DELETE /api/unit-kerjas/{id}
 }
 ```
 
+<<<<<<< HEAD
 ### 2. Kategori (Main Category) Management
+=======
+### 2. Kategori (Main Category)
+No direct endpoint found. Currently derived from SubKategori relationships.
+
+**Recommendation:** Add dedicated Kategori endpoints if direct category management is needed:
+>>>>>>> 94b12556fa8b0175b2e617b3c5ca2812e14c0d1c
 ```http
 GET /api/kategoris
 POST /api/kategoris
@@ -804,6 +827,7 @@ PUT /api/kategoris/{id}
 DELETE /api/kategoris/{id}
 ```
 
+<<<<<<< HEAD
 **Status:** ✅ Fully implemented
 
 **Data Structure:**
@@ -1205,6 +1229,8 @@ GET /api/sso/callback
 
 **Use Case:** Single Sign-On authentication callback (possibly for government systems).
 
+=======
+>>>>>>> 94b12556fa8b0175b2e617b3c5ca2812e14c0d1c
 ---
 
 ## ⚠️ Frontend Integration Status
@@ -1224,6 +1250,7 @@ GET /api/sso/callback
 
 ### HIGH PRIORITY
 
+<<<<<<< HEAD
 1. **✅ Diskominfo Dashboard Implementation - COMPLETED**
    - Endpoint: `GET /api/dashboard/diskominfo` - System-wide statistics
    - Aggregates: Assets by status/kondisi/usage, Risks by priority/status
@@ -1245,6 +1272,24 @@ GET /api/sso/callback
    - Endpoint: `GET /api/statistics/risk-heatmap` - 5x5 probability×impact matrix
    - Endpoint: `GET /api/statistics/trends` - Historical timeline data
    - Query params: type, period (daily/weekly/monthly/yearly), date range
+=======
+1. **Diskominfo Dashboard Integration**
+   - Endpoint: `GET /api/assets` with aggregation
+   - Endpoint: `GET /api/risks` with grouping
+   - Display total assets, risk levels, system overview
+
+2. **Diskominfo Asset Deletion Workflow**
+   - Page: `notifikasi-diskominfo.jsx`
+   - Integrate: `GET /api/asset-deletions?status=accepted`
+   - Integrate: `DELETE /api/assets/{id}` after approval
+
+3. **Auditor Dashboard Complete Integration**
+   - Aggregate data from all endpoints
+   - Implement risk heatmap visualization
+   - Per-dinas statistics breakdown
+   - Maintenance schedule calendar
+   - Chart implementations
+>>>>>>> 94b12556fa8b0175b2e617b3c5ca2812e14c0d1c
 
 ### MEDIUM PRIORITY
 
@@ -1260,10 +1305,17 @@ GET /api/sso/callback
 
 ### LOW PRIORITY
 
+<<<<<<< HEAD
 6. **Documentation Alignment**
    - ✅ Backend API: 100% Complete
    - ⚠️ Frontend: Update field names to match snake_case convention
    - ⚠️ Frontend: Integrate bonus endpoints (statistics, user filtering, rejection tracking)
+=======
+6. **Unit Kerja Management**
+   - Add to `api.js` if needed
+   - Create admin UI for management
+   - Integrate with asset/user relationships
+>>>>>>> 94b12556fa8b0175b2e617b3c5ca2812e14c0d1c
 
 ---
 
@@ -1310,6 +1362,7 @@ Endpoints that accept files (lampiran_bukti, buktiLampiran) should support:
 - Max file size: TBD (recommend 10MB)
 - Allowed formats: PDF, JPG, PNG
 
+<<<<<<< HEAD
 ### Field Naming Notes
 **Actual Implementation Uses snake_case:**
 - ✅ Maintenance: `bukti_lampiran` (not `buktiLampiran`)
@@ -1320,6 +1373,8 @@ Endpoints that accept files (lampiran_bukti, buktiLampiran) should support:
 - ✅ Maintenance has both `status_pemeliharaan` AND `status_review` for granular tracking
 - ✅ When maintenance status is "penanganan", related asset status auto-updates to "pemeliharaan"
 
+=======
+>>>>>>> 94b12556fa8b0175b2e617b3c5ca2812e14c0d1c
 ---
 
 ## 🔗 Related Files

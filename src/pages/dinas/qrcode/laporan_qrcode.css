@@ -1,0 +1,139 @@
+.laporan-page {
+  min-height: 100vh;
+  background: #bcd8ff;
+  font-family: "Poppins", sans-serif;
+  padding-bottom: 40px;
+}
+
+.laporan-page .navbar {
+  background: #4185da;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 32px;
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(15, 53, 115, 0.2);
+}
+
+.laporan-page .navbar-center span {
+  cursor: pointer;
+  padding: 0 12px;
+}
+
+.laporan-page .navbar-center span.active,
+.laporan-page .navbar-center span:hover {
+  border-bottom: 2px solid #f7c500;
+}
+
+.laporan-page .breadcrumb {
+  margin: 18px 32px;
+  color: #475569;
+}
+
+.laporan-page .breadcrumb-link {
+  cursor: pointer;
+  color: #1d4ed8;
+}
+
+.laporan-card {
+  background: #fff;
+  margin: 0 32px;
+  padding: 24px;
+  border-radius: 14px;
+  box-shadow: 0 18px 30px rgba(15, 23, 42, 0.08);
+}
+
+.laporan-header h2 {
+  margin: 0;
+  color: #0f172a;
+}
+
+.laporan-header p {
+  margin: 6px 0px 15px;
+  color: #475569;
+}
+
+.laporan-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 20px 0;
+  align-items: center;
+}
+
+.laporan-filters select,
+.laporan-filters input {
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 14px;
+  min-width: 160px;
+}
+
+.laporan-filters .separator {
+  text-align: center;
+  color: #475569;
+  padding: 0 6px;
+}
+
+.laporan-table {
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  background: #fff;
+}
+
+.laporan-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.laporan-table th,
+.laporan-table td {
+  text-align: left;
+  padding: 14px 18px;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.laporan-table th:last-child,
+.laporan-table td:last-child {
+  text-align: center;
+}
+
+.laporan-table th {
+  background: #f8fafc;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.laporan-table tr:last-child td {
+  border-bottom: none;
+}
+
+.laporan-placeholder {
+  padding: 24px;
+  text-align: center;
+  color: #6b7280;
+}
+
+.status-tag {
+  text-transform: capitalize;
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+.download-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 8px 16px;
+  background: #22c55e;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.download-btn:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}

@@ -1,0 +1,144 @@
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css");
+
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background-color: #8ec5fc;
+}
+
+/* Navbar */
+.navbar {
+  background: #4a90e2;
+  color: rgb(0, 0, 0);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  width: 28px;
+  height: 28px;
+}
+
+.brand {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.navbar-center a {
+  color: rgb(255, 255, 255);
+  text-decoration: none;
+  margin: 0 15px;
+  font-weight: 500;
+  padding-bottom: 3px;
+  transition: all 0.3s ease;
+}
+
+.navbar-center a.active,
+.navbar-center a:hover {
+  border-bottom: 2px solid #f7c500;
+}
+
+.navbar-right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.icon,
+.profile {
+  background: rgb(255, 255, 255);
+  color: black;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.notifikator-aset-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  background-color: white;
+  margin: 30px 100px;
+  padding: 15px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Content box */
+.content-box {
+  background: #fff;
+  margin: 30px 100px;
+  padding: 32px 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.notif-card {
+  background: #f8fbff;
+  border-radius: 12px;
+  padding: 20px 24px;
+  border: 1px solid #e0e7ef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: box-shadow 0.2s;
+  width: 550px;
+  height: 90px;
+}
+
+.notif-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.notif-header-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.notif-title,
+.notif-id {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  margin-right: 4px;
+}
+.notif-id {
+  margin-left: 2px;
+}
+.notif-time {
+  margin-left: auto;
+  font-size: 12px;
+  color: #777;
+}
+
+.notif-text {
+  font-size: 14px;
+  color: #444;
+  line-height: 1.6;
+  margin-top: 2px;
+}

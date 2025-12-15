@@ -1,0 +1,56 @@
+/* WRAPPER */
+.faq-wrapper {
+  width: 70%;
+  margin: 40px auto;
+  background: white;
+  padding: 50px;
+  border-radius: 15px;
+}
+
+/* TITLE */
+.faq-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 35px;
+}
+
+/* FAQ BOX */
+.faq-item {
+  margin-bottom: 18px;
+}
+
+.faq-question {
+  background: #dfeafb;
+  padding: 16px 22px;
+  border-radius: 10px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.faq-answer {
+  background: #e7f0ff;
+  padding: 18px 22px;
+  border-radius: 10px;
+  margin-top: 4px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* Arrow */
+.arrow {
+  font-size: 18px;
+}
+
+/* Breadcrumb styling (optional) */
+.breadcrumb {
+  background: white;
+  width: 90%;
+  margin: 30px auto 20px auto;
+  padding: 18px 22px;
+  font-size: 16px;
+  border-radius: 6px;
+}

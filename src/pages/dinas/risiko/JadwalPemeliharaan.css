@@ -1,0 +1,89 @@
+/* Breadcrumb */
+.breadcrumb {
+  background-color: white;
+  margin: 30px 100px;
+  padding: 15px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Title */
+.title-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.title {
+  width: 80%;
+  font-size: 30px;
+  font-weight: 700;
+  color: #333;
+}
+
+/* Table section */
+.table-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 60px;
+}
+
+.table-card {
+  width: 80%;
+  background: white;
+  border-radius: 8px;
+  padding: 32px 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.table-header-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 40px 20px;
+}
+
+.btn-laporan {
+  background: #1b7f2c;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 6px;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+/* Table styling */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table thead {
+  background: #dde7f3;
+}
+
+.table th {
+  padding: 14px 40px;
+  text-align: left;
+  font-weight: 600;
+  color: #555;
+}
+
+.table td {
+  padding: 20px 40px;
+  font-size: 15px;
+  color: #333;
+}
+
+.asset {
+  font-family: monospace;
+  font-weight: 600;
+}
+
+.row-alt {
+  background: #e6eef8;
+}

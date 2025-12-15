@@ -1,0 +1,149 @@
+/* Asset Aktif Page */
+.asset-aktif-page {
+  min-height: 100vh;
+  background-color: #dfe9f5;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Navbar */
+.navbar {
+  background-color: #0052d4;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  width: 32px;
+  height: 32px;
+}
+
+.brand {
+  font-weight: 600;
+  font-size: 18px;
+  color: #fff;
+}
+
+.navbar-center {
+  display: flex;
+  gap: 20px;
+}
+
+.navbar-center span {
+  color: #ffffff;
+  cursor: pointer;
+  padding: 8px 16px;
+  transition: 0.2s;
+  border-radius: 4px;
+}
+
+.navbar-center span:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.navbar-center span.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  font-weight: 600;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  padding: 20px 40px;
+  font-size: 14px;
+  color: #333;
+}
+
+.breadcrumb-link {
+  color: #0052d4;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.breadcrumb-link:hover {
+  text-decoration: underline;
+}
+
+/* Content Box */
+.content-box {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Asset Card */
+.asset-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.asset-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.asset-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.asset-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.asset-title {
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
+}
+
+.asset-id {
+  font-size: 14px;
+  color: #666;
+}
+
+.asset-kondisi {
+  font-size: 12px;
+  padding: 4px 12px;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border-radius: 12px;
+  text-transform: capitalize;
+}
+
+.asset-text {
+  color: #555;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Loading & Error States */
+.loading-text,
+.empty-text {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 14px;
+}

@@ -50,8 +50,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/{id}', [AssetController::class, 'update']);
         // Route::delete('/{id}', [AssetController::class, 'destroy']);
         Route::post('/{id}/pengajuan-delete', [AssetController::class, 'pengajuanDelete']);
-        Route::post('/{id}/accepted', [AssetController::class, 'acceptedDelete']);
-        Route::post('/{id}/rejected', [AssetController::class, 'rejectedDelete']);
+        Route::post('/asset-deletions/{id}/accepted', [AssetController::class, 'acceptedDelete']);
+        Route::post('/asset-deletions/{id}/rejected', [AssetController::class, 'rejectedDelete']);
         Route::get('/all/asset-deletions', [AssetController::class, 'getAllAssetDeletions']);
         Route::post('/{id}/softdelete/bydiskominfo', [AssetController::class, 'diskominfo']);
 

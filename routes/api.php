@@ -49,6 +49,17 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{id}', [AssetController::class, 'show']);
         Route::put('/{id}', [AssetController::class, 'update']);
         Route::delete('/{id}', [AssetController::class, 'destroy']);
+        Route::post('/{id}/pengajuan-delete', [AssetController::class, 'pengajuanDelete']);
+    });
+
+    Route::prefix('asset-deletions')->group(function () {
+        Route::get('/', [AssetDeletionController::class, 'index']);
+        Route::post('/', [AssetDeletionController::class, 'store']);
+        Route::get('/{id}', [AssetDeletionController::class, 'show']);
+        Route::put('/{id}/review', [AssetDeletionController::class, 'review']);
+        Route::delete('/{id}', [AssetDeletionController::class, 'destroy']);
+        Route::post('/{id}/accepted', [AssetController::class, 'acceptedDelete']);
+        Route::post('/{id}/rejected', [AssetController::class, 'rejectedDelete']);
     });
 
     Route::prefix('kategoris')->group(function () {
@@ -121,6 +132,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [MaintenanceController::class, 'store']);
         Route::get('/{id}', [MaintenanceController::class, 'show']);
         Route::put('/{id}', [MaintenanceController::class, 'update']);
+        Route::post('/{id}/approve', [MaintenanceController::class, 'approve']);
+        Route::post('/{id}/reject', [MaintenanceController::class, 'reject']);
+        Route::post('/{id}/set-maintenance', [MaintenanceController::class, 'setMaintenance']);
+        Route::post('/{id}/set-selesai', [MaintenanceController::class, 'setSelesai']);
     });
 
     Route::prefix('asset-deletions')->group(function () {

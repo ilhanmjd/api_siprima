@@ -218,8 +218,7 @@ class MaintenanceController extends Controller
         $data = $validator->validated();
 
         $data['status_review'] = 'pending';
-        $data['status_pemeliharaan'] = 'penanganan';
-
+        $data['status_pemeliharaan'] = null;
 
         // Upload bukti lampiran jika ada
         if ($request->hasFile('bukti_lampiran')) {
@@ -230,14 +229,6 @@ class MaintenanceController extends Controller
         }
 
         $maintenance = Maintenance::create($data);
-
-        // Jika status maintenance adalah "penanganan", update status asset menjadi "pemeliharaan"
-        if ($maintenance->status_pemeliharaan === 'penanganan') {
-            $asset = Asset::find($maintenance->asset_id);
-            if ($asset) {
-                $asset->update(['status' => 'pemeliharaan']);
-            }
-        }
 
         return response()->json([
             'success' => true,
@@ -357,6 +348,310 @@ class MaintenanceController extends Controller
             'success' => true,
             'message' => 'Maintenance berhasil diupdate',
             'data' => $maintenance->load(['asset', 'risk', 'riskTreatment']),
+        ]);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/maintenances/{id}/approve",
+     *     tags={"Maintenances"},
+     *     summary="Approve a maintenance",
+     *     description="Mengubah status_review maintenance menjadi accepted",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Maintenance ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Maintenance berhasil disetujui",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Maintenance berhasil disetujui"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="status_review", type="string", example="accepted")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Maintenance tidak ditemukan",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Maintenance tidak ditemukan")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     )
+     * )
+     */
+    public function approve($id)
+    {
+        $maintenance = Maintenance::find($id);
+
+        if (!$maintenance) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Maintenance tidak ditemukan',
+            ], 404);
+        }
+
+        $maintenance->update([
+            'status_review' => 'accepted',
+            'alasan_ditolak' => null,
+            'status_pemeliharaan' => 'pending',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Maintenance berhasil disetujui',
+            'data' => $maintenance->load(['asset', 'risk', 'riskTreatment']),
+        ]);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/maintenances/{id}/reject",
+     *     tags={"Maintenances"},
+     *     summary="Reject a maintenance",
+     *     description="Mengubah status_review maintenance menjadi rejected dengan alasan",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Maintenance ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"alasan_ditolak"},
+     *             @OA\Property(property="alasan_ditolak", type="string", example="Pemeliharaan tidak diperlukan saat ini")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Maintenance berhasil ditolak",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Maintenance berhasil ditolak"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="status_review", type="string", example="rejected"),
+     *                 @OA\Property(property="alasan_ditolak", type="string", example="Pemeliharaan tidak diperlukan saat ini")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Validation error"),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Maintenance tidak ditemukan",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Maintenance tidak ditemukan")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     )
+     * )
+     */
+    public function reject(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'alasan_ditolak' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $maintenance = Maintenance::find($id);
+
+        if (!$maintenance) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Maintenance tidak ditemukan',
+            ], 404);
+        }
+
+        $maintenance->update([
+            'status_review' => 'rejected',
+            'alasan_ditolak' => $request->alasan_ditolak
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Maintenance berhasil ditolak',
+            'data' => $maintenance->load(['asset', 'risk', 'riskTreatment']),
+        ]);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/maintenances/{id}/set-maintenance",
+     *     tags={"Maintenances"},
+     *     summary="Set maintenance status to penanganan",
+     *     description="Mengubah status_pemeliharaan maintenance menjadi 'penanganan' dan status asset menjadi 'pemeliharaan'",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Maintenance ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Status pemeliharaan berhasil diupdate",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Status pemeliharaan berhasil diupdate"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="status_pemeliharaan", type="string", example="penanganan"),
+     *                 @OA\Property(property="asset_id", type="integer", example=1),
+     *                 @OA\Property(property="alasan_pemeliharaan", type="string", example="Perbaikan rutin")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Maintenance tidak ditemukan",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Maintenance tidak ditemukan")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     )
+     * )
+     */
+    public function setMaintenance($id)
+    {
+        $maintenance = Maintenance::find($id);
+        $asset = Asset::find($maintenance->asset_id);
+
+        if (!$maintenance) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Maintenance tidak ditemukan',
+            ], 404);
+        }
+
+        $maintenance->update(['status_pemeliharaan' => 'penanganan']);
+        $asset->update(['status' => 'pemeliharaan']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status pemeliharaan berhasil diupdate',
+            'data' => $maintenance,
+        ]);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/maintenances/{id}/set-selesai",
+     *     tags={"Maintenances"},
+     *     summary="Set maintenance status to selesai",
+     *     description="Mengubah status_pemeliharaan maintenance menjadi 'selesai' dan status asset menjadi 'diterima'",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Maintenance ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Status pemeliharaan berhasil diupdate",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Status pemeliharaan berhasil diupdate"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="status_pemeliharaan", type="string", example="selesai"),
+     *                 @OA\Property(property="asset_id", type="integer", example=1),
+     *                 @OA\Property(property="alasan_pemeliharaan", type="string", example="Perbaikan rutin")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Maintenance tidak ditemukan",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Maintenance tidak ditemukan")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     )
+     * )
+     */
+    public function setSelesai($id)
+    {
+        $maintenance = Maintenance::find($id);
+        $asset = Asset::find($maintenance->asset_id);
+
+        if (!$maintenance) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Maintenance tidak ditemukan',
+            ], 404);
+        }
+
+        $maintenance->update(['status_pemeliharaan' => 'selesai']);
+        $asset->update(['status' => 'diterima']);  
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status pemeliharaan berhasil diupdate',
+            'data' => $maintenance,
         ]);
     }
 }

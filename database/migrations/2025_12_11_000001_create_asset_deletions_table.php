@@ -19,6 +19,7 @@ return new class extends Migration
             $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
             $table->text('alasan_ditolak')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

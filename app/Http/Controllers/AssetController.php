@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Asset;
+use App\Models\AssetDeletion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -506,6 +507,227 @@ class AssetController extends Controller
                 'total' => $assets->count(),
                 'assets' => $assets,
             ],
+        ]);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/assets/{id}/pengajuan-delete",
+     *     tags={"Assets"},
+     *     summary="Mengajukan penghapusan asset",
+     *     description="Membuat pengajuan penghapusan asset",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID Asset",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"alasan_penghapusan"},
+     *             @OA\Property(property="alasan_penghapusan", type="string", example="Asset sudah rusak berat dan tidak dapat diperbaiki"),
+     *             @OA\Property(property="lampiran", type="string", example="dokumen_penghapusan.pdf")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Pengajuan penghapusan berhasil dibuat",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Pengajuan penghapusan asset berhasil dibuat"),
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Asset tidak ditemukan"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error"
+     *     )
+     * )
+     */
+    public function pengajuanDelete(Request $request, $id)
+    {
+        $asset = Asset::find($id);
+
+        if (!$asset) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Asset tidak ditemukan',
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'alasan_penghapusan' => 'required|string',
+            'lampiran' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $assetDeletion = AssetDeletion::create([
+            'asset_id' => $asset->id,
+            'alasan_penghapusan' => $request->alasan_penghapusan,
+            'lampiran' => $request->lampiran,
+            'status' => 'pending',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pengajuan penghapusan asset berhasil dibuat',
+            'data' => $assetDeletion->load('asset'),
+        ], 201);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/asset-deletions/{id}/accepted",
+     *     tags={"Assets"},
+     *     summary="Menerima pengajuan penghapusan asset",
+     *     description="Menerima pengajuan penghapusan asset, menghapus permanent asset dan mengubah status menjadi 'dihapus'",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID AssetDeletion",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Pengajuan penghapusan diterima",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Pengajuan penghapusan asset diterima dan asset telah dihapus")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Pengajuan penghapusan tidak ditemukan"
+     *     )
+     * )
+     */
+    public function acceptedDelete($id)
+    {
+        $assetDeletion = AssetDeletion::find($id);
+
+        if (!$assetDeletion) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pengajuan penghapusan tidak ditemukan',
+            ], 404);
+        }
+
+        $asset = $assetDeletion->asset;
+
+        if (!$asset) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Asset tidak ditemukan',
+            ], 404);
+        }
+
+        // Update status pengajuan menjadi diterima
+        $assetDeletion->update([
+            'status' => 'diterima',
+        ]);
+
+        // Update status asset menjadi 'dihapus'
+        $asset->update([
+            'status' => 'dihapus',
+        ]);
+
+        // Soft delete asset
+        $asset->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pengajuan penghapusan asset diterima dan asset telah dihapus',
+        ]);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/asset-deletions/{id}/rejected",
+     *     tags={"Assets"},
+     *     summary="Menolak pengajuan penghapusan asset",
+     *     description="Menolak pengajuan penghapusan asset dengan alasan tertentu",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID AssetDeletion",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"alasan_ditolak"},
+     *             @OA\Property(property="alasan_ditolak", type="string", example="Asset masih dalam kondisi baik dan masih digunakan")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Pengajuan penghapusan ditolak",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Pengajuan penghapusan asset ditolak")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Pengajuan penghapusan tidak ditemukan"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error"
+     *     )
+     * )
+     */
+    public function rejectedDelete(Request $request, $id)
+    {
+        $assetDeletion = AssetDeletion::find($id);
+
+        if (!$assetDeletion) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pengajuan penghapusan tidak ditemukan',
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'alasan_ditolak' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        // Update status pengajuan menjadi ditolak dengan alasan
+        $assetDeletion->update([
+            'status' => 'ditolak',
+            'alasan_ditolak' => $request->alasan_ditolak,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pengajuan penghapusan asset ditolak',
+            'data' => $assetDeletion->load('asset'),
         ]);
     }
 }

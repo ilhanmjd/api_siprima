@@ -48,8 +48,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [AssetController::class, 'store']);
         Route::get('/{id}', [AssetController::class, 'show']);
         Route::put('/{id}', [AssetController::class, 'update']);
-        Route::delete('/{id}', [AssetController::class, 'destroy']);
+        // Route::delete('/{id}', [AssetController::class, 'destroy']);
         Route::post('/{id}/pengajuan-delete', [AssetController::class, 'pengajuanDelete']);
+        Route::post('/{id}/accepted', [AssetController::class, 'acceptedDelete']);
+        Route::post('/{id}/rejected', [AssetController::class, 'rejectedDelete']);
+        Route::get('/all/asset-deletions', [AssetController::class, 'getAllAssetDeletions']);
+        Route::post('/{id}/softdelete/bydiskominfo', [AssetController::class, 'diskominfo']);
+
     });
 
     Route::prefix('asset-deletions')->group(function () {
@@ -58,8 +63,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{id}', [AssetDeletionController::class, 'show']);
         Route::put('/{id}/review', [AssetDeletionController::class, 'review']);
         Route::delete('/{id}', [AssetDeletionController::class, 'destroy']);
-        Route::post('/{id}/accepted', [AssetController::class, 'acceptedDelete']);
-        Route::post('/{id}/rejected', [AssetController::class, 'rejectedDelete']);
+        
     });
 
     Route::prefix('kategoris')->group(function () {

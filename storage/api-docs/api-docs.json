@@ -1257,6 +1257,153 @@
                 ]
             }
         },
+        "/api/asset-deletions/accepted": {
+            "get": {
+                "tags": [
+                    "Assets"
+                ],
+                "summary": "Get accepted asset deletions",
+                "description": "Mendapatkan daftar pengajuan penghapusan asset yang telah diterima",
+                "operationId": "829ddcece4d2a09acc043c27665ee9e3",
+                "responses": {
+                    "200": {
+                        "description": "Berhasil mendapatkan data pengajuan penghapusan yang diterima",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "asset_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "alasan_penghapusan": {
+                                                        "type": "string",
+                                                        "example": "Asset sudah rusak berat"
+                                                    },
+                                                    "lampiran": {
+                                                        "type": "string",
+                                                        "example": "dokumen.pdf"
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "example": "diterima"
+                                                    },
+                                                    "alasan_ditolak": {
+                                                        "type": "string",
+                                                        "example": null
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/assets/{id}/delete-diskominfo": {
+            "delete": {
+                "tags": [
+                    "Assets"
+                ],
+                "summary": "Delete asset by Diskominfo (soft delete)",
+                "description": "Menghapus asset secara soft delete oleh Diskominfo. Asset, Risk, dan Risk Treatment terkait akan dihapus.",
+                "operationId": "e8459d5ea805eca566e3980c45b9bcff",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID Asset yang akan dihapus",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Asset berhasil dihapus secara soft delete",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Asset dengan id 1 telah dihapus secara soft delete"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Asset tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Asset tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/asset-deletions": {
             "get": {
                 "tags": [

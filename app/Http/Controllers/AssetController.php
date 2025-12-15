@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Asset;
 use App\Models\AssetDeletion;
+use App\Models\Risk;
+use App\Models\RiskTreatment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -642,14 +644,6 @@ class AssetController extends Controller
             'status' => 'diterima',
         ]);
 
-        // Update status asset menjadi 'dihapus'
-        $asset->update([
-            'status' => 'dihapus',
-        ]);
-
-        // Soft delete asset
-        $asset->delete();
-
         return response()->json([
             'success' => true,
             'message' => 'Pengajuan penghapusan asset diterima dan asset telah dihapus',
@@ -728,6 +722,117 @@ class AssetController extends Controller
             'success' => true,
             'message' => 'Pengajuan penghapusan asset ditolak',
             'data' => $assetDeletion->load('asset'),
+        ]);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/asset-deletions/accepted",
+     *     tags={"Assets"},
+     *     summary="Get accepted asset deletions",
+     *     description="Mendapatkan daftar pengajuan penghapusan asset yang telah diterima",
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Berhasil mendapatkan data pengajuan penghapusan yang diterima",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="asset_id", type="integer", example=1),
+     *                     @OA\Property(property="alasan_penghapusan", type="string", example="Asset sudah rusak berat"),
+     *                     @OA\Property(property="lampiran", type="string", example="dokumen.pdf"),
+     *                     @OA\Property(property="status", type="string", example="diterima"),
+     *                     @OA\Property(property="alasan_ditolak", type="string", example=null),
+     *                     @OA\Property(property="created_at", type="string", format="date-time"),
+     *                     @OA\Property(property="updated_at", type="string", format="date-time")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated"
+     *     )
+     * )
+     */
+    public function getAssetDeletions()
+    {
+        $assetDeletions = AssetDeletion::with('asset')->where('status', 'diterima')->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $assetDeletions,
+        ]);
+    }
+    /**
+     * @OA\Delete(
+     *     path="/api/assets/{id}/delete-diskominfo",
+     *     tags={"Assets"},
+     *     summary="Delete asset by Diskominfo (soft delete)",
+     *     description="Menghapus asset secara soft delete oleh Diskominfo. Asset, Risk, dan Risk Treatment terkait akan dihapus.",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID Asset yang akan dihapus",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Asset berhasil dihapus secara soft delete",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Asset dengan id 1 telah dihapus secara soft delete")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Asset tidak ditemukan",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Asset tidak ditemukan")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated"
+     *     )
+     * )
+     */
+    public function deleteDiskominfo($id)
+    {
+        $asset = Asset::find($id);
+
+        if (!$asset) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Asset tidak ditemukan',
+            ], 404);
+        }
+
+        $asset->status = 'dihapus';
+        
+        $risks = Risk::where('asset_id', $asset->id)->get();;
+        foreach ($risks as $risk) {
+            $risk->delete();
+        }
+
+        $riskTreatments = RiskTreatment::where('asset_id', $asset->id)->get();;
+        foreach ($riskTreatments as $treatment) {
+            $treatment->delete();
+        }
+
+        $asset->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Asset dengan id ' . $id . ' telah dihapus secara soft delete',
         ]);
     }
 }

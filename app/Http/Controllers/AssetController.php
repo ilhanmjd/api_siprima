@@ -810,32 +810,34 @@ class AssetController extends Controller
      */
     public function deleteDiskominfo($id)
     {
-        $asset = Asset::find($id);
+        try {
+            $asset = Asset::find($id);
 
-        if (!$asset) {
+            if (!$asset) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Asset tidak ditemukan',
+                ], 404);
+            }
+
+            // Soft delete related Risks
+            Risk::where('asset_id', $asset->id)->delete();
+
+            // Soft delete related Risk Treatments
+            RiskTreatment::where('asset_id', $asset->id)->delete();
+
+            // Soft delete the Asset
+            $asset->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => "Asset dengan id {$id} telah dihapus secara soft delete",
+            ]);
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Asset tidak ditemukan',
-            ], 404);
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+            ], 500);
         }
-
-        $asset->status = 'dihapus';
-        
-        $risks = Risk::where('asset_id', $asset->id)->get();;
-        foreach ($risks as $risk) {
-            $risk->delete();
-        }
-
-        $riskTreatments = RiskTreatment::where('asset_id', $asset->id)->get();;
-        foreach ($riskTreatments as $treatment) {
-            $treatment->delete();
-        }
-
-        $asset->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Asset dengan id ' . $id . ' telah dihapus secara soft delete',
-        ]);
     }
 }

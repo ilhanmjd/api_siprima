@@ -820,13 +820,18 @@ class AssetController extends Controller
                 ], 404);
             }
 
-            // Soft delete related Risks
+            // Get all risks related to this asset
+            $risks = Risk::where('asset_id', $asset->id)->get();
+            
+            // Soft delete risk treatments for each risk
+            foreach ($risks as $risk) {
+                RiskTreatment::where('risiko_id', $risk->id)->delete();
+            }
+
+            // Soft delete related risks
             Risk::where('asset_id', $asset->id)->delete();
 
-            // Soft delete related Risk Treatments
-            RiskTreatment::where('asset_id', $asset->id)->delete();
-
-            // Soft delete the Asset
+            // Soft delete the asset
             $asset->delete();
 
             return response()->json([

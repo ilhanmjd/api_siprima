@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('bukti_lampiran')->nullable();
             $table->text('alasan_ditolak')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

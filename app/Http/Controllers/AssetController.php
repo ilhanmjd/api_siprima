@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Asset;
 use App\Models\AssetDeletion;
+use App\Models\Maintenance;
 use App\Models\Risk;
 use App\Models\RiskTreatment;
 use Illuminate\Http\Request;
@@ -830,6 +831,7 @@ class AssetController extends Controller
 
             // Soft delete related risks
             Risk::where('asset_id', $asset->id)->delete();
+            Maintenance::where('asset_id', $asset->id)->delete();
 
             AssetDeletion::where('asset_id', $asset->id)->delete();
             $asset->delete();

@@ -21,6 +21,13 @@ class AssetController extends Controller
      *     summary="Get all assets",
      *     description="Mendapatkan daftar semua asset dengan relasi kategori, subkategori, lokasi, dan penanggung jawab",
      *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         description="Pencarian berdasarkan nama asset, kode BMD, atau deskripsi",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
      *         name="dinas_id",
      *         in="query",
      *         description="Filter berdasarkan dinas ID",
@@ -76,6 +83,16 @@ class AssetController extends Controller
     public function index(Request $request)
     {
         $query = Asset::with(['dinas', 'kategori', 'subkategori', 'lokasi', 'penanggungjawab']);
+
+        // Search berdasarkan nama, kode BMD, atau deskripsi
+        if ($request->has('search') && !empty($request->search)) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('nama', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('kode_bmd', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('deskripsi', 'like', '%' . $searchTerm . '%');
+            });
+        }
 
         // Filter berdasarkan dinas
         if ($request->has('dinas_id')) {

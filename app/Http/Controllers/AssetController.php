@@ -641,7 +641,7 @@ class AssetController extends Controller
 
         // Update status pengajuan menjadi diterima
         $assetDeletion->update([
-            'status' => 'diterima',
+            'status' => 'accepted',
         ]);
 
         return response()->json([

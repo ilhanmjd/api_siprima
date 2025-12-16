@@ -66,9 +66,18 @@ class SsoController extends Controller
      * )
      */
     public function handleCallback(Request $request)
-    {   
-        $token = $request->token;
+    {
+        // Ambil token dari request (query / body)
+        $token = $request->input('token');
 
+        if (!$token) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Token not provided'
+            ], 400);
+        }
+
+        // Validasi token ke server SSO
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $token,
         ])->get('https://api.bispro.digitaltech.my.id/api/v2/auth/me');
@@ -81,7 +90,7 @@ class SsoController extends Controller
         }
 
         $ssoData = $response->json();
-        
+
         if (!isset($ssoData['success']) || !$ssoData['success']) {
             return response()->json([
                 'success' => false,
@@ -91,30 +100,29 @@ class SsoController extends Controller
 
         $userData = $ssoData['data']['user'];
 
-        // Cari atau buat user baru
+        // Cari atau buat user
         $user = User::updateOrCreate(
-            ['email' => $userData['email']], // Cari berdasarkan email
+            ['email' => $userData['email']],
             [
                 'name' => $userData['name'],
                 'email' => $userData['email'],
-                'password' => bcrypt(Str::random(32)), // Random password untuk SSO user
+                'password' => bcrypt(Str::random(32)),
                 'email_verified_at' => $userData['email_verified_at'] ?? now(),
-                'dinas_id' => $userData['dinas_id'] ?? 1, // Default ke dinas_id 1 jika tidak ada
-                'unit_kerja_id' => $userData['unit_kerja_id'] ?? 1, // Default ke unit_kerja_id 1 jika tidak ada
-                'role_id' => $userData['role_id'] ?? 1, // Default ke role_id 1 jika tidak ada
+                'dinas_id' => $userData['dinas_id'] ?? 1,
+                'unit_kerja_id' => $userData['unit_kerja_id'] ?? 1,
+                'role_id' => $userData['role_id'] ?? 1,
             ]
         );
 
-        // Buat token untuk user
+        // Generate token Sanctum
         $userToken = $user->createToken('sso-token')->plainTextToken;
 
-        // Simpan token ke dalam session
-        $request->localStorage()->put('token', $userToken);
-
-        // Redirect ke frontend dengan token
+        // Redirect ke frontend (frontend yang simpan ke localStorage)
         $frontendUrl = 'https://siprima.digitaltech.my.id/sso/callback';
-        $redirectUrl = $frontendUrl . '?token=' . urlencode($userToken);
-        
-        return redirect($redirectUrl);
+
+        return redirect()->away(
+            $frontendUrl . '?token=' . urlencode($userToken)
+        );
     }
+
 }

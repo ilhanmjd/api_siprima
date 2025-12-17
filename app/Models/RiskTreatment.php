@@ -29,6 +29,10 @@ class RiskTreatment extends Model
         'target_tanggal' => 'date',
     ];
 
+    public function asset()
+    {
+        return $this->belongsTo(Asset::class);
+    }
     /**
      * Get the risk that owns the treatment.
      */

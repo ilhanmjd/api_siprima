@@ -152,6 +152,14 @@ class Asset extends Model
     }
 
     /**
+     * Get the risk treatment for the asset.
+     */
+    public function riskTreatment(): HasMany
+    {
+        return $this->hasMany(RiskTreatment::class);
+    }
+
+    /**
      * Get the asset deletions for the asset.
      */
     public function assetDeletions(): HasMany
@@ -165,5 +173,13 @@ class Asset extends Model
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Get the maintenances for the asset.
+     */
+    public function maintenance(): HasMany
+    {
+        return $this->hasMany(Maintenance::class);
     }
 }

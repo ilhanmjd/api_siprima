@@ -83,7 +83,7 @@ class AssetController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Asset::with(['dinas', 'kategori', 'subkategori', 'lokasi', 'penanggungjawab', 'risk', 'riskTreatment', 'maintenance', 'assetDeletions']);
+        $query = Asset::with(['dinas', 'kategori', 'subkategori', 'lokasi', 'penanggungjawab', 'risks', 'riskTreatment', 'maintenance', 'assetDeletions']);
 
         // Search berdasarkan nama, kode BMD, atau deskripsi
         if ($request->has('search') && !empty($request->search)) {

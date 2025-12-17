@@ -148,7 +148,7 @@ class Asset extends Model
      */
     public function risks(): HasMany
     {
-        return $this->hasMany(Risk::class);
+        return $this->hasMany(Risk::class, 'asset_id');
     }
 
     /**
@@ -156,7 +156,7 @@ class Asset extends Model
      */
     public function riskTreatment(): HasMany
     {
-        return $this->hasMany(RiskTreatment::class);
+        return $this->hasMany(RiskTreatment::class, 'asset_id');
     }
 
     /**
@@ -164,7 +164,7 @@ class Asset extends Model
      */
     public function assetDeletions(): HasMany
     {
-        return $this->hasMany(AssetDeletion::class);
+        return $this->hasMany(AssetDeletion::class, 'asset_id');
     }
 
     /**
@@ -180,6 +180,6 @@ class Asset extends Model
      */
     public function maintenance(): HasMany
     {
-        return $this->hasMany(Maintenance::class);
+        return $this->hasMany(Maintenance::class, 'asset_id');
     }
 }

@@ -45,7 +45,7 @@ class Risk extends Model
     /**
      * Get the risk treatments for the risk.
      */
-    public function riskTreatments(): HasMany
+    public function riskTreatments()
     {
         return $this->hasMany(RiskTreatment::class, 'risiko_id');
     }

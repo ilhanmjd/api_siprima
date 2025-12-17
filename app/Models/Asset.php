@@ -152,14 +152,6 @@ class Asset extends Model
     }
 
     /**
-     * Get the risk treatment for the asset.
-     */
-    public function riskTreatment(): HasMany
-    {
-        return $this->hasMany(RiskTreatment::class, 'asset_id');
-    }
-
-    /**
      * Get the asset deletions for the asset.
      */
     public function assetDeletions(): HasMany

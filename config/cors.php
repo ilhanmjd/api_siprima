@@ -19,7 +19,18 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://api.siprima.digitaltech.my.id', 'http://localhost:8000', 'http://localhost:5173', 'http://localhost:5174', 'https://46d083476aee.ngrok-free.app', 'https://siprima.digitaltech.my.id'],
+    'allowed_origins' => [
+        'https://api.siprima.digitaltech.my.id', 
+        'http://localhost:8000', 
+        'http://localhost:5173', 
+        'http://localhost:5174', 
+        'https://46d083476aee.ngrok-free.app', 
+        'https://siprima.digitaltech.my.id',  
+        'https://sindra.online', 
+        'https://api.sindra.online', 
+        'https://simantic.online', 
+        'https://api.simantic.online'
+    ],
 
     'allowed_origins_patterns' => [],
 

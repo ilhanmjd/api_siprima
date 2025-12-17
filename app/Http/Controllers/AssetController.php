@@ -242,7 +242,9 @@ class AssetController extends Controller
      */
     public function show($id)
     {
-        $asset = Asset::with(['dinas', 'kategori', 'subkategori', 'lokasi', 'penanggungjawab'])->find($id);
+        $query = Asset::with(['dinas', 'kategori', 'subkategori', 'lokasi', 'penanggungjawab', 'risks.riskTreatments', 'maintenance', 'assetDeletions']);
+
+        $asset = $query->find($id);
 
         if (!$asset) {
             return response()->json([

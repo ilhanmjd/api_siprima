@@ -41,6 +41,7 @@ Route::get('/sso/callback', [SsoController::class, 'handleCallback']);
 Route::prefix('assets')->group(function () {
     Route::get('/', [AssetController::class, 'index']);
     Route::get('/active', [AssetController::class, 'getActive']);
+    Route::get('bykodebmd/{kodeBmd}', [AssetController::class, 'getByKodeBmd']);
     Route::get('/{id}', [AssetController::class, 'show']);
 });
 

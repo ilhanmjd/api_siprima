@@ -259,6 +259,26 @@ class AssetController extends Controller
         ]);
     }
 
+    public function byKodBmd($kodeBmd)
+    {
+        $query = Asset::with(['dinas', 'kategori', 'subkategori', 'lokasi', 'penanggungjawab', 'risks.riskTreatments', 'maintenance', 'assetDeletions']);
+
+        $asset = $query->where('kode_bmd', $kodeBmd)->first();
+        
+        if (!$asset) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Asset tidak ditemukan',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $asset,
+        ]);
+    }
+
+
     /**
      * @OA\Put(
      *     path="/api/assets/{id}",
